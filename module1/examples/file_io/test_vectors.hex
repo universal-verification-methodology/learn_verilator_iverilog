@@ -1,0 +1,6 @@
+// Test vectors for AND gate
+// Format: ab (a in bit 1, b in bit 0)
+00
+01
+10
+11

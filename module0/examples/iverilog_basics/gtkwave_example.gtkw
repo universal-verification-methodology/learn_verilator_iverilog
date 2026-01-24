@@ -1,0 +1,17 @@
+[*] GTKWave save file for gtkwave_example.vcd
+[*] This file pre-loads signals so they're visible immediately
+[*]
+[*] To regenerate: Open VCD in GTKWave, arrange signals, then File -> Write Save File
+[*]
+[*] Signal format: [hierarchy] [signal_name] [color] [format]
+[*] Hierarchy levels: 0=top, 1=first level, etc.
+[*]
+[*] Note: This is a template. GTKWave will auto-populate when you:
+[*] 1. Open gtkwave_example.vcd
+[*] 2. Expand hierarchy (SST panel on left)
+[*] 3. Select signals: clk, a, b, y, enable, counter
+[*] 4. Drag to waveform viewer (right panel)
+[*] 5. Save: File -> Write Save File
+[*]
+[*] After saving, this file will contain the actual signal configuration
+[*] Then you can use: gtkwave gtkwave_example.vcd gtkwave_example.gtkw

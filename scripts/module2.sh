@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Module 2: SystemVerilog Testbench Fundamentals Orchestrator
+# Module 2: Verilator Deep Dive Orchestrator
 # This script runs examples and tests for Module 2
 # Usage: ./module2.sh [OPTIONS]
 
@@ -19,57 +19,21 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 MODULE2_DIR="$PROJECT_ROOT/module2"
 
-# Set UVM_HOME if not already set
-# Following Antmicro example: https://github.com/antmicro/verilator-uvm-example
-# UVM_HOME should point to the src directory (as in their example)
-if [[ -z "${UVM_HOME:-}" ]]; then
-    UVM_HOME="$PROJECT_ROOT/tools/uvm-2017/1800.2-2017-1.0/src"
-    export UVM_HOME
-fi
-
 # Options
-RUN_CLOCK_GENERATION=true
-RUN_RESET_PATTERNS=true
-RUN_SIGNAL_ACCESS=true
-RUN_TRIGGERS=true
-RUN_COMMON_PATTERNS=true
-RUN_UVM_TESTS=true
-SIMULATOR="verilator"
+RUN_COMPILATION=true
+RUN_CPP_TESTBENCH=true
+RUN_FILE_IO=true
+RUN_WAVEFORMS=true
+RUN_DEBUGGING=true
+RUN_ADVANCED=false  # Default false (advanced topics)
+RUN_BASIC_TESTS=true
+RUN_FILE_IO_TESTS=true
 
-# Parallel build jobs (default: 8)
-# Can be overridden with --jobs option
+# Parallel build jobs
 PARALLEL_JOBS=8
 
-# Clean builds by default (set to false to skip cleaning for faster rebuilds)
+# Clean builds by default
 CLEAN_BUILDS=true
-
-# Log file setup - will be initialized in main()
-LOG_FILE=""
-
-# Function to setup logging (redirects stdout and stderr to both console and log file)
-setup_logging() {
-    # Initialize log file path
-    LOG_FILE="$MODULE2_DIR/module2.log"
-    mkdir -p "$MODULE2_DIR"
-    
-    # Create log file with timestamp header
-    {
-        echo "=========================================="
-        echo "Module 2 Execution Log"
-        echo "Started: $(date '+%Y-%m-%d %H:%M:%S')"
-        echo "Command: $0 $*"
-        echo "Working directory: $(pwd)"
-        echo "UVM_HOME: ${UVM_HOME:-not set}"
-        echo "Simulator: $SIMULATOR"
-        echo "Parallel jobs: $PARALLEL_JOBS"
-        echo "=========================================="
-        echo ""
-    } > "$LOG_FILE"
-    
-    # Redirect stdout and stderr to both console and log file
-    exec > >(tee -a "$LOG_FILE")
-    exec 2>&1
-}
 
 # Function to print colored output
 print_status() {
@@ -92,50 +56,48 @@ show_usage() {
     cat << EOF
 Usage: $0 [OPTIONS]
 
-Module 2: SystemVerilog Testbench Fundamentals
+Module 2: Verilator Deep Dive
 This script runs examples and tests for Module 2.
 
 OPTIONS:
-    SystemVerilog Examples:
-        --clock-generation      Run clock generation examples
-        --reset-patterns        Run reset patterns examples
-        --signal-access         Run signal access examples
-        --triggers              Run triggers and timing control examples
-        --common-patterns       Run common verification patterns examples
-        --all-examples          Run all SystemVerilog examples (default)
-        --skip-examples         Skip all SystemVerilog examples
+    Examples:
+        --compilation          Run Verilator compilation examples
+        --cpp-testbench        Run C++ testbench examples
+        --file-io              Run file I/O examples
+        --waveforms            Run waveform generation examples
+        --debugging            Run debugging examples
+        --advanced             Run advanced Verilator features
+        --all-examples         Run all examples (default)
+        --skip-examples        Skip all examples
     
     Tests:
-        --uvm-tests             Run UVM testbenches
-        --all-tests             Run all tests
+        --basic-tests          Run basic C++ testbenches
+        --file-io-tests       Run file I/O testbenches
+        --all-tests            Run all tests (default)
+        --skip-tests           Skip all tests
     
     Environment:
-        --sim SIMULATOR         Simulator to use (default: verilator)
-        --uvm-home DIR          UVM library directory (default: \$UVM_HOME)
-        --jobs N                Number of parallel build jobs (default: 8)
-        --no-clean              Skip cleaning before build (faster rebuilds)
+        --jobs N               Number of parallel build jobs (default: 8)
+        --no-clean             Skip cleaning before build (faster rebuilds)
     
     Other:
-        --help, -h              Show this help message
+        --help, -h             Show this help message
 
 EXAMPLES:
-    # Run all SystemVerilog examples (with parallel builds)
+    # Run all examples and tests
     $0
     
-    # Run only clock generation
-    $0 --clock-generation
+    # Run only compilation examples
+    $0 --compilation
     
-    # Run UVM tests
-    $0 --uvm-tests
+    # Run only C++ testbench examples
+    $0 --cpp-testbench
     
-    # Run everything
-    $0 --all-examples --all-tests
+    # Run all tests
+    $0 --all-tests
     
-    # Faster rebuilds (skip cleaning, use parallel builds)
+    # Faster rebuilds
     $0 --no-clean --jobs 8
-    
-    # Use specific number of parallel jobs
-    $0 --jobs 4
 
 EOF
 }
@@ -144,48 +106,48 @@ EOF
 check_prerequisites() {
     print_status $BLUE "Checking prerequisites..."
     
+    local missing_tools=0
+    
     # Check Verilator
     if ! command -v verilator &> /dev/null; then
         print_status $RED "Error: verilator not found. Please install it first."
-        exit 1
+        print_status $YELLOW "Run: ./scripts/install_verilator.sh"
+        missing_tools=$((missing_tools + 1))
+    else
+        local verilator_version=$(verilator --version | head -1 | awk '{print $2}')
+        print_status $GREEN "Found Verilator version: $verilator_version"
     fi
     
-    local verilator_version=$(verilator --version | head -1 | awk '{print $2}')
-    print_status $GREEN "Found Verilator version: $verilator_version"
-    
-    # Check UVM library (if running UVM tests)
-    if [[ "$RUN_UVM_TESTS" == true ]]; then
-        local uvm_pkg_file=""
-        if [[ -f "$UVM_HOME/uvm_pkg.sv" ]]; then
-            uvm_pkg_file="$UVM_HOME/uvm_pkg.sv"
-        elif [[ -f "$UVM_HOME/src/uvm_pkg.sv" ]]; then
-            uvm_pkg_file="$UVM_HOME/src/uvm_pkg.sv"
-        fi
-        
-        if [[ -z "$uvm_pkg_file" ]]; then
-            print_status $YELLOW "Warning: UVM library not found"
-            print_status $YELLOW "Expected file: $UVM_HOME/uvm_pkg.sv or $UVM_HOME/src/uvm_pkg.sv"
-            print_status $YELLOW "Install UVM using: ./scripts/install_uvm.sh"
-            print_status $YELLOW "Or set UVM_HOME to your UVM src directory (as in Antmicro example)"
+    # Check C++ compiler
+    if ! command -v g++ &> /dev/null && ! command -v clang++ &> /dev/null; then
+        print_status $RED "Error: C++ compiler (g++ or clang++) not found."
+        missing_tools=$((missing_tools + 1))
+    else
+        if command -v g++ &> /dev/null; then
+            print_status $GREEN "Found g++: $(g++ --version | head -1)"
         else
-            print_status $GREEN "Found UVM library at: $uvm_pkg_file"
+            print_status $GREEN "Found clang++: $(clang++ --version | head -1)"
         fi
     fi
     
     # Check Make
     if ! command -v make &> /dev/null; then
         print_status $RED "Error: make not found. Please install it first."
+        missing_tools=$((missing_tools + 1))
+    fi
+    
+    if [[ $missing_tools -gt 0 ]]; then
+        print_status $RED "Please install missing tools before running Module 2 examples."
         exit 1
     fi
     
     print_status $GREEN "Prerequisites check passed"
 }
 
-# Function to compile and run SystemVerilog example
-run_sv_example() {
+# Function to run example directory
+run_example_dir() {
     local example_dir=$1
     local example_name=$2
-    local example_file=$3
     
     print_header "Running: $example_name"
     
@@ -194,375 +156,254 @@ run_sv_example() {
         return 1
     }
     
-    # Clean previous builds (unless --no-clean is specified)
+    # Clean previous builds
     if [[ "$CLEAN_BUILDS" == true ]]; then
-        rm -rf obj_dir *.log 2>/dev/null || true
-    else
-        print_status $YELLOW "Skipping clean (using existing build)"
+        make clean >/dev/null 2>&1 || true
     fi
     
-    # Add --timing flag for examples that use delays/forks
-    # Add --trace flag for examples that use VCD tracing in C++ files
-    # Add warning suppressions for known Verilator limitations
-    local verilator_flags="-sv --cc --exe"
-    # All Module 2 examples use timing (clocks, delays, forks)
-    if [[ "$example_dir" == "clock_generation" ]] || [[ "$example_dir" == "reset_patterns" ]] || \
-       [[ "$example_dir" == "signal_access" ]] || [[ "$example_dir" == "triggers" ]] || \
-       [[ "$example_dir" == "common_patterns" ]]; then
-        verilator_flags="$verilator_flags --timing"
-    fi
-    # All examples with C++ files use VCD tracing, so add --trace flag
-    if [[ "$example_dir" == "clock_generation" ]] || [[ "$example_dir" == "reset_patterns" ]] || \
-       [[ "$example_dir" == "signal_access" ]] || [[ "$example_dir" == "triggers" ]] || \
-       [[ "$example_dir" == "common_patterns" ]]; then
-        verilator_flags="$verilator_flags --trace"
-    fi
-    # Suppress width truncation warnings (common in SystemVerilog)
-    # Suppress INITIALDLY warnings (non-blocking in initial blocks - acceptable in testbenches)
-    verilator_flags="$verilator_flags -Wno-WIDTHTRUNC -Wno-INITIALDLY"
-    
-    # Extract top module name from file (Verilator uses lowercase)
-    # Get the last module definition (usually the top-level testbench)
-    local top_module
-    top_module=$(grep "^module" "$example_file" | tail -1 | sed 's/module[[:space:]]*\([a-zA-Z0-9_]*\).*/\1/' | tr '[:upper:]' '[:lower:]')
-    
-    # Executable name is based on top module (lowercase)
-    local exe_name="V${top_module}"
-
-    # If we are not doing a clean build and an existing binary is up-to-date,
-    # skip recompilation and just run it.
-    if [[ "$CLEAN_BUILDS" == false && -x "obj_dir/$exe_name" ]]; then
-        if ! find . -maxdepth 1 -type f \( -name "*.sv" -o -name "*.cpp" \) -newer "obj_dir/$exe_name" | grep -q .; then
-            print_status $YELLOW "Reusing existing build for $example_name (no source changes detected)"
-            set +e
-            ./obj_dir/"$exe_name" 2>&1 | tee run.log
-            local cached_run_exit=${PIPESTATUS[0]}
-            set -e
-
-            cd "$PROJECT_ROOT"
-            if [[ $cached_run_exit -eq 0 ]]; then
-                print_status $GREEN "✓ $example_name completed successfully (cached build)"
-                return 0
-            else
-                print_status $RED "✗ $example_name failed when using cached build (exit code: $cached_run_exit)"
-                print_status $YELLOW "Re-run without --no-clean if you need a full rebuild"
-                return 1
-            fi
-        fi
-    fi
-
-    # Compile with Verilator
-    print_status $BLUE "Compiling $example_name..."
-    set +e  # Temporarily disable exit on error
-    
-    # Check if C++ main file exists (try multiple naming patterns)
-    local cpp_file="${example_file%.sv}.cpp"
-    local cpp_file_alt="${top_module}.cpp"
-    local cpp_file_alt2="${example_file%.sv}_example.cpp"
-    local found_cpp=""
-    if [[ -f "$cpp_file" ]]; then
-        found_cpp="$cpp_file"
-    elif [[ -f "$cpp_file_alt" ]]; then
-        found_cpp="$cpp_file_alt"
-    elif [[ -f "$cpp_file_alt2" ]]; then
-        found_cpp="$cpp_file_alt2"
-    fi
-    
-    if [[ -n "$found_cpp" ]]; then
-        verilator $verilator_flags "$example_file" "$found_cpp" --top-module "$top_module" 2>&1 | tee compile.log
-    else
-        verilator $verilator_flags "$example_file" --top-module "$top_module" 2>&1 | tee compile.log
-    fi
-    local compile_exit=${PIPESTATUS[0]}
-    set -e
-    
-    if [[ $compile_exit -ne 0 ]]; then
-        print_status $RED "✗ Compilation failed for $example_name"
-        print_status $YELLOW "Check compile.log for details"
-        cd "$PROJECT_ROOT"
-        return 1
-    fi
-    
-    # Build
-    print_status $BLUE "Building $example_name (using $PARALLEL_JOBS parallel jobs)..."
+    # Run make
     set +e
-    # Verilator creates Makefile based on top module name (lowercase)
-    local makefile_name="V${top_module}.mk"
-    make -j"$PARALLEL_JOBS" -C obj_dir -f "$makefile_name" 2>&1 | tee -a compile.log
-    local build_exit=${PIPESTATUS[0]}
-    set -e
-    
-    if [[ $build_exit -ne 0 ]]; then
-        print_status $RED "✗ Build failed for $example_name"
-        print_status $YELLOW "Check compile.log for details"
-        cd "$PROJECT_ROOT"
-        return 1
-    fi
-    
-    # Run
-    print_status $BLUE "Running $example_name..."
-    set +e
-    ./obj_dir/"$exe_name" 2>&1 | tee run.log
-    local run_exit=${PIPESTATUS[0]}
+    make all 2>&1 | tee run.log
+    local exit_code=${PIPESTATUS[0]}
     set -e
     
     cd "$PROJECT_ROOT"
     
-    if [[ $run_exit -eq 0 ]]; then
+    if [[ $exit_code -eq 0 ]]; then
         print_status $GREEN "✓ $example_name completed successfully"
         return 0
     else
-        print_status $RED "✗ $example_name failed (exit code: $run_exit)"
+        print_status $RED "✗ $example_name failed (exit code: $exit_code)"
         print_status $YELLOW "Check $MODULE2_DIR/examples/$example_dir/run.log for details"
         return 1
     fi
 }
 
-# Function to run UVM tests
-run_uvm_tests() {
-    print_header "Running UVM Tests"
+# Function to run test directory
+run_test_dir() {
+    local test_dir=$1
+    local test_name=$2
     
-    # Check if UVM_HOME points to src directory or root directory (following Antmicro example)
-    local uvm_pkg_file=""
-    if [[ -f "$UVM_HOME/uvm_pkg.sv" ]]; then
-        uvm_pkg_file="$UVM_HOME/uvm_pkg.sv"
-    elif [[ -f "$UVM_HOME/src/uvm_pkg.sv" ]]; then
-        uvm_pkg_file="$UVM_HOME/src/uvm_pkg.sv"
-    else
-        print_status $RED "Error: UVM library not found"
-        print_status $RED "Expected file: $UVM_HOME/uvm_pkg.sv or $UVM_HOME/src/uvm_pkg.sv"
-        print_status $YELLOW "Install UVM using: ./scripts/install_uvm.sh"
-        print_status $YELLOW "Or set UVM_HOME to your UVM src directory (as in Antmicro example)"
-        print_status $YELLOW "See: https://github.com/antmicro/verilator-uvm-example"
-        return 1
-    fi
+    print_header "Running: $test_name"
     
-    # Note about Verilator's UVM support
-    if [[ "$SIMULATOR" == "verilator" ]]; then
-        print_status $GREEN "ℹ️  Note: Verilator now supports UVM 2017-1.0 (as of Oct 2025)"
-        print_status $GREEN "   See: https://antmicro.com/blog/2025/10/support-for-upstream-uvm-2017-in-verilator"
-        print_status $GREEN "   Using recommended flags: --binary, +define+UVM_NO_DPI, -Wno-fatal"
-        echo ""
-    fi
-    
-    cd "$MODULE2_DIR/tests/uvm_tests" || {
-        print_status $RED "Error: Failed to change to UVM tests directory"
+    cd "$MODULE2_DIR/tests/$test_dir" || {
+        print_status $RED "Error: Failed to change to test directory: $test_dir"
         return 1
     }
     
-    print_status $BLUE "Running UVM simple register test..."
-    print_status $YELLOW "Note: Verilator has limited UVM support. For full UVM features, use commercial simulators."
-    print_status $YELLOW "Note: UVM compilation generates ~2000 C++ files due to template instantiations."
-    print_status $YELLOW "      This is normal and may take 5-10 minutes even with parallel builds."
+    # Clean previous builds
+    if [[ "$CLEAN_BUILDS" == true ]]; then
+        make clean >/dev/null 2>&1 || true
+    fi
     
-    make clean >/dev/null 2>&1 || true
-    set +e  # Temporarily disable exit on error to capture exit code
-    make -j"$PARALLEL_JOBS" SIM="$SIMULATOR" TEST=test_simple_register_uvm 2>&1 | tee /tmp/uvm_simple_register.log
+    # Run make
+    set +e
+    make all 2>&1 | tee test.log
     local exit_code=${PIPESTATUS[0]}
-    set -e  # Re-enable exit on error
+    set -e
+    
+    cd "$PROJECT_ROOT"
+    
     if [[ $exit_code -eq 0 ]]; then
-        print_status $GREEN "✓ UVM simple register test passed"
-        cd "$PROJECT_ROOT"
+        print_status $GREEN "✓ $test_name passed"
         return 0
     else
-        print_status $RED "✗ UVM simple register test failed (exit code: $exit_code)"
-        print_status $YELLOW "Check /tmp/uvm_simple_register.log for details"
-        if [[ "$SIMULATOR" == "verilator" ]]; then
-            print_status $YELLOW ""
-            print_status $YELLOW "⚠️  UVM test failed with Verilator."
-            print_status $YELLOW ""
-            print_status $YELLOW "   According to Antmicro (Oct 2025), Verilator supports UVM 2017-1.0,"
-            print_status $YELLOW "   but this requires the latest Verilator with recent UVM fixes."
-            print_status $YELLOW ""
-            print_status $YELLOW "   Your Verilator version: $(verilator --version 2>/dev/null || echo 'unknown')"
-            print_status $YELLOW ""
-            print_status $YELLOW "   To get full UVM support, you may need to:"
-            print_status $YELLOW "   1. Build Verilator from latest source:"
-            print_status $YELLOW "      git clone https://github.com/verilator/verilator"
-            print_status $YELLOW "      cd verilator && autoconf && ./configure && make"
-            print_status $YELLOW ""
-            print_status $YELLOW "   2. Or use a commercial simulator:"
-            print_status $YELLOW "      cd module2/tests/uvm_tests"
-            print_status $YELLOW "      make SIM=vcs TEST=test_simple_register_uvm      # For VCS"
-            print_status $YELLOW "      make SIM=questa TEST=test_simple_register_uvm    # For QuestaSim"
-            print_status $YELLOW "      make SIM=xcelium TEST=test_simple_register_uvm   # For Xcelium"
-        else
-            print_status $YELLOW "Note: Some UVM features may not work with Verilator"
-            print_status $YELLOW "Consider using commercial simulators (VCS, Questa, Xcelium) for full UVM support"
-        fi
-        cd "$PROJECT_ROOT"
+        print_status $RED "✗ $test_name failed (exit code: $exit_code)"
+        print_status $YELLOW "Check $MODULE2_DIR/tests/$test_dir/test.log for details"
         return 1
     fi
 }
 
-# Function to parse command line arguments
-parse_args() {
-    while [[ $# -gt 0 ]]; do
-        case $1 in
-            --clock-generation)
-                RUN_CLOCK_GENERATION=true
-                shift
-                ;;
-            --reset-patterns)
-                RUN_RESET_PATTERNS=true
-                shift
-                ;;
-            --signal-access)
-                RUN_SIGNAL_ACCESS=true
-                shift
-                ;;
-            --triggers)
-                RUN_TRIGGERS=true
-                shift
-                ;;
-            --common-patterns)
-                RUN_COMMON_PATTERNS=true
-                shift
-                ;;
-            --all-examples)
-                RUN_CLOCK_GENERATION=true
-                RUN_RESET_PATTERNS=true
-                RUN_SIGNAL_ACCESS=true
-                RUN_TRIGGERS=true
-                RUN_COMMON_PATTERNS=true
-                shift
-                ;;
-            --skip-examples)
-                RUN_CLOCK_GENERATION=false
-                RUN_RESET_PATTERNS=false
-                RUN_SIGNAL_ACCESS=false
-                RUN_TRIGGERS=false
-                RUN_COMMON_PATTERNS=false
-                shift
-                ;;
-            --uvm-tests)
-                RUN_UVM_TESTS=true
-                shift
-                ;;
-            --all-tests)
-                RUN_UVM_TESTS=true
-                shift
-                ;;
-            --sim)
-                SIMULATOR="$2"
-                shift 2
-                ;;
-            --uvm-home)
-                UVM_HOME="$2"
-                export UVM_HOME
-                shift 2
-                ;;
-            --jobs)
-                PARALLEL_JOBS="$2"
-                shift 2
-                ;;
-            --no-clean)
-                CLEAN_BUILDS=false
-                shift
-                ;;
-            --help|-h)
-                show_usage
-                exit 0
-                ;;
-            *)
-                print_status $RED "Unknown option: $1"
-                show_usage
-                exit 1
-                ;;
-        esac
-    done
-}
+# Parse command line arguments
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        --compilation)
+            RUN_COMPILATION=true
+            RUN_CPP_TESTBENCH=false
+            RUN_FILE_IO=false
+            RUN_WAVEFORMS=false
+            RUN_DEBUGGING=false
+            shift
+            ;;
+        --cpp-testbench)
+            RUN_COMPILATION=false
+            RUN_CPP_TESTBENCH=true
+            RUN_FILE_IO=false
+            RUN_WAVEFORMS=false
+            RUN_DEBUGGING=false
+            shift
+            ;;
+        --file-io)
+            RUN_COMPILATION=false
+            RUN_CPP_TESTBENCH=false
+            RUN_FILE_IO=true
+            RUN_WAVEFORMS=false
+            RUN_DEBUGGING=false
+            shift
+            ;;
+        --waveforms)
+            RUN_COMPILATION=false
+            RUN_CPP_TESTBENCH=false
+            RUN_FILE_IO=false
+            RUN_WAVEFORMS=true
+            RUN_DEBUGGING=false
+            shift
+            ;;
+        --debugging)
+            RUN_COMPILATION=false
+            RUN_CPP_TESTBENCH=false
+            RUN_FILE_IO=false
+            RUN_WAVEFORMS=false
+            RUN_DEBUGGING=true
+            shift
+            ;;
+        --advanced)
+            RUN_ADVANCED=true
+            shift
+            ;;
+        --all-examples)
+            RUN_COMPILATION=true
+            RUN_CPP_TESTBENCH=true
+            RUN_FILE_IO=true
+            RUN_WAVEFORMS=true
+            RUN_DEBUGGING=true
+            shift
+            ;;
+        --skip-examples)
+            RUN_COMPILATION=false
+            RUN_CPP_TESTBENCH=false
+            RUN_FILE_IO=false
+            RUN_WAVEFORMS=false
+            RUN_DEBUGGING=false
+            shift
+            ;;
+        --basic-tests)
+            RUN_BASIC_TESTS=true
+            RUN_FILE_IO_TESTS=false
+            shift
+            ;;
+        --file-io-tests)
+            RUN_BASIC_TESTS=false
+            RUN_FILE_IO_TESTS=true
+            shift
+            ;;
+        --all-tests)
+            RUN_BASIC_TESTS=true
+            RUN_FILE_IO_TESTS=true
+            shift
+            ;;
+        --skip-tests)
+            RUN_BASIC_TESTS=false
+            RUN_FILE_IO_TESTS=false
+            shift
+            ;;
+        --jobs)
+            PARALLEL_JOBS="$2"
+            shift 2
+            ;;
+        --no-clean)
+            CLEAN_BUILDS=false
+            shift
+            ;;
+        --help|-h)
+            show_usage
+            exit 0
+            ;;
+        *)
+            print_status $RED "Unknown option: $1"
+            show_usage
+            exit 1
+            ;;
+    esac
+done
 
-# Main function
+# Main execution
 main() {
-    # Parse arguments first (so help can be shown without logging)
-    parse_args "$@"
-    
-    # Setup logging after argument parsing (before actual work)
-    setup_logging "$@"
-    
-    print_header "Module 2: SystemVerilog Testbench Fundamentals"
-    print_status $BLUE "Log file: $LOG_FILE"
+    print_header "Module 2: Verilator Deep Dive"
     
     # Check prerequisites
     check_prerequisites
     
-    local errors=0
+    local failed=0
+    local vcd_file_to_open=""
     
-    # Run SystemVerilog examples
-    if [[ "$RUN_CLOCK_GENERATION" == true ]] || [[ "$RUN_RESET_PATTERNS" == true ]] || \
-       [[ "$RUN_SIGNAL_ACCESS" == true ]] || [[ "$RUN_TRIGGERS" == true ]] || \
-       [[ "$RUN_COMMON_PATTERNS" == true ]]; then
-        
-        print_header "Running SystemVerilog Examples"
-        
-        if [[ "$RUN_CLOCK_GENERATION" == true ]]; then
-            if ! run_sv_example "clock_generation" "ClockGeneration" "clock_gen.sv"; then
-                errors=$((errors + 1))
-            fi
+    # Run examples
+    if [[ "$RUN_COMPILATION" == true ]]; then
+        run_example_dir "compilation" "Compilation Examples" || failed=$((failed + 1))
+    fi
+    
+    if [[ "$RUN_CPP_TESTBENCH" == true ]]; then
+        run_example_dir "cpp_testbench" "C++ Testbench Examples" || failed=$((failed + 1))
+    fi
+    
+    if [[ "$RUN_FILE_IO" == true ]]; then
+        run_example_dir "file_io" "File I/O Examples" || failed=$((failed + 1))
+    fi
+    
+    if [[ "$RUN_WAVEFORMS" == true ]]; then
+        run_example_dir "waveforms" "Waveform Examples" || failed=$((failed + 1))
+        local vcd="$MODULE2_DIR/examples/waveforms/waveform_example.vcd"
+        if [[ -f "$vcd" ]]; then
+            vcd_file_to_open="$vcd"
         fi
-        
-        if [[ "$RUN_RESET_PATTERNS" == true ]]; then
-            if ! run_sv_example "reset_patterns" "ResetPatterns" "reset_patterns.sv"; then
-                errors=$((errors + 1))
-            fi
-        fi
-        
-        if [[ "$RUN_SIGNAL_ACCESS" == true ]]; then
-            if ! run_sv_example "signal_access" "SignalAccess" "signal_access.sv"; then
-                errors=$((errors + 1))
-            fi
-        fi
-        
-        if [[ "$RUN_TRIGGERS" == true ]]; then
-            if ! run_sv_example "triggers" "Triggers" "triggers.sv"; then
-                errors=$((errors + 1))
-            fi
-        fi
-        
-        if [[ "$RUN_COMMON_PATTERNS" == true ]]; then
-            if ! run_sv_example "common_patterns" "CommonPatterns" "common_patterns.sv"; then
-                errors=$((errors + 1))
-            fi
+    fi
+    
+    if [[ "$RUN_DEBUGGING" == true ]]; then
+        run_example_dir "debugging" "Debugging Examples" || failed=$((failed + 1))
+    fi
+    
+    if [[ "$RUN_ADVANCED" == true ]]; then
+        if [[ -d "$MODULE2_DIR/examples/advanced" ]]; then
+            run_example_dir "advanced" "Advanced Examples" || failed=$((failed + 1))
+        else
+            print_status $YELLOW "Advanced examples directory not found (optional)"
         fi
     fi
     
     # Run tests
-    if [[ "$RUN_UVM_TESTS" == true ]]; then
-        if ! run_uvm_tests; then
-            errors=$((errors + 1))
+    if [[ "$RUN_BASIC_TESTS" == true ]]; then
+        run_test_dir "basic_tests" "Basic Tests" || failed=$((failed + 1))
+    fi
+    
+    if [[ "$RUN_FILE_IO_TESTS" == true ]]; then
+        if [[ -d "$MODULE2_DIR/tests/file_io_tests" ]]; then
+            run_test_dir "file_io_tests" "File I/O Tests" || failed=$((failed + 1))
+        else
+            print_status $YELLOW "File I/O tests directory not found (optional)"
+        fi
+    fi
+    
+    # Open GTKWave if VCD file was generated
+    if [[ -n "$vcd_file_to_open" ]] && [[ -f "$vcd_file_to_open" ]]; then
+        if command -v gtkwave &> /dev/null; then
+            print_status $BLUE "Opening GTKWave to view waveforms..."
+            if [[ -n "${DISPLAY:-}" ]] || [[ "$OSTYPE" == "darwin"* ]]; then
+                local gtkw_file="${vcd_file_to_open%.vcd}.gtkw"
+                if [[ -f "$gtkw_file" ]]; then
+                    gtkwave "$vcd_file_to_open" "$gtkw_file" &
+                else
+                    gtkwave "$vcd_file_to_open" &
+                    print_status $YELLOW "Note: Add signals manually in GTKWave (drag from left panel to right)"
+                fi
+                print_status $GREEN "✓ GTKWave opened with waveform file: $(basename "$vcd_file_to_open")"
+            else
+                print_status $YELLOW "No display available. To view waveforms:"
+                print_status $YELLOW "  gtkwave $vcd_file_to_open"
+            fi
         fi
     fi
     
     # Summary
+    echo ""
     print_header "Summary"
-    
-    if [[ $errors -eq 0 ]]; then
+    if [[ $failed -eq 0 ]]; then
         print_status $GREEN "✓ All examples and tests completed successfully!"
-        echo ""
-        print_status $BLUE "Next steps:"
-        echo "  1. Review the examples in module2/examples/"
-        echo "  2. Try modifying the examples"
-        echo "  3. Proceed to Module 3: UVM Basics"
-        echo ""
-        print_status $BLUE "Full log saved to: $LOG_FILE"
+        return 0
     else
-        print_status $RED "✗ Completed with $errors error(s)"
-        echo ""
-        print_status $YELLOW "Check log file for details: $LOG_FILE"
-        exit 1
+        print_status $RED "✗ $failed example(s) or test(s) failed"
+        return 1
     fi
-    
-    # Add footer to log file
-    {
-        echo ""
-        echo "=========================================="
-        echo "Module 2 Execution Log - Completed"
-        echo "Finished: $(date '+%Y-%m-%d %H:%M:%S')"
-        echo "Exit code: $errors"
-        echo "=========================================="
-    } >> "$LOG_FILE"
 }
 
-# Run main function with all arguments
-main "$@"
+# Run main function
+main

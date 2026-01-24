@@ -1,0 +1,30 @@
+# Build artifacts
+build/
+obj_dir/
+*.o
+*.a
+*.so
+*.dylib
+
+# Executables
+hello_world
+and_gate_test
+test_and_gate
+V*
+
+# Waveforms
+*.vcd
+*.fst
+*.lxt
+
+# Logs
+*.log
+run.log
+test.log
+compile.log
+
+# Temporary files
+*.tmp
+*.swp
+*~
+.DS_Store
