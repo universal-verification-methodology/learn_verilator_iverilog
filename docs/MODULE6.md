@@ -4,6 +4,16 @@
 **Complexity**: Intermediate-Advanced  
 **Goal**: Master SystemVerilog features for advanced testbench development (primarily for iverilog, with Verilator considerations)
 
+---
+
+## Navigation
+
+[← Previous: Module 5: Procedural Testbench Writing](MODULE5.md) | [Next: Module 7: Coverage and Assertions →](MODULE7.md)
+
+[↑ Back to README](../README.md) | [📚 Full Syllabus](SYLLABUS2.md)
+
+---
+
 ## Overview
 
 This module introduces SystemVerilog features that enhance testbench capabilities. You'll learn about classes, randomization, interfaces, and other SystemVerilog constructs that make testbenches more powerful and maintainable. These concepts form the foundation of modern verification methodologies like UVM (Universal Verification Methodology).

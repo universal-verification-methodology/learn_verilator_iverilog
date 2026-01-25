@@ -4,6 +4,16 @@
 **Complexity**: Intermediate  
 **Goal**: Master basic coverage analysis and assertion-based verification without SystemVerilog dependencies
 
+---
+
+## Navigation
+
+[← Previous: Module 6: SystemVerilog Testbench Features](MODULE6.md) | [Next: Module 8: Verification Methodology →](MODULE8.md)
+
+[↑ Back to README](../README.md) | [📚 Full Syllabus](SYLLABUS2.md)
+
+---
+
 ## Overview
 
 This module covers fundamental coverage analysis and assertion-based verification using basic Verilog and C++ constructs. You'll learn to measure verification completeness, write simple assertions, and use coverage to guide verification efforts. We focus on concepts that work with both iverilog and Verilator without requiring advanced SystemVerilog features.

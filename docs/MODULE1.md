@@ -4,6 +4,16 @@
 **Complexity**: Beginner-Intermediate  
 **Goal**: Master iverilog for Verilog/SystemVerilog testbench development
 
+---
+
+## Navigation
+
+[← Previous: Module 0: Installation and Setup](MODULE0.md) | [Next: Module 2: Verilator Deep Dive →](MODULE2.md)
+
+[↑ Back to README](../README.md) | [📚 Full Syllabus](SYLLABUS2.md)
+
+---
+
 ## Overview
 
 This module provides comprehensive coverage of Icarus Verilog (iverilog), an open-source Verilog simulator. You'll learn its compilation process, simulation execution, capabilities, limitations, and how to write Verilog testbenches that work with iverilog.
@@ -502,6 +512,13 @@ By the end of this module, you should be able to:
 - [ ] Can debug compilation and simulation errors
 - [ ] Can organize projects with Makefiles
 - [ ] Can automate verification flows
+
+## Related Topics
+
+- **Prerequisites**: [Module 0: Installation and Setup](MODULE0.md)
+- **Next Steps**: [Module 2: Verilator Deep Dive](MODULE2.md) - Master Verilator for C++ testbench development
+- **Next Steps**: [Module 3: Testbench Fundamentals](MODULE3.md) - Learn fundamental testbench concepts for both paradigms
+- **UVM Connection**: [UVM Core Repository](https://github.com/universal-verification-methodology/core)
 
 ## Next Steps
 

@@ -4,6 +4,16 @@
 **Complexity**: Beginner-Intermediate  
 **Goal**: Master construction of structured testbenches with proper organization
 
+---
+
+## Navigation
+
+[← Previous: Module 3: Testbench Fundamentals](MODULE3.md) | [Next: Module 5: Procedural Testbench Writing →](MODULE5.md)
+
+[↑ Back to README](../README.md) | [📚 Full Syllabus](SYLLABUS2.md)
+
+---
+
 ## Overview
 
 This module focuses on building well-structured testbenches for both Verilog and C++ paradigms. You'll learn to organize testbenches into reusable components, create test scenarios, and implement proper verification patterns in both testbench styles.

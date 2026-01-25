@@ -4,6 +4,16 @@
 **Complexity**: Advanced  
 **Goal**: Master verification methodology and industry best practices
 
+---
+
+## Navigation
+
+[← Previous: Module 7: Coverage and Assertions](MODULE7.md) | [Next: N/A (Final Module)]
+
+[↑ Back to README](../README.md) | [📚 Full Syllabus](SYLLABUS2.md)
+
+---
+
 ## Overview
 
 This module focuses on verification methodology, best practices, and preparing for real-world verification projects. You'll learn about test planning, verification metrics, documentation, and verification sign-off.

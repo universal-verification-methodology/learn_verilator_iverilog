@@ -4,6 +4,16 @@
 **Complexity**: Intermediate  
 **Goal**: Master procedural testbench construction using Verilog procedural blocks and C++ control flow
 
+---
+
+## Navigation
+
+[← Previous: Module 4: Basic Testbench Construction](MODULE4.md) | [Next: Module 6: SystemVerilog Testbench Features →](MODULE6.md)
+
+[↑ Back to README](../README.md) | [📚 Full Syllabus](SYLLABUS2.md)
+
+---
+
 ## Overview
 
 This module covers procedural testbench writing using Verilog's procedural blocks and C++ control structures. You'll learn to create complex test sequences, handle timing, and implement procedural verification patterns in both paradigms.

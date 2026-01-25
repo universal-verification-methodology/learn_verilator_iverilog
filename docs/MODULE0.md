@@ -4,6 +4,16 @@
 **Complexity**: Beginner  
 **Goal**: Set up verification environment with iverilog and Verilator
 
+---
+
+## Navigation
+
+[← Previous: N/A (First Module)] | [Next: Module 1: iverilog Deep Dive →](MODULE1.md)
+
+[↑ Back to README](../README.md) | [📚 Full Syllabus](SYLLABUS2.md)
+
+---
+
 ## Overview
 
 This module covers the complete setup of your verification environment, including installation of iverilog, Verilator, GTKWave, and other verification tools. You'll learn the differences between these simulators and when to use each.
@@ -16,6 +26,14 @@ This module covers the complete setup of your verification environment, includin
 - **Waveform Analysis**: Generate and view waveforms using GTKWave
 - **Project Structure**: Organize your verification project following best practices
 - **Tool Comparison**: Understand when to use iverilog vs Verilator
+
+### Prerequisites
+
+Before starting this module, you should:
+- [ ] Have a Linux, macOS, or Windows (WSL2) system
+- [ ] Have basic command-line knowledge
+- [ ] Have Git installed (for cloning the repository)
+- [ ] Have a C/C++ compiler available (GCC, Clang, or MSVC)
 
 ### Verification Methodology Context
 
@@ -51,6 +69,44 @@ verilator --version
 - Icarus Verilog: `./scripts/install_iverilog.sh [--system|--source]`
 - Verilator: `./scripts/install_verilator.sh [--from-submodule|--system|--source]`
 - GTKWave: Usually installed with iverilog package, or separately via package manager
+
+---
+
+## Quick Reference
+
+### Common Commands
+```bash
+# Verify iverilog installation
+iverilog -v
+
+# Verify Verilator installation
+verilator --version
+
+# Verify GTKWave installation
+gtkwave --version
+
+# Run first iverilog test
+cd module0/examples/iverilog_basics
+make hello_world
+
+# Run first Verilator test
+cd module0/examples/verilator_basics
+make hello_world
+```
+
+### Key File Locations
+- Installation Scripts: `scripts/install_*.sh`
+- Module 0 Examples: `module0/examples/`
+- Module 0 DUT: `module0/dut/`
+- Module 0 Tests: `module0/tests/`
+
+### Key Concepts
+- **iverilog**: Open-source Verilog/SystemVerilog simulator
+- **Verilator**: Fast Verilog/SystemVerilog simulator (generates C++)
+- **GTKWave**: Waveform viewer for VCD/FST files
+- **VVP**: Icarus Verilog runtime (executes compiled designs)
+
+---
 
 ## Topics Covered
 
@@ -332,34 +388,260 @@ verilator --version
     - Integration with C++ libraries
     - Complex testbenches with advanced data structures
 
-### 10. Troubleshooting Common Issues
+### 10. Common Pitfalls and Solutions
 
-- **iverilog Issues**
-  - Compilation errors
-  - Missing dependencies
-  - Version compatibility
-  - Path issues
-  - SystemVerilog syntax errors
+#### Pitfall 1: Installation Script Permissions
 
-- **Verilator Issues**
-  - Compilation errors
-  - Missing dependencies
-  - Version compatibility
-  - Path issues
-  - SystemVerilog syntax errors
-  - C++ compilation errors
+**Problem**: Scripts won't execute
+```bash
+./scripts/install_iverilog.sh
+# Error: Permission denied
+```
 
-- **Build System Issues**
-  - Makefile errors
-  - Include path problems
-  - Compilation flags
+**Solution**: Make scripts executable
+```bash
+chmod +x scripts/*.sh
+./scripts/install_iverilog.sh
+```
 
-- **IDE Issues**
-  - SystemVerilog syntax highlighting
-  - Import resolution problems
-  - Debugging not working
+**Why**: Scripts need execute permission on Unix-like systems
 
-### 11. Verification Checklist
+**Prevention**: Always check file permissions before running scripts
+
+#### Pitfall 2: Missing Build Dependencies
+
+**Problem**: Compilation fails with "command not found" errors
+```bash
+./scripts/install_verilator.sh
+# Error: g++: command not found
+```
+
+**Solution**: Install build essentials first
+```bash
+# Ubuntu/Debian
+sudo apt-get update
+sudo apt-get install build-essential
+
+# macOS
+xcode-select --install
+
+# Then retry installation
+```
+
+**Why**: Verilator requires C++ compiler and build tools
+
+#### Pitfall 3: Verilator Version Too Old
+
+**Problem**: Verilator installed but version is too old
+```bash
+verilator --version
+# Verilator 4.xxx (too old, need 5.042+)
+```
+
+**Solution**: Install from source or update package
+```bash
+# Remove old version
+sudo apt-get remove verilator
+
+# Install from source (recommended)
+./scripts/install_verilator.sh --from-submodule
+```
+
+**Why**: This course requires Verilator 5.042+ for full feature support
+
+#### Pitfall 4: PATH Not Updated
+
+**Problem**: Tools installed but not found in PATH
+```bash
+iverilog -v
+# Command not found
+```
+
+**Solution**: Add to PATH or use full path
+```bash
+# Check installation location
+which iverilog  # or: whereis iverilog
+
+# Add to PATH (if installed to custom location)
+export PATH=$PATH:/usr/local/bin
+
+# Or use full path
+/usr/local/bin/iverilog -v
+```
+
+**Why**: Installation scripts may install to non-standard locations
+
+### 11. Troubleshooting Common Issues
+
+#### iverilog Installation Issues
+
+**Error**: `error: Cannot find iverilog`
+- **Cause**: iverilog not installed or not in PATH
+- **Solution**: 
+  ```bash
+  # Install using script
+  ./scripts/install_iverilog.sh
+  
+  # Or manually
+  sudo apt-get install iverilog  # Ubuntu/Debian
+  brew install icarus-verilog   # macOS
+  ```
+- **Verify**: `iverilog -v` should show version
+
+**Error**: `error: syntax error, unexpected TOK_ID` (during test)
+- **Cause**: SystemVerilog syntax not supported by default
+- **Solution**: Use `-g2012` flag for SystemVerilog support
+  ```bash
+  iverilog -g2012 -o output input.sv
+  ```
+- **Note**: Some SystemVerilog features may still be limited
+
+**Error**: `error: Cannot find file`
+- **Cause**: Missing include path
+- **Solution**: Add include directory with `-I` flag
+  ```bash
+  iverilog -I../dut -o test test.v
+  ```
+
+**Error**: `vvp: command not found`
+- **Cause**: VVP runtime not installed or not in PATH
+- **Solution**: VVP is usually installed with iverilog. Reinstall if missing:
+  ```bash
+  sudo apt-get install iverilog  # Includes vvp
+  ```
+
+#### Verilator Installation Issues
+
+**Error**: `verilator: command not found`
+- **Cause**: Verilator not installed or not in PATH
+- **Solution**:
+  ```bash
+  # Install using script (recommended)
+  ./scripts/install_verilator.sh --from-submodule
+  
+  # Or from system package
+  sudo apt-get install verilator  # May be old version
+  ```
+
+**Error**: `error: Verilator version 5.042+ required`
+- **Cause**: Installed version is too old
+- **Solution**: Install from source for latest version
+  ```bash
+  ./scripts/install_verilator.sh --from-submodule
+  ```
+
+**Error**: `error: g++: command not found`
+- **Cause**: C++ compiler not installed
+- **Solution**: Install build essentials
+  ```bash
+  # Ubuntu/Debian
+  sudo apt-get install build-essential
+  
+  # macOS
+  xcode-select --install
+  ```
+
+**Error**: `error: fatal error: 'verilated.h' No such file or directory`
+- **Cause**: Verilator headers not found
+- **Solution**: Check Verilator installation and include paths
+  ```bash
+  # Verify installation
+  verilator --version
+  
+  # Check include path
+  verilator --getenv VERILATOR_ROOT
+  ```
+
+**Error**: C++ compilation errors (undefined references)
+- **Cause**: Missing Verilator library linking
+- **Solution**: Ensure Makefile includes Verilator libraries
+  ```makefile
+  # In Makefile
+  VL_OBJ_DIR = obj_dir
+  include $(VL_OBJ_DIR)/V$(TOP).mk
+  ```
+
+#### GTKWave Issues
+
+**Error**: `gtkwave: command not found`
+- **Cause**: GTKWave not installed
+- **Solution**:
+  ```bash
+  # Usually installed with iverilog
+  sudo apt-get install gtkwave  # Ubuntu/Debian
+  brew install gtkwave          # macOS
+  ```
+
+**Error**: GTKWave won't open VCD file
+- **Cause**: File format issue or corrupted file
+- **Solution**: 
+  - Verify VCD file was generated correctly
+  - Check file permissions
+  - Try regenerating: `vvp executable` (should create .vcd file)
+
+#### Platform-Specific Issues
+
+**Linux (Ubuntu/Debian)**:
+- **Issue**: Package manager version may be outdated
+- **Solution**: Use installation scripts or build from source
+
+**macOS**:
+- **Issue**: Homebrew version may be outdated
+- **Solution**: Use `--source` flag to build from source
+  ```bash
+  ./scripts/install_iverilog.sh --source
+  ./scripts/install_verilator.sh --source
+  ```
+
+**Windows/WSL2**:
+- **Issue**: Some tools may not work in Windows directly
+- **Solution**: Use WSL2 Ubuntu and install there
+  ```bash
+  # In WSL2 Ubuntu
+  sudo apt-get update
+  sudo apt-get install iverilog gtkwave
+  ./scripts/install_verilator.sh
+  ```
+
+#### Build System Issues
+
+**Makefile Errors**:
+- **Issue**: `make: *** No targets specified and no makefile found`
+- **Solution**: Ensure you're in the correct directory with a Makefile
+  ```bash
+  cd module0/examples/iverilog_basics
+  make all
+  ```
+
+**Include Path Problems**:
+- **Issue**: Files not found during compilation
+- **Solution**: Check relative paths and use `-I` flags correctly
+  ```bash
+  iverilog -I../../dut -o test test.v
+  ```
+
+#### IDE Issues
+
+**SystemVerilog Syntax Highlighting Not Working**:
+- **VS Code**: Install "SystemVerilog" extension by mshr-h
+- **Vim**: Install vim-systemverilog plugin
+- **Verification**: Open a `.sv` file and check for syntax highlighting
+
+**Import Resolution Problems**:
+- **Issue**: IDE can't find included files
+- **Solution**: Configure include paths in IDE settings
+  - VS Code: Add to `settings.json`:
+    ```json
+    "systemverilog.includeIndexing": ["**/*.sv", "**/*.v"]
+    ```
+
+**Debugging Not Working**:
+- **Issue**: Can't set breakpoints or debug
+- **Solution**: 
+  - For Verilator: Use GDB with compiled executable
+  - For iverilog: Use VCD waveforms for debugging
+
+### 12. Verification Checklist
 
 - [ ] C/C++ compiler installed and working
 - [ ] iverilog installed and verified
@@ -441,6 +723,12 @@ By the end of this module, you should be able to:
 - [ ] Can troubleshoot common issues
 - [ ] Understands project structure best practices
 - [ ] Understands tool differences and selection criteria
+
+## Related Topics
+
+- **Next Steps**: [Module 1: iverilog Deep Dive](MODULE1.md) - Master iverilog for Verilog testbench development
+- **Next Steps**: [Module 2: Verilator Deep Dive](MODULE2.md) - Master Verilator for C++ testbench development
+- **UVM Connection**: [UVM Core Repository](https://github.com/universal-verification-methodology/core)
 
 ## Next Steps
 

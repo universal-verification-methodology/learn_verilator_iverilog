@@ -208,6 +208,8 @@ The `docs/` directory contains comprehensive documentation for the entire learni
 ### Core Documentation
 
 - **[SYLLABUS2.md](docs/SYLLABUS2.md)**: Complete course syllabus with learning path, schedule, and resources
+- **[GLOSSARY.md](docs/GLOSSARY.md)**: Glossary of key verification terms and concepts
+- **[MODULE_TEMPLATE.md](docs/MODULE_TEMPLATE.md)**: Standard template for module documentation
 
 ### Module Documentation
 
@@ -447,6 +449,23 @@ make all
 
 ## 🔀 Tool Comparison
 
+### Quick Comparison Table
+
+| Feature | iverilog | Verilator | Notes |
+|---------|----------|-----------|-------|
+| **Testbench Language** | Verilog/SystemVerilog | C++ | Different paradigms |
+| **Performance** | Moderate | Excellent | Verilator is 10-100x faster |
+| **Learning Curve** | Easy | Moderate | Requires C++ knowledge for Verilator |
+| **SystemVerilog Classes** | Limited support | No | Use C++ classes for Verilator |
+| **Randomization** | Limited (`$random`, `$urandom`) | No | Use C++ libraries (e.g., `<random>`) |
+| **Interfaces** | Limited support | No | Use C++ structs/classes for Verilator |
+| **Waveform Format** | VCD | VCD, FST | FST is more efficient |
+| **Compilation Speed** | Fast | Moderate | Verilator generates C++ code |
+| **Simulation Speed** | Moderate | Very Fast | Verilator optimized C++ |
+| **Memory Usage** | Moderate | Low | Verilator is more efficient |
+| **Debugging** | VCD waveforms, `$display` | VCD/FST, GDB, Valgrind | Verilator has more tools |
+| **Best For** | Learning, prototyping | Production, large designs | Different use cases |
+
 ### iverilog (Icarus Verilog)
 
 **Best For:**
@@ -462,7 +481,14 @@ make all
 - Easy to use
 - Good waveform support
 - Moderate performance
-- Good SystemVerilog support
+- Good SystemVerilog support (limited)
+
+**When to Use:**
+- Learning Verilog testbench concepts
+- Quick prototyping
+- SystemVerilog features (classes, interfaces, randomization)
+- When you prefer Verilog syntax
+- Educational projects
 
 ### Verilator
 
@@ -475,24 +501,38 @@ make all
 
 **Characteristics:**
 - C++ testbenches
-- Excellent performance
+- Excellent performance (10-100x faster than iverilog)
 - Good for large designs
 - Requires C++ knowledge
 - Limited SystemVerilog support (use C++ equivalents)
 
-### When to Use Each
+**When to Use:**
+- High-performance simulation needed
+- Large designs (>100K gates)
+- Integration with C++ libraries
+- Complex testbenches with advanced data structures
+- Production verification environments
+- When simulation speed is critical
 
-- **Use iverilog for:**
-  - Learning Verilog testbench concepts
-  - Quick prototyping
-  - SystemVerilog features (classes, interfaces, randomization)
-  - When you prefer Verilog syntax
+### Decision Guide
 
-- **Use Verilator for:**
-  - High-performance simulation
-  - Large designs
-  - Integration with C++ libraries
-  - Complex testbenches with advanced data structures
+**Choose iverilog if:**
+- ✅ You're learning verification
+- ✅ You prefer Verilog/SystemVerilog syntax
+- ✅ You need SystemVerilog classes/interfaces
+- ✅ Quick prototyping is your priority
+- ✅ Design complexity is low to medium
+
+**Choose Verilator if:**
+- ✅ Performance is critical
+- ✅ You're comfortable with C++
+- ✅ Design is large or complex
+- ✅ You need C++ library integration
+- ✅ Production verification environment
+
+**Use Both:**
+- Many projects use iverilog for development/debugging and Verilator for regression testing
+- iverilog for SystemVerilog features, Verilator for performance
 
 See [MODULE8.md](docs/MODULE8.md) for detailed tool comparison and selection guide.
 

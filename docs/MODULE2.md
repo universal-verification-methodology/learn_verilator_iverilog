@@ -4,6 +4,16 @@
 **Complexity**: Beginner-Intermediate  
 **Goal**: Master Verilator for C++ testbench development
 
+---
+
+## Navigation
+
+[← Previous: Module 1: iverilog Deep Dive](MODULE1.md) | [Next: Module 3: Testbench Fundamentals →](MODULE3.md)
+
+[↑ Back to README](../README.md) | [📚 Full Syllabus](SYLLABUS2.md)
+
+---
+
 ## Overview
 
 This module provides comprehensive coverage of Verilator, a fast Verilog/SystemVerilog simulator that generates C++ code. You'll learn its compilation process, C++ testbench writing, capabilities, limitations, and how to create efficient C++ testbenches.
@@ -554,6 +564,101 @@ By the end of this module, you should be able to:
    - Implement clean targets
    - Organize project structure
 
+## Common Pitfalls and Solutions
+
+### Pitfall 1: Forgetting to Call eval()
+
+**Problem**: Signals don't update as expected
+```cpp
+dut->a = 1;
+dut->b = 1;
+// Missing: dut->eval();
+if (dut->y != 1) {  // May fail!
+    std::cout << "Error!" << std::endl;
+}
+```
+
+**Solution**: Always call `eval()` after signal changes
+```cpp
+dut->a = 1;
+dut->b = 1;
+dut->eval();  // Required!
+if (dut->y != 1) {  // Now works correctly
+    std::cout << "Error!" << std::endl;
+}
+```
+
+**Why**: Verilator uses a two-phase evaluation model. Signal changes don't propagate until `eval()` is called.
+
+**Prevention**: Always call `eval()` after any signal assignment
+
+### Pitfall 2: Not Initializing Signals
+
+**Problem**: Undefined behavior due to uninitialized signals
+```cpp
+Vdut* dut = new Vdut;
+// Missing initialization
+dut->eval();  // Undefined behavior!
+```
+
+**Solution**: Initialize all signals before first eval()
+```cpp
+Vdut* dut = new Vdut;
+dut->clk = 0;
+dut->rst = 1;
+dut->a = 0;
+dut->b = 0;
+dut->eval();
+```
+
+**Why**: Verilator doesn't initialize signals to zero by default
+
+**Prevention**: Always initialize all DUT inputs before first `eval()`
+
+### Pitfall 3: Memory Leaks
+
+**Problem**: DUT object not deleted, causing memory leaks
+```cpp
+Vdut* dut = new Vdut;
+// ... use dut ...
+// Missing: delete dut;
+```
+
+**Solution**: Always delete DUT object
+```cpp
+Vdut* dut = new Vdut;
+// ... use dut ...
+dut->final();  // Cleanup
+delete dut;    // Free memory
+```
+
+**Why**: C++ requires manual memory management
+
+**Prevention**: Always pair `new` with `delete`, or use smart pointers
+
+### Pitfall 4: Missing Tracing Initialization
+
+**Problem**: Tracing enabled but no waveform file generated
+```cpp
+// Compiled with --trace but forgot to initialize
+dut->trace(tfp, 99);  // Missing!
+```
+
+**Solution**: Initialize tracing before simulation
+```cpp
+Verilated::traceEverOn(true);
+VerilatedVcdC* tfp = new VerilatedVcdC;
+dut->trace(tfp, 99);
+tfp->open("waveform.vcd");
+// ... simulation ...
+tfp->close();
+delete tfp;
+```
+
+**Why**: Tracing must be explicitly initialized and managed
+
+**Prevention**: Always initialize tracing if compiled with `--trace`
+
 ## Assessment
 
 - [ ] Can compile Verilog designs with various Verilator options
@@ -564,6 +669,12 @@ By the end of this module, you should be able to:
 - [ ] Can debug compilation and simulation errors
 - [ ] Can organize projects with Makefiles
 - [ ] Can optimize Verilator-based testbenches
+
+## Related Topics
+
+- **Prerequisites**: [Module 0: Installation and Setup](MODULE0.md) and [Module 1: iverilog Deep Dive](MODULE1.md)
+- **Next Steps**: [Module 3: Testbench Fundamentals](MODULE3.md) - Learn fundamental testbench concepts for both paradigms
+- **UVM Connection**: [UVM Core Repository](https://github.com/universal-verification-methodology/core)
 
 ## Next Steps
 
