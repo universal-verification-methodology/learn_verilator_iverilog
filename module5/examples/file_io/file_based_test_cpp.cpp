@@ -85,7 +85,22 @@ std::vector<TestVector> read_test_vectors(const std::string& filename) {
         
         // Read hex values: a, b, op
         // std::hex tells stream to interpret values as hexadecimal
-        iss >> std::hex >> tv.a >> tv.b >> tv.op;
+        // Note: Must read into unsigned int first, then cast to uint8_t
+        // because uint8_t is typically unsigned char, and operator>> on char
+        // reads a single character instead of parsing a number
+        unsigned int a_val, b_val, op_val;
+        iss >> std::hex >> a_val >> b_val >> op_val;
+        
+        // Check if parsing was successful
+        if (iss.fail()) {
+            std::cerr << "Warning: Failed to parse line: " << line << std::endl;
+            continue;
+        }
+        
+        // Cast to uint8_t
+        tv.a = static_cast<uint8_t>(a_val);
+        tv.b = static_cast<uint8_t>(b_val);
+        tv.op = static_cast<uint8_t>(op_val);
         
         // Add to vector
         vectors.push_back(tv);
@@ -111,10 +126,20 @@ std::vector<uint8_t> read_expected_results(const std::string& filename) {
             continue;
         }
         
-        uint8_t val;
+        // Read into unsigned int first, then cast to uint8_t
+        // because uint8_t is typically unsigned char, and operator>> on char
+        // reads a single character instead of parsing a number
+        unsigned int val;
         std::istringstream iss(line);
         iss >> std::hex >> val;
-        expected.push_back(val);
+        
+        // Check if parsing was successful
+        if (iss.fail()) {
+            std::cerr << "Warning: Failed to parse line: " << line << std::endl;
+            continue;
+        }
+        
+        expected.push_back(static_cast<uint8_t>(val));
     }
     
     file.close();

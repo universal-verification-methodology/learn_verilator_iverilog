@@ -1,0 +1,14 @@
+// Test vectors for ALU
+// Format: One hex value per line representing [a[7:0], b[7:0], op[1:0]]
+// Packed format: a in bits [17:10], b in bits [9:2], op in bits [1:0]
+// Value = (a << 10) | (b << 2) | op
+004080
+03fc04
+00c041
+004081
+02a956
+03feaa
+02a957
+000003
+010890
+02659a

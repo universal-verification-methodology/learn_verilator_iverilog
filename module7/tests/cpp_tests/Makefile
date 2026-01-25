@@ -1,19 +1,26 @@
-# Makefile for C++ tests
-# Note: Tests are coming soon (see module7/README.md)
+# Makefile for C++ tests (Verilator)
 
 VERILATOR = verilator
+DUT_DIR = ../../../module7/dut
 VERILATOR_FLAGS = --cc --exe --build
 
-# Placeholder target - tests not yet implemented
-all:
-	@echo "========================================"
-	@echo "C++ Tests"
-	@echo "========================================"
-	@echo "C++ tests are coming soon."
-	@echo "See module7/README.md for details."
-	@echo "========================================"
+all: assertion_test coverage_test
+
+assertion_test: assertion_test.cpp
+	@echo "=== Compiling assertion_test ==="
+	$(VERILATOR) $(VERILATOR_FLAGS) -I$(DUT_DIR)/counters \
+		$(DUT_DIR)/counters/counter_4bit.v assertion_test.cpp
+	@echo "=== Running simulation ==="
+	./obj_dir/Vcounter_4bit
+
+coverage_test: coverage_test.cpp
+	@echo "=== Compiling coverage_test ==="
+	$(VERILATOR) $(VERILATOR_FLAGS) -I$(DUT_DIR)/multiplexers \
+		$(DUT_DIR)/multiplexers/mux_4to1.v coverage_test.cpp
+	@echo "=== Running simulation ==="
+	./obj_dir/Vmux_4to1
 
 clean:
-	@echo "No build artifacts to clean"
+	rm -rf obj_dir
 
-.PHONY: all clean
+.PHONY: all clean assertion_test coverage_test

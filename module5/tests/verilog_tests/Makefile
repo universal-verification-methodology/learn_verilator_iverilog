@@ -1,19 +1,26 @@
-# Makefile for Verilog tests
-# Note: Tests are coming soon (see module5/README.md)
+# Makefile for Verilog tests (iverilog)
 
 IVERILOG = iverilog
 VVP = vvp
+DUT_DIR = ../../../module4/dut
 
-# Placeholder target - tests not yet implemented
-all:
-	@echo "========================================"
-	@echo "Verilog Tests"
-	@echo "========================================"
-	@echo "Verilog tests are coming soon."
-	@echo "See module5/README.md for details."
-	@echo "========================================"
+all: alu_reusable_test alu_file_test
+
+alu_reusable_test: alu_reusable_test.v
+	@echo "=== Compiling alu_reusable_test ==="
+	$(IVERILOG) -o alu_reusable_test alu_reusable_test.v $(DUT_DIR)/alus/simple_alu.v
+	@echo "=== Running simulation ==="
+	$(VVP) alu_reusable_test
+
+alu_file_test: alu_file_test.v
+	@echo "=== Compiling alu_file_test ==="
+	$(IVERILOG) -o alu_file_test alu_file_test.v $(DUT_DIR)/alus/simple_alu.v
+	@echo "=== Running simulation ==="
+	$(VVP) alu_file_test
 
 clean:
-	@echo "No build artifacts to clean"
+	rm -f alu_reusable_test alu_file_test
+	rm -f *.vcd
+	rm -f test_results.txt
 
-.PHONY: all clean
+.PHONY: all clean alu_reusable_test alu_file_test

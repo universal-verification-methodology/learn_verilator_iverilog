@@ -1,19 +1,25 @@
-# Makefile for Verilog tests
-# Note: Tests are coming soon (see module7/README.md)
+# Makefile for Verilog tests (iverilog)
 
 IVERILOG = iverilog
 VVP = vvp
+DUT_DIR = ../../../module7/dut
 
-# Placeholder target - tests not yet implemented
-all:
-	@echo "========================================"
-	@echo "Verilog Tests"
-	@echo "========================================"
-	@echo "Verilog tests are coming soon."
-	@echo "See module7/README.md for details."
-	@echo "========================================"
+all: assertion_test coverage_test
+
+assertion_test: assertion_test.v
+	@echo "=== Compiling assertion_test ==="
+	$(IVERILOG) -o assertion_test assertion_test.v $(DUT_DIR)/counters/counter_4bit.v
+	@echo "=== Running simulation ==="
+	$(VVP) assertion_test
+
+coverage_test: coverage_test.v
+	@echo "=== Compiling coverage_test ==="
+	$(IVERILOG) -o coverage_test coverage_test.v $(DUT_DIR)/multiplexers/mux_4to1.v
+	@echo "=== Running simulation ==="
+	$(VVP) coverage_test
 
 clean:
-	@echo "No build artifacts to clean"
+	rm -f assertion_test coverage_test
+	rm -f *.vcd
 
-.PHONY: all clean
+.PHONY: all clean assertion_test coverage_test

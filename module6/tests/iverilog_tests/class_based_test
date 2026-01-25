@@ -1,0 +1,275 @@
+#! /usr/bin/vvp
+:ivl_version "12.0 (stable)";
+:ivl_delay_selection "TYPICAL";
+:vpi_time_precision - 12;
+:vpi_module "/usr/lib/x86_64-linux-gnu/ivl/system.vpi";
+:vpi_module "/usr/lib/x86_64-linux-gnu/ivl/vhdl_sys.vpi";
+:vpi_module "/usr/lib/x86_64-linux-gnu/ivl/vhdl_textio.vpi";
+:vpi_module "/usr/lib/x86_64-linux-gnu/ivl/v2005_math.vpi";
+:vpi_module "/usr/lib/x86_64-linux-gnu/ivl/va_math.vpi";
+:vpi_module "/usr/lib/x86_64-linux-gnu/ivl/v2009.vpi";
+S_0x569c98312f10 .scope package, "$unit" "$unit" 2 1;
+ .timescale 0 0;
+C0x569c9830ee50  .class "testbench" [5]
+   0: "fail_count", "sb32"
+   1: "pass_count", "sb32"
+   2: "result", "b1"
+   3: "test_count", "sb32"
+   4: "tr", "o"
+ ;
+C0x569c982eafc0  .class "transaction" [3]
+   0: "a", "b1"
+   1: "b", "b1"
+   2: "expected", "b1"
+ ;
+S_0x569c98348460 .scope class, "testbench" "testbench" 3 52, 3 52 0, S_0x569c98312f10;
+ .timescale 0 0;
+S_0x569c98348620 .scope autofunction.obj, "new" "new" 3 59, 3 59 0, S_0x569c98348460;
+ .timescale 0 0;
+v0x569c98348800_0 .var/cobj "@";
+TD_$unit.testbench.new ;
+    %load/obj v0x569c98348800_0;
+    %alloc S_0x569c98349230;
+    %new/cobj C0x569c982eafc0;
+    %store/obj v0x569c98349430_0;
+    %callf/obj TD_$unit.transaction.new, S_0x569c98349230;
+    %load/obj v0x569c98349430_0;
+    %free S_0x569c98349230;
+    %store/prop/obj 4, 0; IVL_VT_CLASS
+    %pop/obj 1, 0;
+    %pushi/vec4 0, 0, 32;
+    %load/obj v0x569c98348800_0;
+    %store/prop/v 3, 32; Store in bool property test_count
+    %pop/obj 1, 0;
+    %pushi/vec4 0, 0, 32;
+    %load/obj v0x569c98348800_0;
+    %store/prop/v 1, 32; Store in bool property pass_count
+    %pop/obj 1, 0;
+    %pushi/vec4 0, 0, 32;
+    %load/obj v0x569c98348800_0;
+    %store/prop/v 0, 32; Store in bool property fail_count
+    %pop/obj 1, 0;
+    %end;
+S_0x569c983488c0 .scope autofunction.void, "print_summary" "print_summary" 3 81, 3 81 0, S_0x569c98348460;
+ .timescale 0 0;
+v0x569c98348ac0_0 .var/cobj "@";
+TD_$unit.testbench.print_summary ;
+    %vpi_call/w 3 82 "$display", "\012========================================" {0 0 0};
+    %vpi_call/w 3 83 "$display", "Test Summary" {0 0 0};
+    %vpi_call/w 3 84 "$display", "========================================" {0 0 0};
+    %load/obj v0x569c98348ac0_0;
+    %prop/v 3;
+    %pop/obj 1, 0;
+    %vpi_call/w 3 85 "$display", "Total tests: %0d", S<0,vec4,s32> {1 0 0};
+    %load/obj v0x569c98348ac0_0;
+    %prop/v 1;
+    %pop/obj 1, 0;
+    %vpi_call/w 3 86 "$display", "Passed:      %0d", S<0,vec4,s32> {1 0 0};
+    %load/obj v0x569c98348ac0_0;
+    %prop/v 0;
+    %pop/obj 1, 0;
+    %vpi_call/w 3 87 "$display", "Failed:      %0d", S<0,vec4,s32> {1 0 0};
+    %vpi_call/w 3 88 "$display", "========================================" {0 0 0};
+    %end;
+S_0x569c98348b80 .scope autofunction.void, "run_test" "run_test" 3 66, 3 66 0, S_0x569c98348460;
+ .timescale 0 0;
+v0x569c98348d90_0 .var/cobj "@";
+v0x569c98348e50_0 .var/2u "a", 0 0;
+v0x569c98348f10_0 .var/2u "b", 0 0;
+v0x569c98348fe0_0 .var/2u "expected", 0 0;
+TD_$unit.testbench.run_test ;
+    %pushi/vec4 1, 0, 32;
+    %load/obj v0x569c98348d90_0;
+    %store/prop/v 3, 32; Store in bool property test_count
+    %pop/obj 1, 0;
+    %load/vec4 v0x569c98348e50_0;
+    %load/vec4 v0x569c98348f10_0;
+    %and;
+    %cast2;
+    %load/obj v0x569c98348d90_0;
+    %store/prop/v 2, 1; Store in bool property result
+    %pop/obj 1, 0;
+    %load/obj v0x569c98348d90_0;
+    %prop/v 2;
+    %pop/obj 1, 0;
+    %load/vec4 v0x569c98348fe0_0;
+    %cmp/e;
+    %jmp/0xz  T_2.0, 4;
+    %pushi/vec4 1, 0, 32;
+    %load/obj v0x569c98348d90_0;
+    %store/prop/v 1, 32; Store in bool property pass_count
+    %pop/obj 1, 0;
+    %load/obj v0x569c98348d90_0;
+    %prop/v 3;
+    %pop/obj 1, 0;
+    %load/obj v0x569c98348d90_0;
+    %prop/v 2;
+    %pop/obj 1, 0;
+    %vpi_call/w 3 72 "$display", "[PASS] Test %0d: a=%b, b=%b, result=%b, expected=%b", S<1,vec4,s32>, v0x569c98348e50_0, v0x569c98348f10_0, S<0,vec4,u1>, v0x569c98348fe0_0 {2 0 0};
+    %jmp T_2.1;
+T_2.0 ;
+    %pushi/vec4 1, 0, 32;
+    %load/obj v0x569c98348d90_0;
+    %store/prop/v 0, 32; Store in bool property fail_count
+    %pop/obj 1, 0;
+    %load/obj v0x569c98348d90_0;
+    %prop/v 3;
+    %pop/obj 1, 0;
+    %load/obj v0x569c98348d90_0;
+    %prop/v 2;
+    %pop/obj 1, 0;
+    %vpi_call/w 3 76 "$error", "[FAIL] Test %0d: a=%b, b=%b, result=%b, expected=%b", S<1,vec4,s32>, v0x569c98348e50_0, v0x569c98348f10_0, S<0,vec4,u1>, v0x569c98348fe0_0 {2 0 0};
+T_2.1 ;
+    %end;
+S_0x569c983490a0 .scope class, "transaction" "transaction" 3 26, 3 26 0, S_0x569c98312f10;
+ .timescale 0 0;
+S_0x569c98349230 .scope autofunction.obj, "new" "new" 3 31, 3 31 0, S_0x569c983490a0;
+ .timescale 0 0;
+v0x569c98349430_0 .var/cobj "@";
+TD_$unit.transaction.new ;
+    %pushi/vec4 0, 0, 1;
+    %load/obj v0x569c98349430_0;
+    %store/prop/v 0, 1; Store in bool property a
+    %pop/obj 1, 0;
+    %pushi/vec4 0, 0, 1;
+    %load/obj v0x569c98349430_0;
+    %store/prop/v 1, 1; Store in bool property b
+    %pop/obj 1, 0;
+    %pushi/vec4 0, 0, 1;
+    %load/obj v0x569c98349430_0;
+    %store/prop/v 2, 1; Store in bool property expected
+    %pop/obj 1, 0;
+    %end;
+S_0x569c98349510 .scope autofunction.void, "post_randomize" "post_randomize" 3 41, 3 41 0, S_0x569c983490a0;
+ .timescale 0 0;
+v0x569c98349710_0 .var/cobj "@";
+TD_$unit.transaction.post_randomize ;
+    %load/obj v0x569c98349710_0;
+    %prop/v 0;
+    %pop/obj 1, 0;
+    %load/obj v0x569c98349710_0;
+    %prop/v 1;
+    %pop/obj 1, 0;
+    %and;
+    %cast2;
+    %load/obj v0x569c98349710_0;
+    %store/prop/v 2, 1; Store in bool property expected
+    %pop/obj 1, 0;
+    %end;
+S_0x569c983497d0 .scope autofunction.void, "print" "print" 3 37, 3 37 0, S_0x569c983490a0;
+ .timescale 0 0;
+v0x569c983499e0_0 .var/cobj "@";
+TD_$unit.transaction.print ;
+    %load/obj v0x569c983499e0_0;
+    %prop/v 0;
+    %pop/obj 1, 0;
+    %load/obj v0x569c983499e0_0;
+    %prop/v 1;
+    %pop/obj 1, 0;
+    %load/obj v0x569c983499e0_0;
+    %prop/v 2;
+    %pop/obj 1, 0;
+    %vpi_call/w 3 38 "$display", "Transaction: a=%b, b=%b, expected=%b", S<2,vec4,u1>, S<1,vec4,u1>, S<0,vec4,u1> {3 0 0};
+    %end;
+S_0x569c983290a0 .scope module, "class_based_test" "class_based_test" 3 93;
+ .timescale -9 -12;
+v0x569c9834a040_0 .var "a", 0 0;
+v0x569c9834a110_0 .var "b", 0 0;
+v0x569c9834a1e0_0 .var/cobj "tb";
+v0x569c9834a2b0_0 .net "y", 0 0, v0x569c98349ef0_0;  1 drivers
+S_0x569c98349aa0 .scope module, "dut" "and_gate" 3 99, 4 31 0, S_0x569c983290a0;
+ .timescale -9 -12;
+    .port_info 0 /INPUT 1 "a";
+    .port_info 1 /INPUT 1 "b";
+    .port_info 2 /OUTPUT 1 "y";
+v0x569c98349d50_0 .net "a", 0 0, v0x569c9834a040_0;  1 drivers
+v0x569c98349e30_0 .net "b", 0 0, v0x569c9834a110_0;  1 drivers
+v0x569c98349ef0_0 .var "y", 0 0;
+E_0x569c9832c770 .event anyedge, v0x569c98349d50_0, v0x569c98349e30_0;
+    .scope S_0x569c98349aa0;
+T_6 ;
+    %wait E_0x569c9832c770;
+    %load/vec4 v0x569c98349d50_0;
+    %load/vec4 v0x569c98349e30_0;
+    %and;
+    %store/vec4 v0x569c98349ef0_0, 0, 1;
+    %jmp T_6;
+    .thread T_6, $push;
+    .scope S_0x569c983290a0;
+T_7 ;
+    %vpi_call/w 3 110 "$display", "========================================" {0 0 0};
+    %vpi_call/w 3 111 "$display", "Class-Based Testbench (iverilog)" {0 0 0};
+    %vpi_call/w 3 112 "$display", "========================================" {0 0 0};
+    %alloc S_0x569c98348620;
+    %new/cobj C0x569c9830ee50;
+    %store/obj v0x569c98348800_0;
+    %callf/obj TD_$unit.testbench.new, S_0x569c98348620;
+    %load/obj v0x569c98348800_0;
+    %free S_0x569c98348620;
+    %store/obj v0x569c9834a1e0_0;
+    %alloc S_0x569c98348b80;
+    %load/obj v0x569c9834a1e0_0;
+    %store/obj v0x569c98348d90_0;
+    %pushi/vec4 0, 0, 1;
+    %store/vec4 v0x569c98348e50_0, 0, 1;
+    %pushi/vec4 0, 0, 1;
+    %store/vec4 v0x569c98348f10_0, 0, 1;
+    %pushi/vec4 0, 0, 1;
+    %store/vec4 v0x569c98348fe0_0, 0, 1;
+    %callf/void TD_$unit.testbench.run_test, S_0x569c98348b80;
+    %free S_0x569c98348b80;
+    %alloc S_0x569c98348b80;
+    %load/obj v0x569c9834a1e0_0;
+    %store/obj v0x569c98348d90_0;
+    %pushi/vec4 0, 0, 1;
+    %store/vec4 v0x569c98348e50_0, 0, 1;
+    %pushi/vec4 1, 0, 1;
+    %store/vec4 v0x569c98348f10_0, 0, 1;
+    %pushi/vec4 0, 0, 1;
+    %store/vec4 v0x569c98348fe0_0, 0, 1;
+    %callf/void TD_$unit.testbench.run_test, S_0x569c98348b80;
+    %free S_0x569c98348b80;
+    %alloc S_0x569c98348b80;
+    %load/obj v0x569c9834a1e0_0;
+    %store/obj v0x569c98348d90_0;
+    %pushi/vec4 1, 0, 1;
+    %store/vec4 v0x569c98348e50_0, 0, 1;
+    %pushi/vec4 0, 0, 1;
+    %store/vec4 v0x569c98348f10_0, 0, 1;
+    %pushi/vec4 0, 0, 1;
+    %store/vec4 v0x569c98348fe0_0, 0, 1;
+    %callf/void TD_$unit.testbench.run_test, S_0x569c98348b80;
+    %free S_0x569c98348b80;
+    %alloc S_0x569c98348b80;
+    %load/obj v0x569c9834a1e0_0;
+    %store/obj v0x569c98348d90_0;
+    %pushi/vec4 1, 0, 1;
+    %store/vec4 v0x569c98348e50_0, 0, 1;
+    %pushi/vec4 1, 0, 1;
+    %store/vec4 v0x569c98348f10_0, 0, 1;
+    %pushi/vec4 1, 0, 1;
+    %store/vec4 v0x569c98348fe0_0, 0, 1;
+    %callf/void TD_$unit.testbench.run_test, S_0x569c98348b80;
+    %free S_0x569c98348b80;
+    %alloc S_0x569c983488c0;
+    %load/obj v0x569c9834a1e0_0;
+    %store/obj v0x569c98348ac0_0;
+    %callf/void TD_$unit.testbench.print_summary, S_0x569c983488c0;
+    %free S_0x569c983488c0;
+    %delay 10000, 0;
+    %vpi_call/w 3 127 "$finish" {0 0 0};
+    %end;
+    .thread T_7;
+    .scope S_0x569c983290a0;
+T_8 ;
+    %vpi_call/w 3 132 "$dumpfile", "class_based_test.vcd" {0 0 0};
+    %vpi_call/w 3 133 "$dumpvars", 32'sb00000000000000000000000000000000, S_0x569c983290a0 {0 0 0};
+    %end;
+    .thread T_8;
+# The file index is used to find the file name in the following table.
+:file_names 5;
+    "N/A";
+    "<interactive>";
+    "-";
+    "class_based_test.sv";
+    "../../../module6/dut/simple_gates/and_gate.v";

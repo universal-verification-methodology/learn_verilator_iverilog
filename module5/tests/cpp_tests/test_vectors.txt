@@ -1,0 +1,14 @@
+# ALU Test Vectors
+# Format: a b op expected (all in hex)
+# op: 0=ADD, 1=SUB, 2=AND, 3=OR
+
+10 20 0 30
+ff 01 0 00
+30 10 1 20
+10 20 1 f0
+aa 55 2 00
+ff aa 2 aa
+aa 55 3 ff
+00 00 3 00
+42 24 0 66
+99 66 2 00

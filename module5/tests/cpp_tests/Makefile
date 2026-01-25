@@ -1,19 +1,27 @@
-# Makefile for C++ tests
-# Note: Tests are coming soon (see module5/README.md)
+# Makefile for C++ tests (Verilator)
 
 VERILATOR = verilator
+DUT_DIR = ../../../module4/dut
 VERILATOR_FLAGS = --cc --exe --build
 
-# Placeholder target - tests not yet implemented
-all:
-	@echo "========================================"
-	@echo "C++ Tests"
-	@echo "========================================"
-	@echo "C++ tests are coming soon."
-	@echo "See module5/README.md for details."
-	@echo "========================================"
+all: alu_reusable_test alu_file_test
+
+alu_reusable_test: alu_reusable_test.cpp
+	@echo "=== Compiling alu_reusable_test ==="
+	$(VERILATOR) $(VERILATOR_FLAGS) -I$(DUT_DIR)/alus \
+		$(DUT_DIR)/alus/simple_alu.v alu_reusable_test.cpp
+	@echo "=== Running simulation ==="
+	./obj_dir/Vsimple_alu
+
+alu_file_test: alu_file_test.cpp
+	@echo "=== Compiling alu_file_test ==="
+	$(VERILATOR) $(VERILATOR_FLAGS) -I$(DUT_DIR)/alus \
+		$(DUT_DIR)/alus/simple_alu.v alu_file_test.cpp
+	@echo "=== Running simulation ==="
+	./obj_dir/Vsimple_alu
 
 clean:
-	@echo "No build artifacts to clean"
+	rm -rf obj_dir
+	rm -f test_results.txt
 
-.PHONY: all clean
+.PHONY: all clean alu_reusable_test alu_file_test
