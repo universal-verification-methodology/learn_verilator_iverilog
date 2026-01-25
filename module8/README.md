@@ -1,7 +1,5 @@
 # Module 8: Verification Methodology and Best Practices
 
-**Duration**: 2 weeks  
-**Complexity**: Advanced  
 **Goal**: Master verification methodology and industry best practices
 
 ## Overview

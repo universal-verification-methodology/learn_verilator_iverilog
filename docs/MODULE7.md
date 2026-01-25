@@ -1,7 +1,5 @@
 # Module 7: Coverage and Assertions
 
-**Duration**: 2 weeks  
-**Complexity**: Intermediate  
 **Goal**: Master basic coverage analysis and assertion-based verification without SystemVerilog dependencies
 
 ---

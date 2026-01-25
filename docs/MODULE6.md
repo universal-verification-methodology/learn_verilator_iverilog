@@ -1,7 +1,5 @@
 # Module 6: SystemVerilog Testbench Features
 
-**Duration**: 2 weeks  
-**Complexity**: Intermediate-Advanced  
 **Goal**: Master SystemVerilog features for advanced testbench development (primarily for iverilog, with Verilator considerations)
 
 ---

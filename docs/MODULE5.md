@@ -1,7 +1,5 @@
 # Module 5: Procedural Testbench Writing
 
-**Duration**: 2 weeks  
-**Complexity**: Intermediate  
 **Goal**: Master procedural testbench construction using Verilog procedural blocks and C++ control flow
 
 ---

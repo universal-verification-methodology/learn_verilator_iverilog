@@ -1,7 +1,5 @@
 # Module 4: Basic Testbench Construction
 
-**Duration**: 2 weeks  
-**Complexity**: Beginner-Intermediate  
 **Goal**: Master construction of structured testbenches with proper organization
 
 ## Overview

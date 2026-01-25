@@ -1,7 +1,5 @@
 # Module 2: Verilator Deep Dive
 
-**Duration**: 2 weeks  
-**Complexity**: Beginner-Intermediate  
 **Goal**: Master Verilator for C++ testbench development
 
 ---

@@ -1,7 +1,5 @@
 # Module 3: Testbench Fundamentals (Verilog and C++)
 
-**Duration**: 2 weeks  
-**Complexity**: Beginner  
 **Goal**: Understand testbench architecture and basic verification concepts for both Verilog and C++ testbenches
 
 ---

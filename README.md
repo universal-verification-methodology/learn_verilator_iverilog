@@ -278,8 +278,6 @@ Each module has a dedicated guide with examples, exercises, and detailed explana
 ## 🎓 Modules
 
 ### Module 0: Installation and Setup
-**Duration**: 1 week  
-**Complexity**: Beginner
 
 Set up your verification environment with all required tools:
 - Icarus Verilog (iverilog) installation
@@ -290,8 +288,6 @@ Set up your verification environment with all required tools:
 **Quick Start**: `./scripts/module0.sh`
 
 ### Module 1: iverilog Deep Dive
-**Duration**: 2 weeks  
-**Complexity**: Beginner-Intermediate
 
 Master iverilog for Verilog/SystemVerilog testbench development:
 - Compilation process and options
@@ -304,8 +300,6 @@ Master iverilog for Verilog/SystemVerilog testbench development:
 **Quick Start**: `./scripts/module1.sh`
 
 ### Module 2: Verilator Deep Dive
-**Duration**: 2 weeks  
-**Complexity**: Beginner-Intermediate
 
 Master Verilator for C++ testbench development:
 - Compilation process and flags
@@ -318,8 +312,6 @@ Master Verilator for C++ testbench development:
 **Quick Start**: `./scripts/module2.sh`
 
 ### Module 3: Testbench Fundamentals (Verilog and C++)
-**Duration**: 2 weeks  
-**Complexity**: Beginner
 
 Understand testbench architecture and basic verification concepts:
 - Testbench purpose and structure
@@ -331,8 +323,6 @@ Understand testbench architecture and basic verification concepts:
 **Quick Start**: `./scripts/module3.sh`
 
 ### Module 4: Basic Testbench Construction
-**Duration**: 2 weeks  
-**Complexity**: Beginner-Intermediate
 
 Master construction of structured testbenches:
 - Modular testbench organization
@@ -344,8 +334,6 @@ Master construction of structured testbenches:
 **Quick Start**: `./scripts/module4.sh`
 
 ### Module 5: Procedural Testbench Writing
-**Duration**: 2 weeks  
-**Complexity**: Intermediate
 
 Master procedural testbench construction:
 - Procedural constructs (initial, always blocks)
@@ -357,8 +345,6 @@ Master procedural testbench construction:
 **Quick Start**: `./scripts/module5.sh`
 
 ### Module 6: SystemVerilog Testbench Features
-**Duration**: 2 weeks  
-**Complexity**: Intermediate-Advanced
 
 Master SystemVerilog features for advanced testbenches:
 - SystemVerilog classes (iverilog)
@@ -371,8 +357,6 @@ Master SystemVerilog features for advanced testbenches:
 **Quick Start**: `./scripts/module6.sh`
 
 ### Module 7: Coverage and Assertions
-**Duration**: 2 weeks  
-**Complexity**: Intermediate
 
 Master coverage analysis and assertion-based verification:
 - Code coverage (both tools)
@@ -384,8 +368,6 @@ Master coverage analysis and assertion-based verification:
 **Quick Start**: `./scripts/module7.sh`
 
 ### Module 8: Verification Methodology and Best Practices
-**Duration**: 2 weeks  
-**Complexity**: Advanced
 
 Master verification methodology and industry best practices:
 - Verification planning

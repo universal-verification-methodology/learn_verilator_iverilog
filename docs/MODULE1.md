@@ -1,7 +1,5 @@
 # Module 1: iverilog Deep Dive
 
-**Duration**: 2 weeks  
-**Complexity**: Beginner-Intermediate  
 **Goal**: Master iverilog for Verilog/SystemVerilog testbench development
 
 ---
