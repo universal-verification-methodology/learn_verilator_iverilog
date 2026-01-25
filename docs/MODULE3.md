@@ -57,6 +57,75 @@ cd module3/examples/cpp_testbenches
 make all
 ```
 
+## UVM-Inspired Verification Patterns
+
+While this module focuses on fundamental testbench concepts, the patterns introduced here form the foundation for more advanced verification methodologies like UVM (Universal Verification Methodology). Understanding these basic patterns will help you transition to industry-standard verification frameworks.
+
+### Core Verification Components (UVM Mapping)
+
+The simple testbenches in this module demonstrate concepts that map directly to UVM components:
+
+1. **Driver (Stimulus Generation)**
+   - **In this module**: Direct signal assignment in test sequence
+   - **UVM equivalent**: `uvm_driver` class that drives transactions to DUT
+   - **Example**: Setting `dut->a = 1; dut->b = 1;` in testbench
+   - **Future**: UVM drivers use transaction-level modeling (TLM) ports
+
+2. **Monitor (Response Capture)**
+   - **In this module**: `$display` statements and signal reading
+   - **UVM equivalent**: `uvm_monitor` class that observes DUT behavior
+   - **Example**: Reading `dut->y` and displaying its value
+   - **Future**: UVM monitors collect transactions and send to scoreboard
+
+3. **Scoreboard (Result Checking)**
+   - **In this module**: Expected vs. actual comparison with assertions
+   - **UVM equivalent**: `uvm_scoreboard` class that compares expected vs. actual
+   - **Example**: `assert(dut->y == 1 && "Test failed")`
+   - **Future**: UVM scoreboards use TLM analysis ports for automatic checking
+
+4. **Test (Test Sequence)**
+   - **In this module**: `initial` block or `main()` function orchestrating tests
+   - **UVM equivalent**: `uvm_test` class with `run_phase()` method
+   - **Example**: Test sequence in `initial begin ... end`
+   - **Future**: UVM tests build environment and run sequences
+
+5. **Clock Generator**
+   - **In this module**: `always` block (Verilog) or simulation loop (C++)
+   - **UVM equivalent**: `uvm_clock` or clock agent
+   - **Example**: Continuous clock generation in `always begin clk = !clk; #10; end`
+   - **Future**: UVM clock agents provide configurable clock domains
+
+6. **Reset Agent**
+   - **In this module**: Reset sequences in test code
+   - **UVM equivalent**: `uvm_reset_agent` or reset sequence
+   - **Example**: `dut->rst_n = 0; ... dut->rst_n = 1;`
+   - **Future**: UVM reset agents provide standardized reset sequences
+
+### Verification Flow Pattern
+
+The testbenches in this module follow a pattern that mirrors UVM's phase-based execution:
+
+```
+1. Build Phase    → DUT instantiation, signal declaration
+2. Connect Phase → Signal connectivity (port mapping)
+3. Run Phase     → Test sequence execution (stimulus, monitoring, checking)
+4. Cleanup Phase → Resource cleanup ($finish, delete dut)
+```
+
+### Code Examples with UVM Pattern Annotations
+
+All example testbenches in this module include detailed comments mapping each section to UVM concepts. For example:
+
+- **`and_gate_test.v`**: Demonstrates driver, monitor, and scoreboard concepts
+- **`counter_test.v`**: Demonstrates clock generator and reset agent patterns
+- **`mux_4to1_test.cpp`**: Shows exhaustive testing pattern (foundation for coverage-driven verification)
+
+### Why This Matters
+
+Understanding these fundamental patterns now will make learning UVM and other advanced verification methodologies much easier. The concepts are the same; UVM just provides a standardized, reusable framework for organizing them.
+
+**Key Takeaway**: Every UVM component has a simple equivalent in basic testbenches. The complexity comes from reusability, configurability, and transaction-level modeling, not from the core verification concepts.
+
 ## Topics Covered
 
 ### 1. Verification Fundamentals

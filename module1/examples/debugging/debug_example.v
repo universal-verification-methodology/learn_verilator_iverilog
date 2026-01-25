@@ -20,6 +20,7 @@ module debug_example;
     reg  a, b;
     wire y;
     integer debug_level = 1;  // 0=minimal, 1=normal, 2=verbose
+    reg [8*80-1:0] debug_msg;  // Buffer for formatted debug messages
 
     // Instantiate DUT
     and_gate dut (
@@ -29,7 +30,11 @@ module debug_example;
     );
 
     // Debug task with different verbosity levels
-    task debug_print(input integer level, input string message);
+    // Note: iverilog doesn't support 'string' type in task ports
+    // Using integer array to represent string (workaround)
+    task debug_print;
+        input integer level;
+        input [8*80-1:0] message;  // 80 characters max
         if (debug_level >= level) begin
             $display("[DEBUG L%0d] %s", level, message);
         end
@@ -47,7 +52,8 @@ module debug_example;
         debug_print(1, "Test case 1: a=0, b=0");
         a = 0; b = 0;
         #5;
-        debug_print(2, $sformatf("Signal values: a=%b, b=%b, y=%b", a, b, y));
+        $sformat(debug_msg, "Signal values: a=%b, b=%b, y=%b", a, b, y);
+        debug_print(2, debug_msg);
         if (y !== 0) begin
             $error("Test failed: Expected y=0, got y=%b", y);
         end
@@ -56,7 +62,8 @@ module debug_example;
         debug_print(1, "Test case 2: a=1, b=1");
         a = 1; b = 1;
         #5;
-        debug_print(2, $sformatf("Signal values: a=%b, b=%b, y=%b", a, b, y));
+        $sformat(debug_msg, "Signal values: a=%b, b=%b, y=%b", a, b, y);
+        debug_print(2, debug_msg);
         if (y !== 1) begin
             $error("Test failed: Expected y=1, got y=%b", y);
         end

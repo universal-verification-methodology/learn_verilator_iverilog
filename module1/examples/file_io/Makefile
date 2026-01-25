@@ -8,7 +8,7 @@ all: file_read_test
 
 file_read_test: file_read_test.v test_vectors.hex expected_results.hex
 	@echo "=== Compiling file_read_test ==="
-	$(IVERILOG) -o file_read_test file_read_test.v $(DUT_DIR)/simple_gates/and_gate.v
+	$(IVERILOG) -o file_read_test file_read_test.v ../../../module0/dut/simple_gates/and_gate.v
 	@echo "=== Running simulation ==="
 	$(VVP) file_read_test
 	@echo "=== Checking output file ==="

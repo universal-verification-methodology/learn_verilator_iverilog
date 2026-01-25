@@ -1,7 +1,7 @@
 # Makefile for file I/O C++ tests
 
 VERILATOR = verilator
-DUT_DIR = ../../module0/dut
+DUT_DIR = ../../../module0/dut
 VERILATOR_FLAGS = --cc --exe --build
 
 all: test_file_io

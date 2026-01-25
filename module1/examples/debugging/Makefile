@@ -8,7 +8,7 @@ all: debug_example
 
 debug_example: debug_example.v
 	@echo "=== Compiling debug_example ==="
-	$(IVERILOG) -o debug_example debug_example.v $(DUT_DIR)/simple_gates/and_gate.v
+	$(IVERILOG) -o debug_example debug_example.v ../../../module0/dut/simple_gates/and_gate.v
 	@echo "=== Running simulation ==="
 	$(VVP) debug_example
 

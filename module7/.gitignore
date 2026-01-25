@@ -1,0 +1,36 @@
+# Build artifacts
+build/
+obj_dir/
+*.o
+*.a
+*.so
+*.dylib
+
+# Executables
+code_coverage
+functional_coverage
+basic_assertions
+assertion_lib
+V*
+
+# Waveforms
+*.vcd
+*.fst
+*.lxt
+*.gtkw
+
+# Coverage data
+*.dat
+coverage.dat
+
+# Logs
+*.log
+run.log
+test.log
+compile.log
+
+# Temporary files
+*.tmp
+*.swp
+*~
+.DS_Store

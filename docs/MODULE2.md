@@ -8,6 +8,47 @@
 
 This module provides comprehensive coverage of Verilator, a fast Verilog/SystemVerilog simulator that generates C++ code. You'll learn its compilation process, C++ testbench writing, capabilities, limitations, and how to create efficient C++ testbenches.
 
+### What You'll Learn
+
+- **Verilator Fundamentals**: Understanding how Verilator converts Verilog to C++
+- **Compilation Process**: Mastering Verilator compilation flags and options
+- **C++ Testbench Writing**: Creating effective testbenches using C++ and Verilator's API
+- **Waveform Generation**: Creating VCD/FST files for debugging
+- **File I/O**: Managing test vectors and results with files
+- **Debugging Techniques**: Strategies for debugging Verilator testbenches
+- **Best Practices**: Professional testbench organization patterns
+
+### Key Concepts
+
+**Verilator's Two-Stage Compilation:**
+1. **Verilator Stage**: Parses Verilog/SystemVerilog and generates C++ wrapper classes
+2. **C++ Compiler Stage**: Compiles the generated C++ code with your testbench into an executable
+
+**Generated C++ Wrapper:**
+- Verilator creates a class named `V<module_name>` for each top-level module
+- This class provides direct access to all Verilog signals as C++ member variables
+- Methods like `eval()` and `final()` control simulation behavior
+
+**Testbench Pattern:**
+```cpp
+// 1. Initialize Verilator
+Verilated::commandArgs(argc, argv);
+
+// 2. Create DUT instance
+Vmodule_name* dut = new Vmodule_name;
+
+// 3. Set inputs and evaluate
+dut->input_signal = value;
+dut->eval();
+
+// 4. Check outputs
+assert(dut->output_signal == expected);
+
+// 5. Cleanup
+dut->final();
+delete dut;
+```
+
 ### Examples and Code Structure
 
 This module includes comprehensive examples and testbenches located in the `module2/` directory:

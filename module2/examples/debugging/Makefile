@@ -1,7 +1,7 @@
 # Makefile for debugging examples
 
 VERILATOR = verilator
-DUT_DIR = ../../module0/dut
+DUT_DIR = ../../../module0/dut
 VERILATOR_FLAGS = --cc --exe --build
 
 all: debug_example

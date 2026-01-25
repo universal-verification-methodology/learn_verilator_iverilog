@@ -1,7 +1,7 @@
 # Makefile for file I/O examples
 
 VERILATOR = verilator
-DUT_DIR = ../../module0/dut
+DUT_DIR = ../../../module0/dut
 VERILATOR_FLAGS = --cc --exe --build
 
 all: file_io_test

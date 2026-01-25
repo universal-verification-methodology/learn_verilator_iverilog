@@ -1,7 +1,7 @@
 # Makefile for waveform examples
 
 VERILATOR = verilator
-DUT_DIR = ../../module1/dut
+DUT_DIR = ../../../module1/dut
 VERILATOR_FLAGS = --cc --exe --build --trace
 
 all: waveform_example

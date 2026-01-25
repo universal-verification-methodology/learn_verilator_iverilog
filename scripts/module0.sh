@@ -33,8 +33,32 @@ PARALLEL_JOBS=8
 # Clean builds by default
 CLEAN_BUILDS=true
 
-# Log file setup
+# Log file setup - will be initialized in main()
 LOG_FILE=""
+
+# Function to setup logging (redirects stdout and stderr to both console and log file)
+setup_logging() {
+    # Initialize log file path
+    LOG_FILE="$MODULE0_DIR/module0.log"
+    mkdir -p "$MODULE0_DIR"
+    
+    # Create log file with timestamp header
+    {
+        echo "=========================================="
+        echo "Module 0 Execution Log"
+        echo "Started: $(date '+%Y-%m-%d %H:%M:%S')"
+        echo "Command: $0 $*"
+        echo "Working directory: $(pwd)"
+        echo "Parallel jobs: $PARALLEL_JOBS"
+        echo "Clean builds: $CLEAN_BUILDS"
+        echo "=========================================="
+        echo ""
+    } > "$LOG_FILE"
+    
+    # Redirect stdout and stderr to both console and log file
+    exec > >(tee -a "$LOG_FILE")
+    exec 2>&1
+}
 
 # Function to print colored output
 print_status() {
@@ -314,7 +338,8 @@ run_comparison() {
     return 0
 }
 
-# Parse command line arguments
+# Parse command line arguments (before logging setup)
+parse_args() {
 while [[ $# -gt 0 ]]; do
     case $1 in
         --iverilog-basics)
@@ -388,10 +413,17 @@ while [[ $# -gt 0 ]]; do
             ;;
     esac
 done
+}
 
 # Main execution
 main() {
+    # Parse arguments first (so help can be shown without logging)
+    parse_args "$@"
+    # Setup logging after argument parsing (before actual work)
+    setup_logging "$@"
+    
     print_header "Module 0: Installation and Setup"
+    print_status $BLUE "Log file: $LOG_FILE"
     
     # Check prerequisites
     check_prerequisites
@@ -538,9 +570,35 @@ main() {
         if [[ "$gtkwave_opened" == true ]]; then
             print_status $BLUE "Waveforms are available in GTKWave"
         fi
+        echo ""
+        print_status $BLUE "Full log saved to: $LOG_FILE"
+        
+        # Add footer to log file
+        {
+            echo ""
+            echo "=========================================="
+            echo "Module 0 Execution Log - Completed"
+            echo "Finished: $(date '+%Y-%m-%d %H:%M:%S')"
+            echo "Exit code: 0"
+            echo "=========================================="
+        } >> "$LOG_FILE"
+        
         return 0
     else
         print_status $RED "✗ $failed example(s) or test(s) failed"
+        echo ""
+        print_status $YELLOW "Check log file for details: $LOG_FILE"
+        
+        # Add footer to log file
+        {
+            echo ""
+            echo "=========================================="
+            echo "Module 0 Execution Log - Completed"
+            echo "Finished: $(date '+%Y-%m-%d %H:%M:%S')"
+            echo "Exit code: $failed"
+            echo "=========================================="
+        } >> "$LOG_FILE"
+        
         return 1
     fi
 }

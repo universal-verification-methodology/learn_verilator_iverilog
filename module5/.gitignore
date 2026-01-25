@@ -1,0 +1,35 @@
+# Build artifacts
+build/
+obj_dir/
+*.o
+*.a
+*.so
+*.dylib
+
+# Executables
+task_function_test
+function_class_test
+file_based_test
+timing_control
+V*
+
+# Waveforms
+*.vcd
+*.fst
+*.lxt
+*.gtkw
+
+# Logs
+*.log
+run.log
+test.log
+compile.log
+
+# File I/O outputs
+test_results.txt
+
+# Temporary files
+*.tmp
+*.swp
+*~
+.DS_Store

@@ -8,6 +8,27 @@
 
 This module covers procedural testbench writing using Verilog's procedural blocks and C++ control structures. You'll learn to create complex test sequences, handle timing, and implement procedural verification patterns in both paradigms.
 
+### What You'll Learn
+
+- **Procedural Constructs**: Master `initial` and `always` blocks in Verilog, and control flow in C++
+- **Timing Control**: Understand delay control, event control, and wait statements
+- **Reusable Routines**: Create tasks/functions in Verilog and functions/classes in C++ for code organization
+- **File I/O**: Read test vectors from files and write results for automated testing
+- **Test Sequences**: Build complex, multi-step test sequences
+- **Advanced Patterns**: Implement state machines, protocols, and transaction-based testbenches
+
+### Verification Methodology Context
+
+Module 5 introduces patterns that are fundamental to advanced verification methodologies:
+
+- **Reusable Routines** → **UVM Components**: Tasks/functions evolve into UVM's reusable component architecture
+- **Test Sequences** → **UVM Sequences**: Procedural sequences become UVM sequence items and sequences
+- **File I/O** → **UVM Configuration**: File-based test vectors lead to UVM's configuration database
+- **State Machines** → **UVM Phases**: Testbench state machines relate to UVM's phase mechanism
+- **Protocol Testbenches** → **UVM Agents**: Protocol drivers/monitors become UVM agents
+
+> **Note**: The patterns in this module directly map to UVM concepts. See the [UVM Core Repository](https://github.com/universal-verification-methodology/core) for advanced examples of these patterns in a production verification framework.
+
 ### Examples and Code Structure
 
 This module includes comprehensive examples and testbenches located in the `module5/` directory:
@@ -438,9 +459,67 @@ After completing this module, proceed to:
 - **Module 6: SystemVerilog Testbench Features** - Learn SystemVerilog enhancements
 - **Module 7: Coverage and Assertions** - Master coverage and assertion-based verification
 
+## Code Quality and Documentation Standards
+
+All code examples in Module 5 follow these standards:
+
+### Commenting Standards
+
+- **File Headers**: Every file includes comprehensive header documentation:
+  - Purpose and learning objectives
+  - Key concepts explained
+  - Compilation and execution instructions
+  - Usage examples
+
+- **Inline Comments**: Detailed comments explain:
+  - **Why** code is written a certain way (not just what it does)
+  - Procedural block behavior and timing
+  - Task/function usage and parameter passing
+  - File I/O operations and formats
+  - Timing control mechanisms
+
+- **Code Organization**: Comments group related code:
+  - Signal declarations
+  - DUT instantiation
+  - Reusable routines (tasks/functions)
+  - Test sequences
+  - File operations
+
+### Best Practices Demonstrated
+
+1. **Modular Design**: Tasks/functions and classes for reusable code
+2. **Clear Error Messages**: Detailed error reporting in file I/O operations
+3. **Systematic Testing**: Structured test sequences with clear phases
+4. **Resource Management**: Proper file handle management and cleanup
+5. **Timing Accuracy**: Careful timing control to avoid race conditions
+
 ## Additional Resources
 
+### Tool Documentation
 - **Icarus Verilog Documentation**: http://iverilog.wikia.com/
 - **Verilator Documentation**: https://verilator.org/
 - **GTKWave Documentation**: http://gtkwave.sourceforge.net/
+
+### Language Standards
 - **IEEE 1364-2005 Standard**: Verilog Hardware Description Language
+- **IEEE 1800-2017 Standard**: SystemVerilog Language Reference Manual
+
+### Verification Methodology Resources
+- **Universal Verification Methodology (UVM)**: https://accellera.org/downloads/standards/uvm
+- **UVM Core Repository**: https://github.com/universal-verification-methodology/core
+  - Official UVM library with examples of:
+    - Reusable components (agents, drivers, monitors)
+    - Sequence-based stimulus generation
+    - Configuration management
+    - Phase-based testbench control
+
+### Pattern Evolution: Module 5 → UVM
+
+| Module 5 Pattern | UVM Equivalent | Key Differences |
+|-----------------|----------------|----------------|
+| Tasks/Functions | `uvm_component` methods | Object-oriented, polymorphic |
+| Procedural sequences | `uvm_sequence` and `uvm_sequence_item` | Transaction-based, reusable |
+| File I/O | `uvm_config_db` | Centralized, type-safe |
+| State machines | `uvm_phase` mechanism | Structured, automated |
+| Protocol testbenches | `uvm_agent` (driver + monitor) | Decoupled, configurable |
+| Manual timing | Event-driven simulation | Built-in, synchronized |

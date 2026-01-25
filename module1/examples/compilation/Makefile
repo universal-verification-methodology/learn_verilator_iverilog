@@ -29,7 +29,7 @@ macro_def: basic_compilation.v
 # Multi-file compilation
 multi_file: basic_compilation.v
 	@echo "=== Multi-file Compilation ==="
-	$(IVERILOG) -o multi_file basic_compilation.v $(DUT_DIR)/simple_gates/and_gate.v
+	$(IVERILOG) -o multi_file basic_compilation.v ../../../module0/dut/simple_gates/and_gate.v
 	$(VVP) multi_file
 
 # Clean build artifacts

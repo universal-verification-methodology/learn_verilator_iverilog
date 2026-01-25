@@ -36,6 +36,33 @@ PARALLEL_JOBS=8
 # Clean builds by default
 CLEAN_BUILDS=true
 
+# Log file setup - will be initialized in main()
+LOG_FILE=""
+
+# Function to setup logging (redirects stdout and stderr to both console and log file)
+setup_logging() {
+    # Initialize log file path
+    LOG_FILE="$MODULE1_DIR/module1.log"
+    mkdir -p "$MODULE1_DIR"
+    
+    # Create log file with timestamp header
+    {
+        echo "=========================================="
+        echo "Module 1 Execution Log"
+        echo "Started: $(date '+%Y-%m-%d %H:%M:%S')"
+        echo "Command: $0 $*"
+        echo "Working directory: $(pwd)"
+        echo "Parallel jobs: $PARALLEL_JOBS"
+        echo "Clean builds: $CLEAN_BUILDS"
+        echo "=========================================="
+        echo ""
+    } > "$LOG_FILE"
+    
+    # Redirect stdout and stderr to both console and log file
+    exec > >(tee -a "$LOG_FILE")
+    exec 2>&1
+}
+
 # Function to print colored output
 print_status() {
     local color=$1
@@ -212,7 +239,8 @@ run_test_dir() {
     fi
 }
 
-# Parse command line arguments
+# Parse command line arguments (before logging setup)
+parse_args() {
 while [[ $# -gt 0 ]]; do
     case $1 in
         --compilation)
@@ -330,10 +358,18 @@ while [[ $# -gt 0 ]]; do
             ;;
     esac
 done
+}
 
 # Main execution
 main() {
+    # Parse arguments first (so help can be shown without logging)
+    parse_args "$@"
+    
+    # Setup logging after argument parsing (before actual work)
+    setup_logging "$@"
+    
     print_header "Module 1: iverilog Deep Dive"
+    print_status $BLUE "Log file: $LOG_FILE"
     
     # Check prerequisites
     check_prerequisites
@@ -428,9 +464,35 @@ main() {
     print_header "Summary"
     if [[ $failed -eq 0 ]]; then
         print_status $GREEN "✓ All examples and tests completed successfully!"
+        echo ""
+        print_status $BLUE "Full log saved to: $LOG_FILE"
+        
+        # Add footer to log file
+        {
+            echo ""
+            echo "=========================================="
+            echo "Module 1 Execution Log - Completed"
+            echo "Finished: $(date '+%Y-%m-%d %H:%M:%S')"
+            echo "Exit code: 0"
+            echo "=========================================="
+        } >> "$LOG_FILE"
+        
         return 0
     else
         print_status $RED "✗ $failed example(s) or test(s) failed"
+        echo ""
+        print_status $YELLOW "Check log file for details: $LOG_FILE"
+        
+        # Add footer to log file
+        {
+            echo ""
+            echo "=========================================="
+            echo "Module 1 Execution Log - Completed"
+            echo "Finished: $(date '+%Y-%m-%d %H:%M:%S')"
+            echo "Exit code: $failed"
+            echo "=========================================="
+        } >> "$LOG_FILE"
+        
         return 1
     fi
 }

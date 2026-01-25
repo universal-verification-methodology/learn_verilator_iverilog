@@ -1,7 +1,7 @@
 # Makefile for basic C++ tests
 
 VERILATOR = verilator
-DUT_DIR = ../../module1/dut
+DUT_DIR = ../../../module1/dut
 VERILATOR_FLAGS = --cc --exe --build
 
 all: test_mux_4to1

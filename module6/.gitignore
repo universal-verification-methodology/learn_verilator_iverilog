@@ -1,0 +1,33 @@
+# Build artifacts
+build/
+obj_dir/
+*.o
+*.a
+*.so
+*.dylib
+
+# Executables
+class_based_testbench
+randomized_testbench
+interface_based_testbench
+advanced_data_types
+package_example
+V*
+
+# Waveforms
+*.vcd
+*.fst
+*.lxt
+*.gtkw
+
+# Logs
+*.log
+run.log
+test.log
+compile.log
+
+# Temporary files
+*.tmp
+*.swp
+*~
+.DS_Store

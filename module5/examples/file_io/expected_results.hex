@@ -1,0 +1,12 @@
+// Expected results for ALU
+// Format: result[7:0]
+30
+00
+20
+FF
+00
+FF
+FF
+00
+66
+00

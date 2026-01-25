@@ -8,6 +8,24 @@
 
 This module provides comprehensive coverage of Verilator, a fast Verilog/SystemVerilog simulator that generates C++ code. You'll learn its compilation process, C++ testbench writing, capabilities, limitations, and how to create efficient C++ testbenches.
 
+### What Makes Verilator Special?
+
+Verilator is unique among Verilog simulators because it:
+- **Compiles to C++**: Converts Verilog to optimized C++ code, resulting in very fast simulation
+- **Open Source**: Free and actively maintained
+- **High Performance**: Often 10-100x faster than traditional event-driven simulators
+- **C++ Integration**: Seamlessly integrates with C++ libraries and tools
+- **Industry Proven**: Used by major companies for large-scale verification
+
+### Learning Path
+
+1. **Start with Compilation** (`examples/compilation/`): Understand how Verilator works
+2. **Learn Basic Testbenches** (`examples/cpp_testbench/`): Write simple C++ testbenches
+3. **Add Waveforms** (`examples/waveforms/`): Generate and view waveforms
+4. **File I/O** (`examples/file_io/`): Manage test vectors with files
+5. **Debugging** (`examples/debugging/`): Learn debugging techniques
+6. **Advanced Patterns** (`tests/basic_tests/`): Class-based testbench organization
+
 ## Directory Structure
 
 ```
@@ -161,26 +179,55 @@ make all
 
 ## Examples
 
-### Compilation Examples
-- **basic_compilation.cpp**: Demonstrates basic compilation, optimization, tracing, coverage, linting
+### Compilation Examples (`examples/compilation/`)
+- **basic_compilation.cpp**: Minimal working example demonstrating:
+  - Basic Verilator compilation process
+  - How generated wrapper classes work
+  - Essential Verilator API usage
+  - See `Makefile` for examples of different compilation flags
 
-### C++ Testbench Examples
-- **mux_4to1_test.cpp**: Complete C++ testbench for 4-to-1 multiplexer
-- **counter_test.cpp**: C++ testbench for 4-bit counter with clock and reset
+### C++ Testbench Examples (`examples/cpp_testbench/`)
+- **mux_4to1_test.cpp**: Combinational logic testbench demonstrating:
+  - Signal access and evaluation
+  - Test pattern generation
+  - Assertion-based verification
+  - **Key Learning**: How to test combinational logic (no clock needed)
+  
+- **counter_test.cpp**: Sequential logic testbench demonstrating:
+  - Clock generation in C++
+  - Reset sequences
+  - Enable/disable control
+  - **Key Learning**: How to test sequential logic (requires clock edges)
 
-### File I/O
-- **file_io_test.cpp**: Demonstrates C++ file I/O for reading test vectors and writing results
+### File I/O (`examples/file_io/`)
+- **file_io_test.cpp**: File-based test vector management demonstrating:
+  - Reading test vectors from text files
+  - Writing results to output files
+  - Structured test data management
+  - **Key Learning**: Separating test data from test code
 
-### Waveforms
-- **waveform_example.cpp**: Comprehensive waveform generation using Verilator tracing API
+### Waveforms (`examples/waveforms/`)
+- **waveform_example.cpp**: VCD waveform generation demonstrating:
+  - VerilatedVcdC class usage
+  - Signal tracing setup
+  - Time management for waveforms
+  - **Key Learning**: How to generate waveforms for debugging
 
-### Debugging
-- **debug_example.cpp**: C++ debugging techniques and logging strategies
+### Debugging (`examples/debugging/`)
+- **debug_example.cpp**: Debugging strategies demonstrating:
+  - Conditional debug logging
+  - Signal inspection techniques
+  - Error reporting patterns
+  - **Key Learning**: How to debug Verilator testbenches effectively
 
 ## Tests
 
-### Basic Tests
-- **test_mux_4to1.cpp**: Comprehensive 4-to-1 multiplexer test with class-based organization
+### Basic Tests (`tests/basic_tests/`)
+- **test_mux_4to1.cpp**: Advanced testbench demonstrating:
+  - Class-based testbench organization (UVM-inspired pattern)
+  - Test result tracking and reporting
+  - Comprehensive test coverage
+  - **Key Learning**: Professional testbench structure for larger projects
 
 ## Learning Outcomes
 
