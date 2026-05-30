@@ -1,0 +1,9 @@
+flowchart LR
+  IV[iverilog compile] --> VVP[vvp sim]
+  subgraph dut1["module1/dut"]
+    M2[mux_2to1]
+    M4[mux_4to1]
+    CTR[counter_4bit]
+  end
+  TB[Verilog TB] --> dut1
+  VVP --> TB

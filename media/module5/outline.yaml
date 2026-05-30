@@ -1,0 +1,558 @@
+title: Module 5 — Procedural Testbench Writing
+course: learn_verilator_iverilog
+module: 5
+subtitle: Master procedural testbench construction using Verilog procedural blocks
+  and C++ control flow
+footer: learn_verilator_iverilog / Module 5
+slides:
+- type: title
+  title: Module 5
+  subtitle: Procedural Testbench Writing
+- type: bullets
+  title: Learning objectives
+  bullets:
+  - 'Procedural Constructs: Master `initial` and `always` blocks in Verilog, and control
+    flow in C++'
+  - 'Timing Control: Understand delay control, event control, and wait statements'
+  - 'Reusable Routines: Create tasks/functions in Verilog and functions/classes in
+    C++ for code organization'
+  - 'File I/O: Read test vectors from files and write results for automated testing'
+  - 'Test Sequences: Build complex, multi-step test sequences'
+  - 'Advanced Patterns: Implement state machines, protocols, and transaction-based
+    testbenches'
+- type: bullets
+  title: Prerequisites
+  bullets:
+  - See module README
+- type: image
+  title: Learning path
+  image: assets/diagrams/learning_path.png
+  caption: Master procedural testbench construction using Verilog procedural blocks
+    and C++ control flow
+- type: bullets
+  title: Overview
+  bullets:
+  - This module covers procedural testbench writing using Verilog's procedural blocks
+    and C++ control structures. You'll learn to create complex test sequences, handle
+    timing, and implement procedural verification patterns i
+- type: section
+  title: Design architecture
+- type: image
+  title: RTL / block architecture
+  image: assets/diagrams/rtl_architecture.png
+  caption: 'Module 5: DUT / block hierarchy (see module5/examples/).'
+- type: image
+  title: Verification environment architecture
+  image: assets/diagrams/verification_architecture.png
+  caption: 'Module 5: UVM layers, agents, and checkers for this phase.'
+- type: bullets
+  title: 1. Protocol-oriented DUT (Module 5)
+  bullets:
+  - '`dut/uart/simple_uart.v`: TX FSM — idle, start, data bits, stop; `tx_done` handshake'
+  - 'Clock domain: Single `clk` with active-low `rst_n`; serial `tx` output'
+  - 'Future DUTs: SPI/I2C examples extend the same procedural TB patterns'
+  - 'Interface contract: `tx_start` pulse, `tx_data[7:0]`, wait for `tx_done` before
+    next byte'
+  notes: From MODULE5 Design Architecture.
+- type: bullets
+  title: 2. Procedural testbench control architecture
+  bullets:
+  - 'Verilog: `initial` sequences call tasks; `always` blocks for clock and monitors'
+  - 'C++: `main` or test class methods encode multi-step protocols with loops and
+    waits'
+  - 'Timing: `#delay` (Verilog) or counted `eval()` cycles (Verilator) align to bit
+    times'
+  - 'State alignment: TB FSM tracks UART phases while DUT FSM runs in RTL'
+  notes: From MODULE5 Design Architecture.
+- type: bullets
+  title: 3. Reusable routine layer
+  bullets:
+  - 'Tasks/functions: `send_byte`, `wait_tx_done`, `apply_reset` — shared across tests'
+  - 'C++ helpers: Same operations as methods on a `UartDriver` helper class'
+  - 'File-driven layer: Sequences can be loaded from vector files for long regressions'
+  notes: From MODULE5 Design Architecture.
+- type: section
+  title: Verification & testing methods
+- type: image
+  title: Testing and closure flow
+  image: assets/diagrams/testing_methods.png
+  caption: 'Module 5: how tests, checks, and metrics close verification goals.'
+- type: bullets
+  title: 1. Sequence-based stimulus
+  bullets:
+  - 'Multi-step tests: Reset → configure → send N bytes → check `tx` bit timing'
+  - 'Handshaking: Poll `tx_done` or use timeout counters to detect stuck FSM'
+  - 'Negative tests: Start without reset, back-to-back `tx_start` — expect defined
+    errors'
+  notes: From MODULE5 Verification & Testing Methods.
+- type: bullets
+  title: 2. Timing and synchronization checks
+  bullets:
+  - 'Bit period: Verify one `eval()` or time step per bit cell in examples'
+  - 'Setup/hold: Ensure `tx_data` stable before `tx_start` per README contracts'
+  - 'Waveform review: UART frame visible on `tx` in VCD — start bit, LSB-first data'
+  notes: From MODULE5 Verification & Testing Methods.
+- type: bullets
+  title: 3. Reuse and regression methodology
+  bullets:
+  - 'Routine library: Centralize protocol steps; tests only describe high-level scenarios'
+  - 'File I/O regression: Replay captured stimulus files across tool releases'
+  - 'Orchestration: `./scripts/module5.sh --test-sequences` and `--file-io` for focused
+    runs'
+  notes: From MODULE5 Verification & Testing Methods.
+- type: section
+  title: Syllabus topics
+- type: bullets
+  title: 1. Procedural Constructs (1/6)
+  bullets:
+  - 'Verilog: Initial Blocks for Test Sequences'
+  - Initial block usage
+  - Sequential execution
+  - Multiple initial blocks
+  - Initial block organization
+  - 'Verilog: Always Blocks for Continuous Behavior'
+  notes: From MODULE5 Topics Covered.
+- type: bullets
+  title: 1. Procedural Constructs (2/6)
+  bullets:
+  - Always block usage
+  - Continuous execution
+  - Clock generation
+  - Continuous monitoring
+  - 'C++: Main Function and Control Flow'
+  - Main function structure
+  notes: From MODULE5 Topics Covered.
+- type: bullets
+  title: 1. Procedural Constructs (3/6)
+  bullets:
+  - Control flow
+  - Sequential execution
+  - Function organization
+  - 'C++: Loops and Conditionals'
+  - For loops
+  - While loops
+  notes: From MODULE5 Topics Covered.
+- type: bullets
+  title: 1. Procedural Constructs (4/6)
+  bullets:
+  - If-else statements
+  - Switch statements
+  - 'Verilog: Blocking vs. Non-Blocking Assignments in Testbenches'
+  - Blocking assignments (=)
+  - Non-blocking assignments (<=)
+  - When to use each
+  notes: From MODULE5 Topics Covered.
+- type: bullets
+  title: 1. Procedural Constructs (5/6)
+  bullets:
+  - Best practices
+  - Procedural Timing Control (Both Paradigms)
+  - Timing control methods
+  - Timing accuracy
+  - Timing relationships
+  - Timing best practices
+  notes: From MODULE5 Topics Covered.
+- type: bullets
+  title: 1. Procedural Constructs (6/6)
+  bullets:
+  - 'Verilog: Event Control (@, wait)'
+  - Event control (@)
+  - Wait statements
+  - Event-based execution
+  - Event coordination
+  notes: From MODULE5 Topics Covered.
+- type: bullets
+  title: 2. Timing Control (1/7)
+  bullets:
+  - 'Verilog: Delay Control (# delays)'
+  - Delay syntax
+  - Delay timing
+  - Delay accuracy
+  - Delay best practices
+  - '**Verilog: Event Control (@posedge, @negedge, @*)**'
+  notes: From MODULE5 Topics Covered.
+- type: bullets
+  title: 2. Timing Control (2/7)
+  bullets:
+  - Posedge control
+  - Negedge control
+  - Wildcard control
+  - Event-based timing
+  - 'C++: Time Management in Simulation Loop'
+  - Simulation loop
+  notes: From MODULE5 Topics Covered.
+- type: bullets
+  title: 2. Timing Control (3/7)
+  bullets:
+  - Time tracking
+  - Time advancement
+  - Time management
+  - 'C++: Clock Cycle Counting'
+  - Cycle counting
+  - Cycle-based timing
+  notes: From MODULE5 Topics Covered.
+- type: bullets
+  title: 2. Timing Control (4/7)
+  bullets:
+  - Cycle accuracy
+  - Cycle management
+  - 'Verilog: Wait Statements'
+  - Wait syntax
+  - Wait conditions
+  - Wait timing
+  notes: From MODULE5 Topics Covered.
+- type: bullets
+  title: 2. Timing Control (5/7)
+  bullets:
+  - Wait best practices
+  - Timing Accuracy (Both Paradigms)
+  - Timing precision
+  - Timing relationships
+  - Timing verification
+  - Timing debugging
+  notes: From MODULE5 Topics Covered.
+- type: bullets
+  title: 2. Timing Control (6/7)
+  bullets:
+  - Race Condition Avoidance
+  - Race conditions
+  - Avoidance techniques
+  - Best practices
+  - Debugging
+  - '`timing_control_verilog.v`: Delay control, event control, wait statements'
+  notes: From MODULE5 Topics Covered.
+- type: bullets
+  title: 2. Timing Control (7/7)
+  bullets:
+  - '`timing_control_cpp.cpp`: Time management in simulation loop'
+  notes: From MODULE5 Topics Covered.
+- type: bullets
+  title: 3. Test Sequences (1/5)
+  bullets:
+  - Sequential Test Application
+  - Test ordering
+  - Sequential execution
+  - Test dependencies
+  - Test coordination
+  - Test Step Implementation
+  notes: From MODULE5 Topics Covered.
+- type: bullets
+  title: 3. Test Sequences (2/5)
+  bullets:
+  - Step definition
+  - Step execution
+  - Step timing
+  - Step verification
+  - Sequence Timing
+  - Sequence timing
+  notes: From MODULE5 Topics Covered.
+- type: bullets
+  title: 3. Test Sequences (3/5)
+  bullets:
+  - Timing control
+  - Timing accuracy
+  - Timing verification
+  - Synchronization with DUT
+  - DUT synchronization
+  - Timing relationships
+  notes: From MODULE5 Topics Covered.
+- type: bullets
+  title: 3. Test Sequences (4/5)
+  bullets:
+  - Synchronization methods
+  - Synchronization verification
+  - Sequence Verification
+  - Sequence checking
+  - Sequence validation
+  - Sequence debugging
+  notes: From MODULE5 Topics Covered.
+- type: bullets
+  title: 3. Test Sequences (5/5)
+  bullets:
+  - Sequence best practices
+  notes: From MODULE5 Topics Covered.
+- type: bullets
+  title: 4. Reusable Routines (1/6)
+  bullets:
+  - 'Verilog: Task Definitions for Test Sequences'
+  - Task syntax
+  - Task usage
+  - Task parameters
+  - Task organization
+  - 'Verilog: Function Definitions for Calculations'
+  notes: From MODULE5 Topics Covered.
+- type: bullets
+  title: 4. Reusable Routines (2/6)
+  bullets:
+  - Function syntax
+  - Function usage
+  - Function return values
+  - Function organization
+  - 'C++: Function Definitions for Test Sequences'
+  - Function syntax
+  notes: From MODULE5 Topics Covered.
+- type: bullets
+  title: 4. Reusable Routines (3/6)
+  bullets:
+  - Function usage
+  - Function parameters
+  - Function organization
+  - 'C++: Class Methods for Organization'
+  - Class methods
+  - Method organization
+  notes: From MODULE5 Topics Covered.
+- type: bullets
+  title: 4. Reusable Routines (4/6)
+  bullets:
+  - Method reusability
+  - Method best practices
+  - Parameter Passing (Both Paradigms)
+  - Parameter syntax
+  - Parameter types
+  - Parameter passing
+  notes: From MODULE5 Topics Covered.
+- type: bullets
+  title: 4. Reusable Routines (5/6)
+  bullets:
+  - Parameter best practices
+  - Reusable Verification Routines
+  - Routine design
+  - Routine organization
+  - Routine reusability
+  - Routine library
+  notes: From MODULE5 Topics Covered.
+- type: bullets
+  title: 4. Reusable Routines (6/6)
+  bullets:
+  - '`task_function_test_verilog.v`: Tasks and functions for reusable test sequences'
+  - '`function_class_test_cpp.cpp`: Functions and classes for reusable test sequences'
+  notes: From MODULE5 Topics Covered.
+- type: bullets
+  title: 5. Loops and Control Flow (1/5)
+  bullets:
+  - For Loops in Testbenches
+  - For loop syntax
+  - For loop usage
+  - Loop-based testing
+  - Loop best practices
+  - While Loops
+  notes: From MODULE5 Topics Covered.
+- type: bullets
+  title: 5. Loops and Control Flow (2/5)
+  bullets:
+  - While loop syntax
+  - While loop usage
+  - Conditional loops
+  - Loop termination
+  - Repeat Loops
+  - Repeat syntax
+  notes: From MODULE5 Topics Covered.
+- type: bullets
+  title: 5. Loops and Control Flow (3/5)
+  bullets:
+  - Repeat usage
+  - Fixed iteration
+  - Repeat best practices
+  - Conditional Execution
+  - If-else statements
+  - Switch statements
+  notes: From MODULE5 Topics Covered.
+- type: bullets
+  title: 5. Loops and Control Flow (4/5)
+  bullets:
+  - Conditional logic
+  - Conditional best practices
+  - Loop-Based Test Generation
+  - Test generation
+  - Loop-based patterns
+  - Generation strategies
+  notes: From MODULE5 Topics Covered.
+- type: bullets
+  title: 5. Loops and Control Flow (5/5)
+  bullets:
+  - Generation best practices
+  notes: From MODULE5 Topics Covered.
+- type: bullets
+  title: 6. File I/O (1/7)
+  bullets:
+  - 'Verilog: File Reading ($readmemh, $readmemb)'
+  - $readmemh syntax
+  - $readmemb syntax
+  - File reading
+  - Memory initialization
+  - 'Verilog: File Writing ($fopen, $fwrite, $fclose)'
+  notes: From MODULE5 Topics Covered.
+- type: bullets
+  title: 6. File I/O (2/7)
+  bullets:
+  - $fopen syntax
+  - $fwrite syntax
+  - $fclose syntax
+  - File writing
+  - 'C++: File I/O (fstream, ifstream, ofstream)'
+  - fstream usage
+  notes: From MODULE5 Topics Covered.
+- type: bullets
+  title: 6. File I/O (3/7)
+  bullets:
+  - ifstream usage
+  - ofstream usage
+  - File operations
+  - 'C++: Reading Test Vectors'
+  - Vector reading
+  - Vector parsing
+  notes: From MODULE5 Topics Covered.
+- type: bullets
+  title: 6. File I/O (4/7)
+  bullets:
+  - Vector storage
+  - Vector application
+  - 'C++: Writing Results'
+  - Result writing
+  - Result formatting
+  - Result storage
+  notes: From MODULE5 Topics Covered.
+- type: bullets
+  title: 6. File I/O (5/7)
+  bullets:
+  - Result analysis
+  - Test Vector File Formats
+  - Format types
+  - Format selection
+  - Format parsing
+  - Format best practices
+  notes: From MODULE5 Topics Covered.
+- type: bullets
+  title: 6. File I/O (6/7)
+  bullets:
+  - Result Logging to Files
+  - Logging methods
+  - Logging formats
+  - Logging organization
+  - Logging best practices
+  - File-Based Testbenches (Both Paradigms)
+  notes: From MODULE5 Topics Covered.
+- type: bullets
+  title: 6. File I/O (7/7)
+  bullets:
+  - File-based design
+  - File-based patterns
+  - File-based best practices
+  - File-based examples
+  - '`file_based_test_verilog.v`: File-based testbench using $readmemh and $fwrite'
+  - '`file_based_test_cpp.cpp`: File-based testbench using C++ file streams'
+  notes: From MODULE5 Topics Covered.
+- type: bullets
+  title: 7. Advanced Procedural Patterns (1/6)
+  bullets:
+  - State Machine-Based Testbenches
+  - State machine design
+  - State transitions
+  - State verification
+  - State machine patterns
+  - Protocol-Based Testbenches
+  notes: From MODULE5 Topics Covered.
+- type: bullets
+  title: 7. Advanced Procedural Patterns (2/6)
+  bullets:
+  - Protocol modeling
+  - Protocol sequences
+  - Protocol verification
+  - Protocol patterns
+  - Transaction-Based Patterns
+  - Transaction modeling
+  notes: From MODULE5 Topics Covered.
+- type: bullets
+  title: 7. Advanced Procedural Patterns (3/6)
+  bullets:
+  - Transaction sequences
+  - Transaction verification
+  - Transaction patterns
+  - Layered Testbench Structure
+  - Layer organization
+  - Layer interaction
+  notes: From MODULE5 Topics Covered.
+- type: bullets
+  title: 7. Advanced Procedural Patterns (4/6)
+  bullets:
+  - Layer verification
+  - Layer patterns
+  - 'Location: (Coming soon)'
+  - 'Demonstrates: Protocol testbench, procedural sequences'
+  - 'Location: (Coming soon)'
+  - 'Demonstrates: Protocol testbench, C++ control flow'
+  notes: From MODULE5 Topics Covered.
+- type: bullets
+  title: 7. Advanced Procedural Patterns (5/6)
+  bullets:
+  - 'Location: `module5/examples/file_io/`'
+  - 'Demonstrates: File I/O, test vector reading, result writing'
+  - 'Location: `module5/examples/reusable_routines/task_function_test_verilog.v`'
+  - 'Demonstrates: Tasks and functions for reusable test sequences'
+  - 'Location: `module5/examples/reusable_routines/function_class_test_cpp.cpp`'
+  - 'Demonstrates: Functions and classes for reusable test sequences'
+  notes: From MODULE5 Topics Covered.
+- type: bullets
+  title: 7. Advanced Procedural Patterns (6/6)
+  bullets:
+  - 'Location: (Coming soon)'
+  - 'Demonstrates: State machine-based testbench patterns'
+  - 'Location: (Coming soon)'
+  - 'Demonstrates: Protocol testbench patterns'
+  notes: From MODULE5 Topics Covered.
+- type: section
+  title: Hands-on examples
+- type: demo
+  title: Module 5 self-check
+  command: ./scripts/module5.sh --check
+  screenshot: assets/screenshots/module5_check.png
+  expect_stdout_contains: All required checks passed
+  notes: Run from course repository root.
+- type: code
+  title: Exercise scaffold
+  language: bash
+  source_file: scripts/module5.sh
+  code: ./scripts/module5.sh --scaffold
+- type: demo
+  title: 'Demo: Procedural constructs'
+  command: cd module5/examples/procedural_constructs && make all
+  screenshot: assets/screenshots/ex01_procedural_constructs.png
+  notes: 'Hands-on: module5/examples/procedural_constructs/'
+  expect_stdout_contains: ===
+- type: demo
+  title: 'Demo: Reusable routines'
+  command: cd module5/examples/reusable_routines && make all
+  screenshot: assets/screenshots/ex02_reusable_routines.png
+  notes: 'Hands-on: module5/examples/reusable_routines/'
+  expect_stdout_contains: ===
+- type: demo
+  title: 'Demo: File I/O'
+  command: cd module5/examples/file_io && make all
+  screenshot: assets/screenshots/ex03_file_io.png
+  notes: 'Hands-on: module5/examples/file_io/'
+  expect_stdout_contains: ===
+- type: demo
+  title: 'Demo: Test sequences'
+  command: cd module5/examples/test_sequences && make all
+  screenshot: assets/screenshots/ex04_test_sequences.png
+  notes: 'Hands-on: module5/examples/test_sequences/'
+  expect_stdout_contains: ===
+- type: section
+  title: Practice & assessment
+- type: bullets
+  title: Assessment checklist
+  bullets:
+  - Can write procedural testbenches effectively (both paradigms)
+  - Can control timing in testbenches (Verilog and C++)
+  - Can create complex test sequences (both paradigms)
+  - Can use tasks/functions (Verilog) and functions/classes (C++) for organization
+  - Can implement file-based testing (both paradigms)
+  - Can build protocol testbenches (both paradigms)
+- type: bullets
+  title: Summary & next steps
+  bullets:
+  - Master procedural testbench construction using Verilog procedural blocks and C++
+    control flow
+  - Complete module5/CHECKLIST.md
+  - Run ./scripts/module5.sh --check
+  - 'Next: Next module in course'

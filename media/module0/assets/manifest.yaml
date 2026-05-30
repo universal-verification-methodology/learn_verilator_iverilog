@@ -1,0 +1,68 @@
+module: 0
+course: learn_verilator_iverilog
+assets:
+- id: learning_path
+  type: diagram
+  file: assets/diagrams/learning_path.png
+  source: assets/diagrams/learning_path.mmd
+  generator: render_diagrams.sh
+  slides:
+  - 4
+  - 4
+  license: learn_verilator_iverilog course materials
+- id: rtl_architecture
+  type: diagram
+  file: assets/diagrams/rtl_architecture.png
+  source: assets/diagrams/rtl_architecture.mmd
+  generator: render_diagrams.sh
+  slides:
+  - 7
+  license: learn_verilator_iverilog course materials
+- id: verification_architecture
+  type: diagram
+  file: assets/diagrams/verification_architecture.png
+  source: assets/diagrams/verification_architecture.mmd
+  generator: render_diagrams.sh
+  slides:
+  - 8
+  license: learn_verilator_iverilog course materials
+- id: testing_methods
+  type: diagram
+  file: assets/diagrams/testing_methods.png
+  source: assets/diagrams/testing_methods.mmd
+  generator: render_diagrams.sh
+  slides:
+  - 13
+  license: learn_verilator_iverilog course materials
+- id: module0_check
+  type: screenshot
+  file: assets/screenshots/module0_check.png
+  capture_command: ./scripts/module0.sh --check
+  cwd: .
+  slides:
+  - 69
+  expect_stdout_contains: All required checks passed
+- id: ex01_iverilog_basics
+  type: screenshot
+  file: assets/screenshots/ex01_iverilog_basics.png
+  capture_command: cd module0/examples/iverilog_basics && make hello_world
+  cwd: .
+  slides:
+  - 71
+- id: ex02_verilator_basics
+  type: screenshot
+  file: assets/screenshots/ex02_verilator_basics.png
+  capture_command: ls -la module0/examples/verilator_basics && head -20 module0/examples/verilator_basics/Makefile
+  cwd: .
+  slides:
+  - 72
+  expect_stdout_contains: Makefile
+- id: ex03_comparison
+  type: screenshot
+  file: assets/screenshots/ex03_comparison.png
+  capture_command: cd module0/examples/comparison && ls -la && head -30 README.md
+    2>/dev/null || head -30 Makefile
+  cwd: .
+  slides:
+  - 73
+  expect_stdout_contains: total

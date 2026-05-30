@@ -1,0 +1,7 @@
+flowchart TD
+  PLAN[Test plan] --> STIM[Stimulus]
+  STIM --> SIM[Simulate]
+  SIM --> CHK[Check results]
+  CHK --> COV[Coverage / assertions]
+  COV -->|gaps| STIM
+  COV -->|goals met| DONE[Sign-off]

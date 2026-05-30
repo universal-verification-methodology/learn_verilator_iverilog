@@ -1,0 +1,76 @@
+module: 4
+course: learn_verilator_iverilog
+assets:
+- id: learning_path
+  type: diagram
+  file: assets/diagrams/learning_path.png
+  source: assets/diagrams/learning_path.mmd
+  generator: render_diagrams.sh
+  slides:
+  - 4
+  - 4
+  license: learn_verilator_iverilog course materials
+- id: rtl_architecture
+  type: diagram
+  file: assets/diagrams/rtl_architecture.png
+  source: assets/diagrams/rtl_architecture.mmd
+  generator: render_diagrams.sh
+  slides:
+  - 7
+  license: learn_verilator_iverilog course materials
+- id: verification_architecture
+  type: diagram
+  file: assets/diagrams/verification_architecture.png
+  source: assets/diagrams/verification_architecture.mmd
+  generator: render_diagrams.sh
+  slides:
+  - 8
+  license: learn_verilator_iverilog course materials
+- id: testing_methods
+  type: diagram
+  file: assets/diagrams/testing_methods.png
+  source: assets/diagrams/testing_methods.mmd
+  generator: render_diagrams.sh
+  slides:
+  - 13
+  license: learn_verilator_iverilog course materials
+- id: module4_check
+  type: screenshot
+  file: assets/screenshots/module4_check.png
+  capture_command: ./scripts/module4.sh --check
+  cwd: .
+  slides:
+  - 56
+  expect_stdout_contains: All required checks passed
+- id: ex01_clock_reset
+  type: screenshot
+  file: assets/screenshots/ex01_clock_reset.png
+  capture_command: cd module4/examples/clock_reset && make all
+  cwd: .
+  slides:
+  - 58
+  expect_stdout_contains: ===
+- id: ex02_self_checking
+  type: screenshot
+  file: assets/screenshots/ex02_self_checking.png
+  capture_command: cd module4/examples/self_checking && make all
+  cwd: .
+  slides:
+  - 59
+  expect_stdout_contains: ===
+- id: ex03_stimulus_monitoring
+  type: screenshot
+  file: assets/screenshots/ex03_stimulus_monitoring.png
+  capture_command: cd module4/examples/stimulus_monitoring && make all
+  cwd: .
+  slides:
+  - 60
+  expect_stdout_contains: ===
+- id: ex04_modular_testbenches
+  type: screenshot
+  file: assets/screenshots/ex04_modular_testbenches.png
+  capture_command: cd module4/examples/modular_testbenches && make all
+  cwd: .
+  slides:
+  - 61
+  expect_stdout_contains: ===

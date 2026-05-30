@@ -1,0 +1,76 @@
+module: 5
+course: learn_verilator_iverilog
+assets:
+- id: learning_path
+  type: diagram
+  file: assets/diagrams/learning_path.png
+  source: assets/diagrams/learning_path.mmd
+  generator: render_diagrams.sh
+  slides:
+  - 4
+  - 4
+  license: learn_verilator_iverilog course materials
+- id: rtl_architecture
+  type: diagram
+  file: assets/diagrams/rtl_architecture.png
+  source: assets/diagrams/rtl_architecture.mmd
+  generator: render_diagrams.sh
+  slides:
+  - 7
+  license: learn_verilator_iverilog course materials
+- id: verification_architecture
+  type: diagram
+  file: assets/diagrams/verification_architecture.png
+  source: assets/diagrams/verification_architecture.mmd
+  generator: render_diagrams.sh
+  slides:
+  - 8
+  license: learn_verilator_iverilog course materials
+- id: testing_methods
+  type: diagram
+  file: assets/diagrams/testing_methods.png
+  source: assets/diagrams/testing_methods.mmd
+  generator: render_diagrams.sh
+  slides:
+  - 13
+  license: learn_verilator_iverilog course materials
+- id: module5_check
+  type: screenshot
+  file: assets/screenshots/module5_check.png
+  capture_command: ./scripts/module5.sh --check
+  cwd: .
+  slides:
+  - 61
+  expect_stdout_contains: All required checks passed
+- id: ex01_procedural_constructs
+  type: screenshot
+  file: assets/screenshots/ex01_procedural_constructs.png
+  capture_command: cd module5/examples/procedural_constructs && make all
+  cwd: .
+  slides:
+  - 63
+  expect_stdout_contains: ===
+- id: ex02_reusable_routines
+  type: screenshot
+  file: assets/screenshots/ex02_reusable_routines.png
+  capture_command: cd module5/examples/reusable_routines && make all
+  cwd: .
+  slides:
+  - 64
+  expect_stdout_contains: ===
+- id: ex03_file_io
+  type: screenshot
+  file: assets/screenshots/ex03_file_io.png
+  capture_command: cd module5/examples/file_io && make all
+  cwd: .
+  slides:
+  - 65
+  expect_stdout_contains: ===
+- id: ex04_test_sequences
+  type: screenshot
+  file: assets/screenshots/ex04_test_sequences.png
+  capture_command: cd module5/examples/test_sequences && make all
+  cwd: .
+  slides:
+  - 66
+  expect_stdout_contains: ===

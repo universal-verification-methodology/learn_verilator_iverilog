@@ -80,6 +80,7 @@ Module 8: Verification Methodology and Best Practices
 - ✅ **Best Practices**: Industry patterns and verification methodology
 - ✅ **Comprehensive Documentation**: Detailed guides for every concept
 - ✅ **Exercises**: Hands-on practice for each module
+- ✅ **Slides & video**: Per-module `slides.pptx`, `slides.pdf`, and `video.mp4` under `media/` (see `./scripts/build_all_media.sh`)
 
 ## 📚 Prerequisites
 
@@ -137,10 +138,21 @@ chmod +x scripts/*.sh
 
 Begin with [Module 0: Installation and Setup](docs/MODULE0.md) and follow the modules sequentially.
 
+### 5. Slides and video (optional)
+
+From the repo root, build teaching decks for all modules (requires `~/.cursor/skills/module-to-slides-video`):
+
+```bash
+./scripts/build_all_media.sh
+```
+
+Outputs: `media/moduleN/slides.pptx`, `slides.pdf`, `video.mp4`. See [media/README.md](media/README.md) and [media/INDEX.md](media/INDEX.md).
+
 ## 📁 Project Structure
 
 ```
 learn_verilator_iverilog/
+├── media/                     # Slides, PDF, video per module (see media/INDEX.md)
 ├── docs/                      # Comprehensive documentation
 │   ├── SYLLABUS2.md          # Complete course syllabus
 │   ├── MODULE0.md            # Installation and setup guide

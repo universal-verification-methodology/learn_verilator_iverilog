@@ -1,0 +1,8 @@
+flowchart LR
+  SEQ[Test sequences] --> DRV[Driver]
+  DRV --> DUT[DUT]
+  DUT --> MON[Monitor]
+  MON --> SB[Scoreboard]
+  SB --> RPT[Pass / Fail report]
+  CFG[Config / plusargs] --> DRV
+  CFG --> MON

@@ -10,6 +10,9 @@
 
 [↑ Back to README](../README.md) | [📚 Full Syllabus](SYLLABUS2.md)
 
+
+
+- **Slides & video**: [slides.pptx](../media/module1/slides.pptx) · [slides.pdf](../media/module1/slides.pdf) · [video.mp4](../media/module1/video.mp4) — regenerate: `./scripts/build_all_media.sh --module 1`
 ---
 
 ## Overview
@@ -95,6 +98,50 @@ make all
 cd module1/examples/file_io
 make all
 ```
+
+
+## Design Architecture
+
+### 1. iverilog compile-and-run architecture
+
+- **Sources**: RTL under `module1/dut/` plus testbench under `examples/` or `tests/`
+- **Compile**: `iverilog` elaborates modules, produces a VVP bytecode executable
+- **Simulate**: `vvp` drives the event scheduler; `$dumpvars` can emit VCD
+- **Artifacts**: `simv` (or custom name), `*.vcd`, compile logs in example directories
+
+### 2. Module 1 DUT catalog
+
+- **`dut/multiplexers/`**: `mux_2to1`, `mux_4to1` — select lines, combinational outputs
+- **`dut/counters/`**: `counter_4bit` — clock, reset, enable, parallel load
+- **Interface pattern**: Clock + reset on sequential blocks; data ports on combinational paths
+- **Reuse**: Same DUTs exercised across compilation, simulation, and testbench examples
+
+### 3. Verilog testbench structure (iverilog)
+
+- **Top**: `module tb;` instantiates DUT, declares wires/regs for connectivity
+- **Stimulus**: `initial` blocks and tasks drive inputs over simulation time
+- **Observation**: `$display`, `$monitor`, and VCD for passive debug
+- **Closure**: `$finish` after pass/fail counts or explicit timeout
+
+## Verification & Testing Methods
+
+### 1. Directed functional testing
+
+- **Vector tables**: Apply known (sel, d0..d3) or (en, load) patterns; compare `y` or `count`
+- **Corner cases**: Reset during operation, enable deasserted, all MUX select values
+- **Self-check**: Inline `if (expected !== actual)` with error count and final summary
+
+### 2. File-based and batch testing
+
+- **Test vectors**: Read stimulus from files (`file_io` examples) for regression-style reruns
+- **Golden logs**: Compare simulator output to expected transcripts where provided
+- **Orchestration**: `./scripts/module1.sh` runs example matrix; `--check` for CI-style gate
+
+### 3. Waveform and debug methodology
+
+- **VCD generation**: Enable `$dumpfile` / `$dumpvars` in TB or via plusargs where shown
+- **GTKWave**: Align clock edges, verify reset release, step through MUX transitions
+- **Debug flow**: Re-run single example with `make clean && make` and narrowed stimulus
 
 ## Topics Covered
 

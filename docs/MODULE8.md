@@ -10,6 +10,9 @@
 
 [↑ Back to README](../README.md) | [📚 Full Syllabus](SYLLABUS2.md)
 
+
+
+- **Slides & video**: [slides.pptx](../media/module8/slides.pptx) · [slides.pdf](../media/module8/slides.pdf) · [video.mp4](../media/module8/video.mp4) — regenerate: `./scripts/build_all_media.sh --module 8`
 ---
 
 ## Overview
@@ -70,6 +73,49 @@ make all
 cd module8/examples/verification_metrics
 make all
 ```
+
+
+## Design Architecture
+
+### 1. End-to-end verification program architecture
+
+- **DUT portfolio**: Gates, counters, multiplexers — representative of prior modules
+- **TB styles**: Modular Verilog TBs and C++ Verilator TBs under `tests/`
+- **Knowledge base**: Guides in `examples/` (planning, metrics, sign-off, industry practices)
+- **Automation**: `./scripts/module8.sh` orchestrates methodology demos, not just RTL compiles
+
+### 2. Layered testbench architecture (production pattern)
+
+- **Test layer**: Selects scenario, configures plusargs, sets pass criteria
+- **Environment layer**: Agents, scoreboard, coverage collectors — reusable per project
+- **DUT layer**: RTL with assertions and optional bind modules
+- **Tool layer**: Simulator choice (iverilog vs Verilator) per block complexity and SV needs
+
+### 3. Verification infrastructure
+
+- **Regression shell**: Scripts batch examples; logs archived for trend analysis
+- **Documentation**: Test plans, coding standards, tool comparison guides in-repo
+- **Metrics store**: Example formats for coverage/assertion summaries before sign-off
+
+## Verification & Testing Methods
+
+### 1. Verification planning and strategy
+
+- **Test plan**: Features → test cases → priority → owner → status
+- **Strategy selection**: Directed vs random vs assertion-heavy per risk area
+- **Entry/exit criteria**: Definition of done per milestone (smoke, feature, full regression)
+
+### 2. Metrics, regression, and debug methodology
+
+- **Metrics**: Functional coverage, assertion pass rate, test count, bug find rate
+- **Regression**: Nightly `./scripts/module8.sh` style runs; compare logs to golden
+- **Debug process**: Reproduce → minimize → fix → add regression test (examples in `debugging_methodology/`)
+
+### 3. Sign-off and industry practice
+
+- **Sign-off checklist**: Coverage goals met, zero outstanding sev-1 assertions, plan executed
+- **Tool selection**: Decision matrix (iverilog vs Verilator) from `tool_selection/` guide
+- **Maintainability**: Coding standards and modular TB rules for team-scale projects
 
 ## Topics Covered
 

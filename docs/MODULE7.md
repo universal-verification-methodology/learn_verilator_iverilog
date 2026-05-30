@@ -10,6 +10,9 @@
 
 [↑ Back to README](../README.md) | [📚 Full Syllabus](SYLLABUS2.md)
 
+
+
+- **Slides & video**: [slides.pptx](../media/module7/slides.pptx) · [slides.pdf](../media/module7/slides.pdf) · [video.mp4](../media/module7/video.mp4) — regenerate: `./scripts/build_all_media.sh --module 7`
 ---
 
 ## Overview
@@ -75,6 +78,48 @@ make all
 cd module7/examples/assertions
 make all
 ```
+
+
+## Design Architecture
+
+### 1. Observability-focused DUT set
+
+- **`dut/simple_gates/`**, **`dut/multiplexers/`**, **`dut/counters/`**: Familiar blocks for assertion and coverage labs
+- **Checkpoints**: Internal signals (count, select, flags) exposed for bind-style or inline assertions
+- **Tool split**: Assertions in SV/Verilog for iverilog; C++ `assert` paths in Verilator examples
+
+### 2. Assertion architecture
+
+- **Immediate assertions**: `$display` + `if` checks in procedural TB (baseline)
+- **Concurrent-style patterns**: Properties described in examples where SVA subset supported
+- **Assertion libraries**: Reusable check macros/modules in `assertion_libraries/` examples
+- **Failure action**: `$error` / `fatal` or abort simulation with non-zero status
+
+### 3. Coverage model architecture
+
+- **Functional coverage points**: User-defined bins on opcodes, states, or cross terms
+- **Code coverage**: Line/branch awareness via simulator reports where available
+- **Feedback loop**: Coverage holes drive new directed or random tests (documented in guides)
+
+## Verification & Testing Methods
+
+### 1. Assertion-based verification (ABV)
+
+- **Property targets**: Reset behavior, one-hot select, counter monotonicity, no X on outputs
+- **Assume/guarantee mindset**: Environment assumptions vs DUT guarantees in examples
+- **Debug**: Assertion name and time stamp in failure message — rerun with VCD at failure cycle
+
+### 2. Coverage-driven closure
+
+- **Goals**: Target 100% on critical crosses; accept waived bins with documented rationale
+- **Sampling**: Coverpoints updated each transaction or clock in TB code
+- **Reports**: Text summaries from `coverage_analysis` examples — gap list for next tests
+
+### 3. Metrics and sign-off prep
+
+- **Pass/fail plus coverage**: Exit criteria require zero assertion failures and met coverage goals
+- **Regression**: Re-run assertion suite after RTL/TB edits — `./scripts/module7.sh --check`
+- **Bridge to Module 8**: Metrics feed verification plan and sign-off checklist
 
 ## Topics Covered
 

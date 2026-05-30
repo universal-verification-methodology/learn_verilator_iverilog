@@ -10,6 +10,9 @@
 
 [↑ Back to README](../README.md) | [📚 Full Syllabus](SYLLABUS2.md)
 
+
+
+- **Slides & video**: [slides.pptx](../media/module0/slides.pptx) · [slides.pdf](../media/module0/slides.pdf) · [video.mp4](../media/module0/video.mp4) — regenerate: `./scripts/build_all_media.sh --module 0`
 ---
 
 ## Overview
@@ -105,6 +108,50 @@ make hello_world
 - **VVP**: Icarus Verilog runtime (executes compiled designs)
 
 ---
+
+
+## Design Architecture
+
+### 1. Verification toolchain layout
+
+- **Host environment**: Linux, macOS, or WSL2 with GCC/Clang, Make, and Git
+- **Icarus path**: `iverilog` compiles RTL + TB → `simv` (or named binary) executed by `vvp`
+- **Verilator path**: `verilator --cc` emits C++ model under `obj_dir/` linked with a C++ testbench
+- **Waveform path**: Simulators write VCD/FST; **GTKWave** visualizes signal transitions
+- **Course layout**: `scripts/install_*.sh`, `module0/examples/`, `module0/dut/`, `module0/tests/`
+
+### 2. Reference DUT hierarchy (Module 0)
+
+- **`module0/dut/simple_gates/`**: Combinational `and_gate`, `or_gate` — minimal port lists (a, b, y)
+- **`module0/dut/counters/`**: `simple_counter` — clocked sequential logic with enable and reset
+- **Hierarchy depth**: Flat RTL (no sub-modules) so install smoke tests stay fast
+- **TB attachment**: Testbench modules instantiate DUT at top level; no bus fabric yet
+
+### 3. First simulation artifact flow
+
+- **iverilog**: `iverilog -o sim tb.v dut.v` → `vvp sim` → optional `$dumpfile` VCD
+- **Verilator**: `verilator --cc --exe` → `make -C obj_dir` → `./obj_dir/Vdut`
+- **Build dirs**: Per-example `Makefile` targets; artifacts under `build/` or `obj_dir/` (gitignored)
+
+## Verification & Testing Methods
+
+### 1. Install and environment verification
+
+- **Version checks**: `iverilog -v`, `verilator --version`, `gtkwave --version`
+- **PATH and compiler**: Confirm `g++`/`gcc` available for Verilator link step
+- **Self-check**: `./scripts/module0.sh --check` validates examples and DUT compiles
+
+### 2. Hello-world test methodology
+
+- **Smoke test**: Minimal compile-and-run per tool (no functional depth required)
+- **Pass criteria**: Clean compile, simulation exits 0, expected `$display` or C++ `printf`
+- **Waveform spot-check**: Open generated VCD in GTKWave to confirm clock/reset toggles
+
+### 3. Debugging and regression basics
+
+- **Log-first**: Capture simulator stdout; use `-g` / `--trace` when examples enable it
+- **Compare tools**: Run same DUT with iverilog vs Verilator to see flow differences
+- **Repeatability**: Document working directory and Make target in `commands_to_try.txt`
 
 ## Topics Covered
 

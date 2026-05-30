@@ -10,6 +10,9 @@
 
 [↑ Back to README](../README.md) | [📚 Full Syllabus](SYLLABUS2.md)
 
+
+
+- **Slides & video**: [slides.pptx](../media/module4/slides.pptx) · [slides.pdf](../media/module4/slides.pdf) · [video.mp4](../media/module4/video.mp4) — regenerate: `./scripts/build_all_media.sh --module 4`
 ---
 
 ## Overview
@@ -114,6 +117,49 @@ make all
 cd module4/examples/self_checking
 make all
 ```
+
+
+## Design Architecture
+
+### 1. Structured DUT portfolio (Module 4)
+
+- **`dut/alus/simple_alu.v`**: Combinational ALU — op select, result, zero flag
+- **`dut/fifos/simple_fifo.v`**: Queue storage with full/empty and pointer logic
+- **`dut/registers/register_file.v`**: Multi-port register file — read/write ports, clocked updates
+- **Complexity step**: Moves from gates/counters to datapath blocks needing organized TBs
+
+### 2. Modular testbench architecture
+
+- **Separation**: Stimulus generator, monitor, checker/scoreboard as distinct modules or classes
+- **Clock/reset generator**: Dedicated block (`clock_reset` examples) — configurable period
+- **Hierarchy**: Top TB instantiates agents + DUT; connects via named interfaces (wires)
+- **C++ mirror**: Same roles as C++ classes with methods `drive()`, `sample()`, `check()`
+
+### 3. Reference model placement
+
+- **Golden model**: Software replica of ALU/FIFO/register behavior in TB
+- **Self-checking path**: DUT output compared to reference each cycle or transaction
+- **Config**: Parameters for width, depth, and clock period without editing DUT RTL
+
+## Verification & Testing Methods
+
+### 1. Component-level verification
+
+- **Stimulus module**: Encapsulates write sequences to FIFO or register ports
+- **Monitor module**: Captures read data and status flags passively
+- **Checker**: Flags protocol violations (overflow, X on outputs, wrong opcode result)
+
+### 2. Scenario-based testing
+
+- **Scenarios**: Reset + fill FIFO; ALU op sweep; register R/W hazard patterns
+- **Tasks/methods**: Each scenario is a callable task — reusable across tests
+- **Aggregation**: Single report summarizing scenarios run and failures
+
+### 3. Structured debug and closure
+
+- **Modular debug**: Isolate failing agent by disabling others in top TB
+- **Waveform on demand**: Trigger dumps only when checker fires
+- **Regression**: `./scripts/module4.sh --self-checking` and `--all-tests` for batch sign-off
 
 ## Topics Covered
 

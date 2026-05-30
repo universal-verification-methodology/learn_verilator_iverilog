@@ -1,0 +1,8 @@
+flowchart LR
+  VER[verilator --cc] --> OBJ[obj_dir]
+  subgraph dut2["module2/dut"]
+    M4[mux_4to1]
+    CTR[counter_4bit]
+  end
+  CPP[C++ testbench] --> OBJ
+  OBJ --> dut2

@@ -1,0 +1,111 @@
+# Per-example capture overrides (command / expect_stdout_contains).
+# Keys match EXAMPLES.md folder names or demo ids exNN_folder.
+
+module0:
+  demos:
+    verilator_basics:
+      command: "ls -la module0/examples/verilator_basics && head -20 module0/examples/verilator_basics/Makefile"
+      expect: "Makefile"
+
+module1:
+  demos:
+    compilation:
+      expect: "==="
+    simulation:
+      expect: "==="
+    testbench_basics:
+      expect: "==="
+    file_io:
+      expect: "==="
+    waveforms:
+      expect: "==="
+    debugging:
+      expect: "==="
+
+module2:
+  demos:
+    compilation:
+      command: "head -25 module2/examples/compilation/Makefile"
+      expect: "Verilator"
+    cpp_testbench:
+      command: "ls -la module2/examples/cpp_testbench"
+      expect: "total"
+    file_io:
+      command: "ls -la module2/examples/file_io"
+      expect: "total"
+    waveforms:
+      command: "ls -la module2/examples/waveforms"
+      expect: "total"
+    debugging:
+      command: "ls -la module2/examples/debugging"
+      expect: "total"
+
+module3:
+  demos:
+    verilog_testbenches:
+      expect: "==="
+    cpp_testbenches:
+      command: "ls -la module3/examples/cpp_testbenches"
+      expect: "total"
+    comparison:
+      command: "ls -la module3/examples/comparison"
+      expect: "total"
+
+module4:
+  demos:
+    clock_reset:
+      expect: "==="
+    self_checking:
+      expect: "==="
+    stimulus_monitoring:
+      expect: "==="
+    modular_testbenches:
+      expect: "==="
+
+module5:
+  demos:
+    procedural_constructs:
+      expect: "==="
+    reusable_routines:
+      expect: "==="
+    file_io:
+      expect: "==="
+    test_sequences:
+      expect: "==="
+
+module6:
+  demos:
+    sv_classes:
+      expect: "==="
+    interfaces:
+      expect: "==="
+    randomization:
+      expect: "==="
+    packages:
+      expect: "==="
+    equivalent_cpp:
+      command: "head -30 module6/examples/equivalent_cpp/verilator_limitations.md"
+      expect: "Verilator"
+
+module7:
+  demos:
+    assertions:
+      expect: "==="
+    assertion_libraries:
+      expect: "==="
+    coverage_analysis:
+      command: "ls -la module7/examples/coverage_analysis"
+      expect: "total"
+
+module8:
+  demos:
+    testbench_architecture:
+      expect: "==="
+    verification_metrics:
+      expect: "==="
+    tool_selection:
+      command: "head -25 module8/examples/tool_selection/tool_comparison_guide.md"
+      expect: "iverilog"
+    coding_standards:
+      command: "head -25 module8/examples/coding_standards/coding_standards_guide.md"
+      expect: "testbench"

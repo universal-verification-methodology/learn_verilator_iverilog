@@ -1,0 +1,541 @@
+title: Module 6 — SystemVerilog Testbench Features
+course: learn_verilator_iverilog
+module: 6
+subtitle: Master SystemVerilog features for advanced testbench development (primarily
+  for iverilog, with Verilator considerations)
+footer: learn_verilator_iverilog / Module 6
+slides:
+- type: title
+  title: Module 6
+  subtitle: SystemVerilog Testbench Features
+- type: bullets
+  title: Learning objectives
+  bullets:
+  - Master SystemVerilog features for advanced testbench development (primarily for
+    iverilog, with Verilator considerations)
+- type: bullets
+  title: Prerequisites
+  bullets:
+  - See module README
+- type: image
+  title: Learning path
+  image: assets/diagrams/learning_path.png
+  caption: Master SystemVerilog features for advanced testbench development (primarily
+    for iverilog, with Verilator considerations)
+- type: bullets
+  title: Overview
+  bullets:
+  - This module introduces SystemVerilog features that enhance testbench capabilities.
+    You'll learn about classes, randomization, interfaces, and other SystemVerilog
+    constructs that make testbenches more powerful and maintai
+- type: section
+  title: Design architecture
+- type: image
+  title: RTL / block architecture
+  image: assets/diagrams/rtl_architecture.png
+  caption: 'Module 6: DUT / block hierarchy (see module6/examples/).'
+- type: image
+  title: Verification environment architecture
+  image: assets/diagrams/verification_architecture.png
+  caption: 'Module 6: UVM layers, agents, and checkers for this phase.'
+- type: bullets
+  title: 1. SystemVerilog testbench layer
+  bullets:
+  - 'Classes: Encapsulate transactions, drivers, and test state (`sv_classes` examples)'
+  - 'Interfaces: Bundle DUT-facing signals; connect TB components via modports'
+  - 'Packages: Shared types, parameters, and class declarations across compilation
+    units'
+  - 'Randomization: Constraint blocks on transaction fields for varied legal stimulus'
+  notes: From MODULE6 Design Architecture.
+- type: bullets
+  title: 2. DUT and tool considerations
+  bullets:
+  - '`dut/simple_gates/`, `dut/multiplexers/`: RTL exercised with SV TB features'
+  - 'iverilog: Primary target for classes, interfaces, and `randomize()`'
+  - 'Verilator: Limited SV — `equivalent_cpp/` documents C++ workarounds for unsupported
+    constructs'
+  - 'Compilation order: Package → interface → classes → TB top (see example Makefiles)'
+  notes: From MODULE6 Design Architecture.
+- type: bullets
+  title: 3. Object-oriented TB topology
+  bullets:
+  - 'Transaction item: Data class holding addr, data, or opcode fields'
+  - 'Driver class: `randomize()` item, drive interface signals, wait for handshake'
+  - 'Test class: Builds environment, runs sequences, reports `uvm-style` summary without
+    UVM libs'
+  notes: From MODULE6 Design Architecture.
+- type: section
+  title: Verification & testing methods
+- type: image
+  title: Testing and closure flow
+  image: assets/diagrams/testing_methods.png
+  caption: 'Module 6: how tests, checks, and metrics close verification goals.'
+- type: bullets
+  title: 1. Constrained-random stimulus
+  bullets:
+  - 'Constraints: Legal opcodes, address ranges, and timing gaps enforced in class'
+  - 'Seeds: Repeatable runs with `srandom(seed)` for debug vs random exploration'
+  - 'Coverage of space: Many transactions from few lines of sequence code'
+  notes: From MODULE6 Verification & Testing Methods.
+- type: bullets
+  title: 2. Interface-based checking
+  bullets:
+  - 'Modports: Driver drives `DUT_MP`; monitor samples `MON_MP` on same interface'
+  - 'Scoreboard hook: Monitor pushes observed transactions to checker class'
+  - 'Encapsulation: DUT port list changes localized to interface definition'
+  notes: From MODULE6 Verification & Testing Methods.
+- type: bullets
+  title: 3. SV vs C++ equivalence verification
+  bullets:
+  - 'Dual implementation: Compare SV class TB behavior to C++ equivalent where Verilator
+    used'
+  - 'Limitation tests: Document constructs that fail Verilator lint — plan tool split'
+  - 'Regression: `./scripts/module6.sh` runs iverilog-first examples then C++ equivalents'
+  notes: From MODULE6 Verification & Testing Methods.
+- type: section
+  title: Syllabus topics
+- type: bullets
+  title: 1. SystemVerilog Classes (1/6)
+  bullets:
+  - SystemVerilog classes → UVM base classes (`uvm_object`, `uvm_component`, `uvm_sequence_item`)
+  - Transaction classes → UVM sequence items (data structures for verification)
+  - Testbench classes → UVM test classes (test orchestration)
+  - Class hierarchy → UVM component hierarchy
+  - Class Basics for Testbenches
+  - Class declaration syntax
+  notes: From MODULE6 Topics Covered.
+- type: bullets
+  title: 1. SystemVerilog Classes (2/6)
+  bullets:
+  - Class properties (data members)
+  - Class methods (functions and tasks)
+  - Class instantiation (object creation)
+  - Constructor (`new()` function)
+  - Class Methods and Properties
+  - Method declaration and implementation
+  notes: From MODULE6 Topics Covered.
+- type: bullets
+  title: 1. SystemVerilog Classes (3/6)
+  bullets:
+  - Property declaration and initialization
+  - Access modifiers (public, protected, local)
+  - Method overloading concepts
+  - Class Instantiation
+  - 'Object creation: `class_name obj = new();`'
+  - Object lifetime management
+  notes: From MODULE6 Topics Covered.
+- type: bullets
+  title: 1. SystemVerilog Classes (4/6)
+  bullets:
+  - Automatic garbage collection
+  - Memory management best practices
+  - Object-Oriented Testbenches
+  - OOP principles in verification
+  - 'Encapsulation: Data and methods together'
+  - 'Inheritance: Base classes and derived classes'
+  notes: From MODULE6 Topics Covered.
+- type: bullets
+  title: 1. SystemVerilog Classes (5/6)
+  bullets:
+  - 'Polymorphism: Virtual methods and dynamic dispatch'
+  - Class-Based Testbench Organization
+  - 'Transaction classes: Model test data'
+  - 'Testbench classes: Orchestrate tests'
+  - Class hierarchy design
+  - Reusability patterns
+  notes: From MODULE6 Topics Covered.
+- type: bullets
+  title: 1. SystemVerilog Classes (6/6)
+  bullets:
+  - Maintainability best practices
+  - '`class_based_testbench.sv`: Comprehensive class-based testbench with detailed
+    comments'
+  - Transaction class with `post_randomize()` callback
+  - Testbench class for test orchestration
+  - Object instantiation and usage patterns
+  - '`class_based_testbench_cpp.cpp`: C++ equivalent for Verilator'
+  notes: From MODULE6 Topics Covered.
+- type: bullets
+  title: 2. Randomization (1/7)
+  bullets:
+  - SystemVerilog randomization → UVM's constrained random framework
+  - Constraint blocks → UVM constraint blocks in sequence items
+  - Random test generation → UVM sequence generation
+  - Seed control → UVM command-line seed control (`+seed`)
+  - Random Variable Generation
+  - '`$random()`: Signed random integer'
+  notes: From MODULE6 Topics Covered.
+- type: bullets
+  title: 2. Randomization (2/7)
+  bullets:
+  - '`$urandom()`: Unsigned random integer'
+  - '`$urandom_range()`: Random value in range'
+  - 'Seed control: `$urandom(seed)` for reproducibility'
+  - Constrained Randomization Basics
+  - '`rand` keyword: Random variable (can repeat)'
+  - '`randc` keyword: Cyclic random variable (no repeats until all used)'
+  notes: From MODULE6 Topics Covered.
+- type: bullets
+  title: 2. Randomization (3/7)
+  bullets:
+  - 'Constraint blocks: Define valid value ranges'
+  - 'Constraint solving: Automatic constraint satisfaction'
+  - '`randomize()` method: Generate random values'
+  - Constraint Syntax
+  - Post-Randomization Callbacks
+  - '`post_randomize()`: Called after successful randomization'
+  notes: From MODULE6 Topics Covered.
+- type: bullets
+  title: 2. Randomization (4/7)
+  bullets:
+  - Calculate derived values based on randomized inputs
+  - 'UVM pattern: Similar to `post_randomize()` in UVM sequence items'
+  - Random Test Generation
+  - Generate thousands of test vectors automatically
+  - Ensure test vectors meet design requirements
+  - Achieve better coverage with less manual effort
+  notes: From MODULE6 Topics Covered.
+- type: bullets
+  title: 2. Randomization (5/7)
+  bullets:
+  - Random sequences and patterns
+  - Seed Control
+  - 'Seed setting: `$urandom(seed)` for reproducible tests'
+  - 'Seed management: Track seeds for debugging'
+  - 'Reproducibility: Same seed = same test sequence'
+  - 'Seed strategies: Random vs. fixed seeds'
+  notes: From MODULE6 Topics Covered.
+- type: bullets
+  title: 2. Randomization (6/7)
+  bullets:
+  - Randomization Strategies
+  - 'Constraint design: Balance between flexibility and control'
+  - 'Coverage-driven randomization: Guide randomization toward coverage goals'
+  - 'Weighted distributions: Control probability of values'
+  - 'Best practices: Keep constraints simple and maintainable'
+  - '`randomized_testbench.sv`: Comprehensive randomized testbench with:'
+  notes: From MODULE6 Topics Covered.
+- type: bullets
+  title: 2. Randomization (7/7)
+  bullets:
+  - Constraint blocks for valid value ranges
+  - '`post_randomize()` callback for derived values'
+  - Seed control and reproducibility
+  - Random test generation loop
+  - '`randomized_testbench_cpp.cpp`: C++ equivalent using `<random>` library'
+  notes: From MODULE6 Topics Covered.
+- type: bullets
+  title: 3. SystemVerilog Interfaces (1/6)
+  bullets:
+  - SystemVerilog interfaces → UVM virtual interfaces
+  - Modports → UVM interface modports (driver, monitor, etc.)
+  - Interface-based testbenches → UVM testbench structure
+  - Virtual interfaces → UVM's way to connect classes to RTL
+  - Interface Declaration and Usage
+  - 'Interface syntax: `interface name; ... endinterface`'
+  notes: From MODULE6 Topics Covered.
+- type: bullets
+  title: 3. SystemVerilog Interfaces (2/6)
+  bullets:
+  - 'Signal grouping: Related signals together'
+  - 'Interface instantiation: `interface_name instance();`'
+  - 'Interface connection: Pass to modules via modports'
+  - Modports for Direction Control
+  - 'Modport syntax: `modport name(input sig1, output sig2);`'
+  - 'Direction control: Define who can drive/read which signals'
+  notes: From MODULE6 Topics Covered.
+- type: bullets
+  title: 3. SystemVerilog Interfaces (3/6)
+  bullets:
+  - 'Multiple modports: Different views for different users'
+  - 'Type safety: Prevents incorrect signal connections'
+  - Interface in Testbenches
+  - 'Interface-based testbenches: Clean signal organization'
+  - 'DUT wrapping: Connect DUT to interface via wrapper'
+  - 'Interface reusability: Same interface for multiple testbenches'
+  notes: From MODULE6 Topics Covered.
+- type: bullets
+  title: 3. SystemVerilog Interfaces (4/6)
+  bullets:
+  - 'Interface best practices: Clear naming, proper modports'
+  - Virtual Interfaces (Advanced)
+  - 'Virtual interface syntax: `virtual interface_name vif;`'
+  - 'Virtual interface usage: Interface handles in classes'
+  - 'Dynamic interfaces: Runtime interface assignment'
+  - 'Virtual interface patterns: UVM-style class-to-RTL connection'
+  notes: From MODULE6 Topics Covered.
+- type: bullets
+  title: 3. SystemVerilog Interfaces (5/6)
+  bullets:
+  - Interface-Based Testbenches
+  - 'Interface design: Group related signals'
+  - 'Interface patterns: Common interface structures'
+  - 'Interface organization: Hierarchical interfaces'
+  - 'Interface best practices: Modports, naming, documentation'
+  - '`interface_based_testbench.sv`: Comprehensive interface-based testbench with:'
+  notes: From MODULE6 Topics Covered.
+- type: bullets
+  title: 3. SystemVerilog Interfaces (6/6)
+  bullets:
+  - Interface definition with modports (dut, tb)
+  - DUT wrapper module
+  - Testbench using interface
+  - Detailed comments on modport usage
+  - '`interface_based_testbench_cpp.cpp`: C++ equivalent using structs'
+  notes: From MODULE6 Topics Covered.
+- type: bullets
+  title: 4. Advanced Data Types (1/5)
+  bullets:
+  - Structures and Unions
+  - Structure syntax
+  - Union syntax
+  - Packed structures
+  - Unpacked structures
+  - Enumerated Types
+  notes: From MODULE6 Topics Covered.
+- type: bullets
+  title: 4. Advanced Data Types (2/5)
+  bullets:
+  - Enum syntax
+  - Enum usage
+  - Enum values
+  - Enum best practices
+  - Dynamic Arrays
+  - Dynamic array syntax
+  notes: From MODULE6 Topics Covered.
+- type: bullets
+  title: 4. Advanced Data Types (3/5)
+  bullets:
+  - Dynamic array operations
+  - Dynamic array usage
+  - Dynamic array best practices
+  - Associative Arrays
+  - Associative array syntax
+  - Associative array operations
+  notes: From MODULE6 Topics Covered.
+- type: bullets
+  title: 4. Advanced Data Types (4/5)
+  bullets:
+  - Associative array usage
+  - Associative array best practices
+  - Queues
+  - Queue syntax
+  - Queue operations
+  - Queue usage
+  notes: From MODULE6 Topics Covered.
+- type: bullets
+  title: 4. Advanced Data Types (5/5)
+  bullets:
+  - Queue best practices
+  - '`advanced_data_types.sv`: Demonstrates structures, unions, arrays, queues (iverilog)'
+  - '`advanced_data_types_cpp.cpp`: C++ equivalent using STL containers'
+  notes: From MODULE6 Topics Covered.
+- type: bullets
+  title: 5. SystemVerilog Operators (1/4)
+  bullets:
+  - Streaming Operators
+  - Streaming operator syntax
+  - Streaming operator usage
+  - Packing/unpacking
+  - Streaming patterns
+  - Set Membership Operators
+  notes: From MODULE6 Topics Covered.
+- type: bullets
+  title: 5. SystemVerilog Operators (2/4)
+  bullets:
+  - Inside operator
+  - Set membership
+  - Constraint usage
+  - Set operations
+  - SystemVerilog-Specific Operators
+  - Unique operator
+  notes: From MODULE6 Topics Covered.
+- type: bullets
+  title: 5. SystemVerilog Operators (3/4)
+  bullets:
+  - Priority operator
+  - SystemVerilog operators
+  - Operator usage
+  - Operator Overloading Concepts
+  - Overloading concepts
+  - Overloading patterns
+  notes: From MODULE6 Topics Covered.
+- type: bullets
+  title: 5. SystemVerilog Operators (4/4)
+  bullets:
+  - Overloading best practices
+  notes: From MODULE6 Topics Covered.
+- type: bullets
+  title: 6. Packages and Namespaces (1/7)
+  bullets:
+  - SystemVerilog packages → UVM packages (`uvm_pkg`)
+  - Shared definitions → UVM base classes and utilities
+  - Namespace management → UVM's `uvm_*` namespace
+  - Package organization → UVM library structure
+  - Package Organization
+  - 'Package syntax: `package name; ... endpackage`'
+  notes: From MODULE6 Topics Covered.
+- type: bullets
+  title: 6. Packages and Namespaces (2/7)
+  bullets:
+  - 'Package declaration: Define shared items'
+  - 'Package organization: Group related definitions'
+  - 'Package best practices: Clear naming, logical grouping'
+  - Shared Definitions
+  - 'Shared types: `typedef` declarations'
+  - 'Shared functions: Reusable computation logic'
+  notes: From MODULE6 Topics Covered.
+- type: bullets
+  title: 6. Packages and Namespaces (3/7)
+  bullets:
+  - 'Shared tasks: Reusable procedural code'
+  - 'Shared constants: `parameter` and `const` declarations'
+  - Package Import
+  - 'Wildcard import: `import pkg::*;` (imports all)'
+  - 'Explicit import: `import pkg::name;` (imports specific)'
+  - 'Fully qualified: `pkg::name` (no import needed)'
+  notes: From MODULE6 Topics Covered.
+- type: bullets
+  title: 6. Packages and Namespaces (4/7)
+  bullets:
+  - 'Import scope: Module-level or package-level'
+  - Namespace Management
+  - 'Avoid naming conflicts: Packages provide namespaces'
+  - 'Explicit vs. wildcard: Trade-offs in clarity vs. convenience'
+  - 'Namespace organization: Hierarchical package structure'
+  - 'Namespace best practices: Clear package naming'
+  notes: From MODULE6 Topics Covered.
+- type: bullets
+  title: 6. Packages and Namespaces (5/7)
+  bullets:
+  - Testbench Library Organization
+  - 'Library structure: Organize packages by functionality'
+  - 'Library organization: Common utilities, types, functions'
+  - 'Library reusability: Share across projects'
+  - 'Library best practices: Documentation, versioning'
+  - '`testbench_pkg.sv`: Comprehensive package with:'
+  notes: From MODULE6 Topics Covered.
+- type: bullets
+  title: 6. Packages and Namespaces (6/7)
+  bullets:
+  - Type definitions (struct)
+  - Function definitions (automatic functions)
+  - Task definitions (automatic tasks)
+  - Constants and parameters
+  - '`package_example.sv`: Demonstrates package usage:'
+  - Package import (wildcard and explicit)
+  notes: From MODULE6 Topics Covered.
+- type: bullets
+  title: 6. Packages and Namespaces (7/7)
+  bullets:
+  - Using package types, functions, tasks
+  - Namespace management
+  notes: From MODULE6 Topics Covered.
+- type: bullets
+  title: 7. SystemVerilog Procedural Blocks (1/5)
+  bullets:
+  - Always_comb, Always_ff, Always_latch
+  - Always_comb syntax
+  - Always_ff syntax
+  - Always_latch syntax
+  - Block usage
+  - Unique and Priority Case
+  notes: From MODULE6 Topics Covered.
+- type: bullets
+  title: 7. SystemVerilog Procedural Blocks (2/5)
+  bullets:
+  - Unique case syntax
+  - Priority case syntax
+  - Case usage
+  - Case best practices
+  - SystemVerilog-Specific Constructs
+  - SystemVerilog constructs
+  notes: From MODULE6 Topics Covered.
+- type: bullets
+  title: 7. SystemVerilog Procedural Blocks (3/5)
+  bullets:
+  - Construct usage
+  - Construct best practices
+  - 'Location: `module6/examples/sv_classes/class_based_testbench.sv`'
+  - 'Demonstrates: SystemVerilog classes, object-oriented testbenches'
+  - 'Location: `module6/examples/randomization/randomized_testbench.sv`'
+  - 'Demonstrates: Randomization, constraints, random test generation'
+  notes: From MODULE6 Topics Covered.
+- type: bullets
+  title: 7. SystemVerilog Procedural Blocks (4/5)
+  bullets:
+  - 'Location: `module6/examples/interfaces/interface_based_testbench.sv`'
+  - 'Demonstrates: Interfaces, modports, interface-based testbenches'
+  - 'Location: (Coming soon)'
+  - 'Demonstrates: Transaction classes, transaction sequences'
+  - 'Location: All examples'
+  - 'Demonstrates: SystemVerilog features in testbenches'
+  notes: From MODULE6 Topics Covered.
+- type: bullets
+  title: 7. SystemVerilog Procedural Blocks (5/5)
+  bullets:
+  - 'Location: `module6/examples/equivalent_cpp/`'
+  - 'Demonstrates: C++ equivalents for SystemVerilog features'
+  notes: From MODULE6 Topics Covered.
+- type: section
+  title: Hands-on examples
+- type: demo
+  title: Module 6 self-check
+  command: ./scripts/module6.sh --check
+  screenshot: assets/screenshots/module6_check.png
+  expect_stdout_contains: All required checks passed
+  notes: Run from course repository root.
+- type: code
+  title: Exercise scaffold
+  language: bash
+  source_file: scripts/module6.sh
+  code: ./scripts/module6.sh --scaffold
+- type: demo
+  title: 'Demo: SV classes'
+  command: cd module6/examples/sv_classes && make all
+  screenshot: assets/screenshots/ex01_sv_classes.png
+  notes: 'Hands-on: module6/examples/sv_classes/'
+  expect_stdout_contains: ===
+- type: demo
+  title: 'Demo: Interfaces'
+  command: cd module6/examples/interfaces && make all
+  screenshot: assets/screenshots/ex02_interfaces.png
+  notes: 'Hands-on: module6/examples/interfaces/'
+  expect_stdout_contains: ===
+- type: demo
+  title: 'Demo: Randomization'
+  command: cd module6/examples/randomization && make all
+  screenshot: assets/screenshots/ex03_randomization.png
+  notes: 'Hands-on: module6/examples/randomization/'
+  expect_stdout_contains: ===
+- type: demo
+  title: 'Demo: Packages'
+  command: cd module6/examples/packages && make all
+  screenshot: assets/screenshots/ex04_packages.png
+  notes: 'Hands-on: module6/examples/packages/'
+  expect_stdout_contains: ===
+- type: demo
+  title: 'Demo: Equivalent C++'
+  command: head -30 module6/examples/equivalent_cpp/verilator_limitations.md
+  screenshot: assets/screenshots/ex05_equivalent_cpp.png
+  notes: 'Hands-on: module6/examples/equivalent_cpp/'
+  expect_stdout_contains: Verilator
+- type: section
+  title: Practice & assessment
+- type: bullets
+  title: Assessment checklist
+  bullets:
+  - Can use SystemVerilog classes in testbenches (iverilog)
+  - Can implement randomization (iverilog)
+  - Can use interfaces effectively (iverilog)
+  - Can apply advanced data types
+  - Can organize code with packages
+  - Can write modern SystemVerilog testbenches
+- type: bullets
+  title: Summary & next steps
+  bullets:
+  - Master SystemVerilog features for advanced testbench development (primarily for
+    iverilog, with Verilator considerations)
+  - Complete module6/CHECKLIST.md
+  - Run ./scripts/module6.sh --check
+  - 'Next: Next module in course'

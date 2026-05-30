@@ -1,0 +1,11 @@
+flowchart TB
+  subgraph tools["Toolchain"]
+    IV[iverilog] --> VVP[vvp]
+    VER[verilator] --> OBJ[obj_dir C++ model]
+  end
+  subgraph dut0["module0/dut"]
+    G[simple_gates]
+    C[simple_counter]
+  end
+  VVP --> dut0
+  OBJ --> dut0

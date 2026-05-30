@@ -1,0 +1,675 @@
+title: Module 2 — Verilator Deep Dive
+course: learn_verilator_iverilog
+module: 2
+subtitle: Master Verilator for C++ testbench development
+footer: learn_verilator_iverilog / Module 2
+slides:
+- type: title
+  title: Module 2
+  subtitle: Verilator Deep Dive
+- type: bullets
+  title: Learning objectives
+  bullets:
+  - 'Verilator Fundamentals: Understanding how Verilator converts Verilog to C++'
+  - 'Compilation Process: Mastering Verilator compilation flags and options'
+  - 'C++ Testbench Writing: Creating effective testbenches using C++ and Verilator''s
+    API'
+  - 'Waveform Generation: Creating VCD/FST files for debugging'
+  - 'File I/O: Managing test vectors and results with files'
+  - 'Debugging Techniques: Strategies for debugging Verilator testbenches'
+- type: bullets
+  title: Prerequisites
+  bullets:
+  - See module README
+- type: image
+  title: Learning path
+  image: assets/diagrams/learning_path.png
+  caption: Master Verilator for C++ testbench development
+- type: bullets
+  title: Overview
+  bullets:
+  - This module provides comprehensive coverage of Verilator, a fast Verilog/SystemVerilog
+    simulator that generates C++ code. You'll learn its compilation process, C++ testbench
+    writing, capabilities, limitations, and how to
+- type: section
+  title: Design architecture
+- type: image
+  title: RTL / block architecture
+  image: assets/diagrams/rtl_architecture.png
+  caption: 'Module 2: DUT / block hierarchy (see module2/examples/).'
+- type: image
+  title: Verification environment architecture
+  image: assets/diagrams/verification_architecture.png
+  caption: 'Module 2: UVM layers, agents, and checkers for this phase.'
+- type: bullets
+  title: 1. Verilator compilation model
+  bullets:
+  - 'Input: Verilog/SystemVerilog RTL + optional `--timing` / lint flags per example'
+  - 'Output: C++ classes (`V<top>`) in `obj_dir/` with fast cycle-accurate `eval()`'
+  - 'Linkage: C++ `main()` or test class calls `dut->eval()` each cycle or on events'
+  - 'Tracing: `--trace` / `--trace-fst` for waveform dumps from the C++ side'
+  notes: From MODULE2 Design Architecture.
+- type: bullets
+  title: 2. Module 2 DUT catalog
+  bullets:
+  - '`dut/multiplexers/`: Same MUX family as Module 1 — cross-tool comparison baseline'
+  - '`dut/counters/`: `counter_4bit` — exercises sequential C++ drive/monitor loops'
+  - 'Port mapping: Verilator flattens ports to struct members (`dut->clk`, `dut->count`)'
+  - 'Performance: Large test suites favor Verilator’s compiled model over interpreted
+    VVP'
+  notes: From MODULE2 Design Architecture.
+- type: bullets
+  title: 3. C++ testbench architecture
+  bullets:
+  - 'Top-level `main`: Allocates `Vtop`, applies reset sequence, runs clock loop'
+  - 'Stimulus loop: `for`/`while` sets inputs then `eval()` advances time'
+  - 'Optional OOP: Advanced tests organize Driver/Monitor/Checker as C++ classes'
+  - 'Build: Generated `Vtop.mk` plus user `Makefile` link testbench and model'
+  notes: From MODULE2 Design Architecture.
+- type: section
+  title: Verification & testing methods
+- type: image
+  title: Testing and closure flow
+  image: assets/diagrams/testing_methods.png
+  caption: 'Module 2: how tests, checks, and metrics close verification goals.'
+- type: bullets
+  title: 1. Cycle-based C++ testing
+  bullets:
+  - 'Clock generation: Toggle clock in loop with `eval()` between edges'
+  - 'Reset sequence: Hold `rst_n` low N cycles, release, verify known state'
+  - 'Checking: `assert()` or explicit compare with `std::cerr` on mismatch'
+  notes: From MODULE2 Verification & Testing Methods.
+- type: bullets
+  title: 2. Tracing and performance checks
+  bullets:
+  - 'Waveforms: Enable Verilator trace API; view in GTKWave for debug examples'
+  - 'Printf debug: Structured logging before/after `eval()` for signal snapshots'
+  - 'Regression: `./scripts/module2.sh --all-tests` batches compile+run across examples'
+  notes: From MODULE2 Verification & Testing Methods.
+- type: bullets
+  title: 3. File I/O and scalable stimulus
+  bullets:
+  - 'Vector files: Read test data in C++ (`file_io` examples) for long sequences'
+  - 'Repeatability: Fixed seeds and deterministic loops for comparable runs'
+  - 'Failure isolation: Run single `obj_dir` binary with minimal stimulus to bisect
+    bugs'
+  notes: From MODULE2 Verification & Testing Methods.
+- type: section
+  title: Syllabus topics
+- type: bullets
+  title: 1. Verilator Overview (1/6)
+  bullets:
+  - What is Verilator?
+  - Fast Verilog/SystemVerilog simulator
+  - Generates C++ code from Verilog
+  - Open-source and free
+  - Excellent performance
+  - Verilator's Compilation Model
+  notes: From MODULE2 Topics Covered.
+- type: bullets
+  title: 1. Verilator Overview (2/6)
+  bullets:
+  - Two-stage compilation
+  - Verilog → C++ conversion
+  - C++ compilation and linking
+  - Generated wrapper classes
+  - C++ Wrapper Generation
+  - Top module class structure
+  notes: From MODULE2 Topics Covered.
+- type: bullets
+  title: 1. Verilator Overview (3/6)
+  bullets:
+  - Signal access methods
+  - Evaluation methods
+  - Tracing support
+  - Verilator Capabilities and Features
+  - Fast simulation
+  - Good Verilog-2001 support
+  notes: From MODULE2 Topics Covered.
+- type: bullets
+  title: 1. Verilator Overview (4/6)
+  bullets:
+  - Limited SystemVerilog support
+  - Coverage support
+  - Waveform generation
+  - Supported Verilog/SystemVerilog Constructs
+  - Most Verilog-2001 features
+  - Basic SystemVerilog features
+  notes: From MODULE2 Topics Covered.
+- type: bullets
+  title: 1. Verilator Overview (5/6)
+  bullets:
+  - Interfaces (limited)
+  - Classes (limited)
+  - Assertions (limited)
+  - Limitations and Workarounds
+  - Limited SystemVerilog support
+  - Some advanced features not supported
+  notes: From MODULE2 Topics Covered.
+- type: bullets
+  title: 1. Verilator Overview (6/6)
+  bullets:
+  - Workarounds for unsupported features
+  - When to Use Verilator
+  - High-performance simulation
+  - Large designs
+  - Integration with C++ libraries
+  - Complex testbenches with advanced data structures
+  notes: From MODULE2 Topics Covered.
+- type: bullets
+  title: 2. Compilation Process (1/8)
+  bullets:
+  - Verilator Compilation Command
+  - 'Basic syntax: `verilator --cc --exe design.v testbench.cpp`'
+  - Output generation
+  - Build process
+  - Compilation Flags and Options
+  - '`--cc`: Generate C++ code'
+  notes: From MODULE2 Topics Covered.
+- type: bullets
+  title: 2. Compilation Process (2/8)
+  bullets:
+  - '`--exe`: Generate executable'
+  - '`--build`: Build automatically'
+  - '`-I<directory>`: Add include path'
+  - '`-D<macro>`: Define macro'
+  - '`-O0, -O1, -O2, -O3`: Optimization levels'
+  - '`--trace`: Generate VCD tracing'
+  notes: From MODULE2 Topics Covered.
+- type: bullets
+  title: 2. Compilation Process (3/8)
+  bullets:
+  - '`--trace-fst`: Generate FST tracing'
+  - '`--coverage`: Enable coverage'
+  - '`--lint-only`: Lint without compilation'
+  - Optimization Levels (-O0, -O1, -O2, -O3)
+  - '`-O0`: No optimization (fastest compilation)'
+  - '`-O1`: Basic optimization'
+  notes: From MODULE2 Topics Covered.
+- type: bullets
+  title: 2. Compilation Process (4/8)
+  bullets:
+  - '`-O2`: More optimization (default)'
+  - '`-O3`: Maximum optimization (slowest compilation, fastest simulation)'
+  - Coverage Options (--coverage)
+  - Code coverage generation
+  - Coverage analysis
+  - Coverage reporting
+  notes: From MODULE2 Topics Covered.
+- type: bullets
+  title: 2. Compilation Process (5/8)
+  bullets:
+  - Linting Capabilities (--lint-only)
+  - Syntax checking
+  - Design rule checking
+  - No simulation generation
+  - Waveform Generation (--trace, --trace-fst)
+  - '`--trace`: Generate VCD files'
+  notes: From MODULE2 Topics Covered.
+- type: bullets
+  title: 2. Compilation Process (6/8)
+  bullets:
+  - '`--trace-fst`: Generate FST files (smaller, faster)'
+  - Signal selection
+  - GTKWave compatibility
+  - Include Path Management
+  - Adding include directories
+  - Multiple include paths
+  notes: From MODULE2 Topics Covered.
+- type: bullets
+  title: 2. Compilation Process (7/8)
+  bullets:
+  - Relative vs. absolute paths
+  - Define Macros
+  - Conditional compilation
+  - Macro definitions
+  - Usage in designs
+  - Multi-File Compilation
+  notes: From MODULE2 Topics Covered.
+- type: bullets
+  title: 2. Compilation Process (8/8)
+  bullets:
+  - Compiling multiple files
+  - File ordering
+  - Dependency management
+  - '`basic_compilation.cpp`: Demonstrates basic compilation, optimization, tracing,
+    coverage, linting'
+  notes: From MODULE2 Topics Covered.
+- type: bullets
+  title: 3. C++ Testbench Structure (1/7)
+  bullets:
+  - C++ Main Function
+  - Entry point
+  - Verilator initialization
+  - DUT instantiation
+  - Test sequence
+  - Cleanup
+  notes: From MODULE2 Topics Covered.
+- type: bullets
+  title: 3. C++ Testbench Structure (2/7)
+  bullets:
+  - Verilator-Generated Class Usage
+  - Class naming (V<module_name>)
+  - Instance creation
+  - Method calls
+  - Signal access
+  - DUT Instantiation in C++
+  notes: From MODULE2 Topics Covered.
+- type: bullets
+  title: 3. C++ Testbench Structure (3/7)
+  bullets:
+  - Creating DUT object
+  - Memory management
+  - Lifetime management
+  - Signal Access (Reading and Writing)
+  - 'Reading signals: `dut->signal_name`'
+  - 'Writing signals: `dut->signal_name = value`'
+  notes: From MODULE2 Topics Covered.
+- type: bullets
+  title: 3. C++ Testbench Structure (4/7)
+  bullets:
+  - Signal types
+  - Multi-bit signals
+  - Clock Generation in C++
+  - Simulation loop
+  - Clock toggling
+  - Clock period control
+  notes: From MODULE2 Topics Covered.
+- type: bullets
+  title: 3. C++ Testbench Structure (5/7)
+  bullets:
+  - Multiple clocks
+  - Reset Generation in C++
+  - Reset sequences
+  - Synchronous reset
+  - Asynchronous reset
+  - Reset timing
+  notes: From MODULE2 Topics Covered.
+- type: bullets
+  title: 3. C++ Testbench Structure (6/7)
+  bullets:
+  - Simulation Loop
+  - Time management
+  - Event scheduling
+  - Loop structure
+  - Termination
+  - '`mux_4to1_test.cpp`: Basic C++ testbench structure'
+  notes: From MODULE2 Topics Covered.
+- type: bullets
+  title: 3. C++ Testbench Structure (7/7)
+  bullets:
+  - '`counter_test.cpp`: Clock and reset generation, simulation loop'
+  notes: From MODULE2 Topics Covered.
+- type: bullets
+  title: 4. C++ Testbench Writing (1/6)
+  bullets:
+  - Basic C++ Testbench Template
+  - Standard structure
+  - Common patterns
+  - Best practices
+  - Signal Access Methods
+  - Direct access
+  notes: From MODULE2 Topics Covered.
+- type: bullets
+  title: 4. C++ Testbench Writing (2/6)
+  bullets:
+  - Signal reading
+  - Signal writing
+  - Signal monitoring
+  - Clock and Reset Patterns
+  - Standard clock patterns
+  - Reset patterns
+  notes: From MODULE2 Topics Covered.
+- type: bullets
+  title: 4. C++ Testbench Writing (3/6)
+  bullets:
+  - Clock/reset coordination
+  - Stimulus Generation in C++
+  - Test vector generation
+  - Pattern generation
+  - Sequential stimulus
+  - Random stimulus
+  notes: From MODULE2 Topics Covered.
+- type: bullets
+  title: 4. C++ Testbench Writing (4/6)
+  bullets:
+  - Response Monitoring in C++
+  - Output monitoring
+  - Real-time monitoring
+  - Post-processing
+  - Logging
+  - Result Checking
+  notes: From MODULE2 Topics Covered.
+- type: bullets
+  title: 4. C++ Testbench Writing (5/6)
+  bullets:
+  - Expected value calculation
+  - Output comparison
+  - Error detection
+  - Assertions
+  - Error Reporting
+  - Error messages
+  notes: From MODULE2 Topics Covered.
+- type: bullets
+  title: 4. C++ Testbench Writing (6/6)
+  bullets:
+  - Exit codes
+  - Test summaries
+  - Failure reporting
+  notes: From MODULE2 Topics Covered.
+- type: bullets
+  title: 5. Verilator C++ API (1/5)
+  bullets:
+  - Top Module Class Structure
+  - 'Class name: `V<module_name>`'
+  - Constructor/destructor
+  - Methods
+  - Signals
+  - Signal Access Methods
+  notes: From MODULE2 Topics Covered.
+- type: bullets
+  title: 5. Verilator C++ API (2/5)
+  bullets:
+  - Direct member access
+  - Signal types
+  - Multi-bit signals
+  - Array signals
+  - Evaluation Method (eval())
+  - What eval() does
+  notes: From MODULE2 Topics Covered.
+- type: bullets
+  title: 5. Verilator C++ API (3/5)
+  bullets:
+  - When to call eval()
+  - Timing considerations
+  - Multiple evaluations
+  - Time Management
+  - Simulation time
+  - Time tracking
+  notes: From MODULE2 Topics Covered.
+- type: bullets
+  title: 5. Verilator C++ API (4/5)
+  bullets:
+  - Time advancement
+  - Time-based events
+  - Tracing API
+  - VerilatedVcdC class
+  - trace() method
+  - dump() method
+  notes: From MODULE2 Topics Covered.
+- type: bullets
+  title: 5. Verilator C++ API (5/5)
+  bullets:
+  - File management
+  - Coverage API
+  - Coverage collection
+  - Coverage reporting
+  - Coverage analysis
+  notes: From MODULE2 Topics Covered.
+- type: bullets
+  title: 6. Waveform Generation (1/5)
+  bullets:
+  - VCD File Generation
+  - Using --trace flag
+  - VerilatedVcdC class
+  - trace() method
+  - dump() method
+  - File management
+  notes: From MODULE2 Topics Covered.
+- type: bullets
+  title: 6. Waveform Generation (2/5)
+  bullets:
+  - FST File Generation
+  - Using --trace-fst flag
+  - FST advantages
+  - GTKWave compatibility
+  - Signal Selection for Tracing
+  - trace() method levels
+  notes: From MODULE2 Topics Covered.
+- type: bullets
+  title: 6. Waveform Generation (3/5)
+  bullets:
+  - Selective tracing
+  - Hierarchy levels
+  - GTKWave Compatibility
+  - VCD format
+  - FST format
+  - GTKWave viewing
+  notes: From MODULE2 Topics Covered.
+- type: bullets
+  title: 6. Waveform Generation (4/5)
+  bullets:
+  - Signal organization
+  - Waveform Analysis
+  - Viewing waveforms
+  - Signal timing
+  - Timing relationships
+  - Debugging with waveforms
+  notes: From MODULE2 Topics Covered.
+- type: bullets
+  title: 6. Waveform Generation (5/5)
+  bullets:
+  - '`waveform_example.cpp`: Comprehensive waveform generation using Verilator tracing
+    API'
+  notes: From MODULE2 Topics Covered.
+- type: bullets
+  title: 7. Debugging with Verilator (1/6)
+  bullets:
+  - Compilation Error Debugging
+  - Understanding Verilator errors
+  - Common compilation errors
+  - Syntax errors
+  - Missing files
+  - C++ Compilation Errors
+  notes: From MODULE2 Topics Covered.
+- type: bullets
+  title: 7. Debugging with Verilator (2/6)
+  bullets:
+  - Understanding C++ errors
+  - Linker errors
+  - Template errors
+  - Common mistakes
+  - Runtime Debugging
+  - Understanding runtime errors
+  notes: From MODULE2 Topics Covered.
+- type: bullets
+  title: 7. Debugging with Verilator (3/6)
+  bullets:
+  - Signal inspection
+  - GDB debugging
+  - Valgrind debugging
+  - Signal Inspection
+  - Printing signal values
+  - Signal monitoring
+  notes: From MODULE2 Topics Covered.
+- type: bullets
+  title: 7. Debugging with Verilator (4/6)
+  bullets:
+  - VCD file analysis
+  - Debug output
+  - Logging Strategies
+  - Debug levels
+  - Conditional logging
+  - File-based logging
+  notes: From MODULE2 Topics Covered.
+- type: bullets
+  title: 7. Debugging with Verilator (5/6)
+  bullets:
+  - Log organization
+  - Common Pitfalls and Solutions
+  - Forgetting to call eval()
+  - Signal initialization
+  - Memory leaks
+  - Timing issues
+  notes: From MODULE2 Topics Covered.
+- type: bullets
+  title: 7. Debugging with Verilator (6/6)
+  bullets:
+  - Common mistakes
+  - '`debug_example.cpp`: C++ debugging techniques, logging strategies, error handling'
+  notes: From MODULE2 Topics Covered.
+- type: bullets
+  title: 8. Advanced Verilator Features (1/4)
+  bullets:
+  - Multi-Threaded Simulation Basics
+  - Thread safety
+  - Parallel simulation
+  - Synchronization
+  - Performance Optimization
+  - Compilation optimization
+  notes: From MODULE2 Topics Covered.
+- type: bullets
+  title: 8. Advanced Verilator Features (2/4)
+  bullets:
+  - Simulation optimization
+  - Memory optimization
+  - Speed optimization
+  - Large Design Handling
+  - Compiling large designs
+  - Memory management
+  notes: From MODULE2 Topics Covered.
+- type: bullets
+  title: 8. Advanced Verilator Features (3/4)
+  bullets:
+  - Incremental compilation
+  - Design partitioning
+  - Custom C++ Integration
+  - Integrating C++ libraries
+  - External interfaces
+  - Custom functions
+  notes: From MODULE2 Topics Covered.
+- type: bullets
+  title: 8. Advanced Verilator Features (4/4)
+  bullets:
+  - System integration
+  - SystemC Integration Basics
+  - SystemC support
+  - SystemC integration
+  - When to use SystemC
+  notes: From MODULE2 Topics Covered.
+- type: bullets
+  title: 9. Project Organization (1/7)
+  bullets:
+  - Makefile Integration
+  - Basic Makefile structure
+  - Verilator compilation rules
+  - Test execution
+  - Clean targets
+  - Dependency management
+  notes: From MODULE2 Topics Covered.
+- type: bullets
+  title: 9. Project Organization (2/7)
+  bullets:
+  - CMake Integration
+  - CMake setup
+  - Verilator integration
+  - Build configuration
+  - Scripting for Automation
+  - Shell scripts for automation
+  notes: From MODULE2 Topics Covered.
+- type: bullets
+  title: 9. Project Organization (3/7)
+  bullets:
+  - Batch processing
+  - Test automation
+  - Result collection
+  - Batch Simulation
+  - Running multiple tests
+  - Test selection
+  notes: From MODULE2 Topics Covered.
+- type: bullets
+  title: 9. Project Organization (4/7)
+  bullets:
+  - Parallel execution
+  - Result aggregation
+  - Regression Testing Setup
+  - Test suite organization
+  - Regression test structure
+  - Pass/fail reporting
+  notes: From MODULE2 Topics Covered.
+- type: bullets
+  title: 9. Project Organization (5/7)
+  bullets:
+  - Test result tracking
+  - 'Location: `module0/examples/verilator_basics/and_gate_test.cpp`'
+  - 'Demonstrates: Basic C++ testbench structure, signal access'
+  - 'Location: `module2/examples/cpp_testbench/mux_4to1_test.cpp`'
+  - 'Demonstrates: Complete C++ testbench, signal access, test patterns'
+  - 'Location: `module2/examples/cpp_testbench/counter_test.cpp`'
+  notes: From MODULE2 Topics Covered.
+- type: bullets
+  title: 9. Project Organization (6/7)
+  bullets:
+  - 'Demonstrates: Clock generation, reset sequences, simulation loop'
+  - 'Location: `module2/examples/file_io/file_io_test.cpp`'
+  - 'Demonstrates: Reading test vectors from files, writing results'
+  - 'Location: See compilation examples'
+  - 'Demonstrates: Multi-file compilation, include paths'
+  - 'Location: `module2/tests/basic_tests/test_mux_4to1.cpp`'
+  notes: From MODULE2 Topics Covered.
+- type: bullets
+  title: 9. Project Organization (7/7)
+  bullets:
+  - 'Demonstrates: Class-based organization, comprehensive testing'
+  notes: From MODULE2 Topics Covered.
+- type: section
+  title: Hands-on examples
+- type: demo
+  title: Module 2 self-check
+  command: ./scripts/module2.sh --check
+  screenshot: assets/screenshots/module2_check.png
+  expect_stdout_contains: All required checks passed
+  notes: Run from course repository root.
+- type: code
+  title: Exercise scaffold
+  language: bash
+  source_file: scripts/module2.sh
+  code: ./scripts/module2.sh --scaffold
+- type: demo
+  title: 'Demo: Compilation'
+  command: head -25 module2/examples/compilation/Makefile
+  screenshot: assets/screenshots/ex01_compilation.png
+  notes: 'Hands-on: module2/examples/compilation/'
+  expect_stdout_contains: Verilator
+- type: demo
+  title: 'Demo: C++ testbench'
+  command: ls -la module2/examples/cpp_testbench
+  screenshot: assets/screenshots/ex02_cpp_testbench.png
+  notes: 'Hands-on: module2/examples/cpp_testbench/'
+  expect_stdout_contains: total
+- type: demo
+  title: 'Demo: File I/O'
+  command: ls -la module2/examples/file_io
+  screenshot: assets/screenshots/ex03_file_io.png
+  notes: 'Hands-on: module2/examples/file_io/'
+  expect_stdout_contains: total
+- type: demo
+  title: 'Demo: Waveforms'
+  command: ls -la module2/examples/waveforms
+  screenshot: assets/screenshots/ex04_waveforms.png
+  notes: 'Hands-on: module2/examples/waveforms/'
+  expect_stdout_contains: total
+- type: demo
+  title: 'Demo: Debugging'
+  command: ls -la module2/examples/debugging
+  screenshot: assets/screenshots/ex05_debugging.png
+  notes: 'Hands-on: module2/examples/debugging/'
+  expect_stdout_contains: total
+- type: section
+  title: Practice & assessment
+- type: bullets
+  title: Assessment checklist
+  bullets:
+  - Can compile Verilog designs with various Verilator options
+  - Can write complete C++ testbenches
+  - Can use Verilator C++ API effectively
+  - Can use file I/O in C++ testbenches
+  - Can generate and view waveforms
+  - Can debug compilation and simulation errors
+- type: bullets
+  title: Summary & next steps
+  bullets:
+  - Master Verilator for C++ testbench development
+  - Complete module2/CHECKLIST.md
+  - Run ./scripts/module2.sh --check
+  - 'Next: Next module in course'

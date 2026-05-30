@@ -10,6 +10,9 @@
 
 [↑ Back to README](../README.md) | [📚 Full Syllabus](SYLLABUS2.md)
 
+
+
+- **Slides & video**: [slides.pptx](../media/module3/slides.pptx) · [slides.pdf](../media/module3/slides.pdf) · [video.mp4](../media/module3/video.mp4) — regenerate: `./scripts/build_all_media.sh --module 3`
 ---
 
 ## Overview
@@ -162,6 +165,51 @@ All example testbenches in this module include detailed comments mapping each se
 Understanding these fundamental patterns now will make learning UVM and other advanced verification methodologies much easier. The concepts are the same; UVM just provides a standardized, reusable framework for organizing them.
 
 **Key Takeaway**: Every UVM component has a simple equivalent in basic testbenches. The complexity comes from reusability, configurability, and transaction-level modeling, not from the core verification concepts.
+
+
+## Design Architecture
+
+### 1. Canonical testbench–DUT boundary
+
+- **DUT**: Device Under Test in `module3/dut/` (gates, multiplexers, counters)
+- **TB wrapper**: Encapsulates instantiation, clock/reset, and test program only
+- **Signals**: Explicit wires/regs (Verilog) or model ports (C++) — no hidden coupling
+- **Lifecycle**: Build → reset → run tests → report → `$finish` / `return` exit code
+
+### 2. Dual-paradigm environment architecture
+
+- **Verilog TB** (`examples/verilog_testbenches/`): Event-driven `initial`/`always`
+- **C++ TB** (`examples/cpp_testbenches/`): `eval()` loop with Verilator model
+- **Shared DUT**: Same RTL verified two ways — highlights tool-specific TB idioms
+- **Comparison guide**: `examples/comparison/` documents mapping between styles
+
+### 3. Verification component roles (UVM-aligned)
+
+- **Driver**: Applies stimulus (assignments before `eval` or `#delay`)
+- **Monitor**: Samples outputs; logs transactions or pin values
+- **Scoreboard**: Compares actual vs expected; increments pass/fail
+- **Clock/reset agents**: Reusable blocks generating periodic clock and reset sequences
+
+## Verification & Testing Methods
+
+### 1. Structured test flow (build–connect–run)
+
+- **Build**: Compile RTL + TB; elaborate hierarchy
+- **Connect**: Port map DUT; tie off unused inputs
+- **Run**: Execute directed cases (AND truth table, counter wrap, MUX exhaust)
+- **Cleanup**: Close files, print summary, non-zero exit on failure
+
+### 2. Directed and exhaustive patterns
+
+- **Truth-table tests**: All input combinations for small combinational DUTs
+- **Sequential tests**: Known count sequences after reset deassert
+- **Assertions**: `assert` (C++) or immediate checks (Verilog) on each vector
+
+### 3. Cross-paradigm verification discipline
+
+- **Same spec, two TBs**: Document expected behavior once; implement in Verilog and C++
+- **Self-checking**: Both paradigms count errors locally — no manual waveform grading
+- **Orchestration**: `./scripts/module3.sh --verilog-testbenches` vs `--cpp-testbenches`
 
 ## Topics Covered
 

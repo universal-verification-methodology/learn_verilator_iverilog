@@ -1,0 +1,12 @@
+flowchart TB
+  subgraph TB["Testbench"]
+    DRV[Driver / Stimulus]
+    MON[Monitor]
+    CHK[Checker / Scoreboard]
+  end
+  subgraph DUT["Design Under Test"]
+    RTL[RTL modules in moduleN/dut/]
+  end
+  DRV -->|ports| RTL
+  RTL -->|outputs| MON
+  MON --> CHK

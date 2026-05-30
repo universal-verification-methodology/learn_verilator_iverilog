@@ -10,6 +10,9 @@
 
 [↑ Back to README](../README.md) | [📚 Full Syllabus](SYLLABUS2.md)
 
+
+
+- **Slides & video**: [slides.pptx](../media/module5/slides.pptx) · [slides.pdf](../media/module5/slides.pdf) · [video.mp4](../media/module5/video.mp4) — regenerate: `./scripts/build_all_media.sh --module 5`
 ---
 
 ## Overview
@@ -90,6 +93,49 @@ make all
 cd module5/examples/timing_control
 make all
 ```
+
+
+## Design Architecture
+
+### 1. Protocol-oriented DUT (Module 5)
+
+- **`dut/uart/simple_uart.v`**: TX FSM — idle, start, data bits, stop; `tx_done` handshake
+- **Clock domain**: Single `clk` with active-low `rst_n`; serial `tx` output
+- **Future DUTs**: SPI/I2C examples extend the same procedural TB patterns
+- **Interface contract**: `tx_start` pulse, `tx_data[7:0]`, wait for `tx_done` before next byte
+
+### 2. Procedural testbench control architecture
+
+- **Verilog**: `initial` sequences call **tasks**; `always` blocks for clock and monitors
+- **C++**: `main` or test class methods encode multi-step protocols with loops and waits
+- **Timing**: `#delay` (Verilog) or counted `eval()` cycles (Verilator) align to bit times
+- **State alignment**: TB FSM tracks UART phases while DUT FSM runs in RTL
+
+### 3. Reusable routine layer
+
+- **Tasks/functions**: `send_byte`, `wait_tx_done`, `apply_reset` — shared across tests
+- **C++ helpers**: Same operations as methods on a `UartDriver` helper class
+- **File-driven layer**: Sequences can be loaded from vector files for long regressions
+
+## Verification & Testing Methods
+
+### 1. Sequence-based stimulus
+
+- **Multi-step tests**: Reset → configure → send N bytes → check `tx` bit timing
+- **Handshaking**: Poll `tx_done` or use timeout counters to detect stuck FSM
+- **Negative tests**: Start without reset, back-to-back `tx_start` — expect defined errors
+
+### 2. Timing and synchronization checks
+
+- **Bit period**: Verify one `eval()` or time step per bit cell in examples
+- **Setup/hold**: Ensure `tx_data` stable before `tx_start` per README contracts
+- **Waveform review**: UART frame visible on `tx` in VCD — start bit, LSB-first data
+
+### 3. Reuse and regression methodology
+
+- **Routine library**: Centralize protocol steps; tests only describe high-level scenarios
+- **File I/O regression**: Replay captured stimulus files across tool releases
+- **Orchestration**: `./scripts/module5.sh --test-sequences` and `--file-io` for focused runs
 
 ## Topics Covered
 

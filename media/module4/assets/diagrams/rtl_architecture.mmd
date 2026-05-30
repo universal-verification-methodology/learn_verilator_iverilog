@@ -1,0 +1,14 @@
+flowchart LR
+  subgraph agents["Modular TB"]
+    CLK[clock_reset]
+    STIM[stimulus]
+    CHK[checker]
+  end
+  subgraph dut4["module4/dut"]
+    ALU[simple_alu]
+    FIFO[simple_fifo]
+    RF[register_file]
+  end
+  CLK --> dut4
+  STIM --> dut4
+  dut4 --> CHK

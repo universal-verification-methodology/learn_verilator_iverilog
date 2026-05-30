@@ -1,0 +1,633 @@
+title: Module 8 — Verification Methodology and Best Practices
+course: learn_verilator_iverilog
+module: 8
+subtitle: Master verification methodology and industry best practices
+footer: learn_verilator_iverilog / Module 8
+slides:
+- type: title
+  title: Module 8
+  subtitle: Verification Methodology and Best Practices
+- type: bullets
+  title: Learning objectives
+  bullets:
+  - Master verification methodology and industry best practices
+- type: bullets
+  title: Prerequisites
+  bullets:
+  - See module README
+- type: image
+  title: Learning path
+  image: assets/diagrams/learning_path.png
+  caption: Master verification methodology and industry best practices
+- type: bullets
+  title: Overview
+  bullets:
+  - This module focuses on verification methodology, best practices, and preparing
+    for real-world verification projects. You'll learn about test planning, verification
+    metrics, documentation, and verification sign-off.
+- type: section
+  title: Design architecture
+- type: image
+  title: RTL / block architecture
+  image: assets/diagrams/rtl_architecture.png
+  caption: 'Module 8: DUT / block hierarchy (see module8/examples/).'
+- type: image
+  title: Verification environment architecture
+  image: assets/diagrams/verification_architecture.png
+  caption: 'Module 8: UVM layers, agents, and checkers for this phase.'
+- type: bullets
+  title: 1. End-to-end verification program architecture
+  bullets:
+  - 'DUT portfolio: Gates, counters, multiplexers — representative of prior modules'
+  - 'TB styles: Modular Verilog TBs and C++ Verilator TBs under `tests/`'
+  - 'Knowledge base: Guides in `examples/` (planning, metrics, sign-off, industry
+    practices)'
+  - 'Automation: `./scripts/module8.sh` orchestrates methodology demos, not just RTL
+    compiles'
+  notes: From MODULE8 Design Architecture.
+- type: bullets
+  title: 2. Layered testbench architecture (production pattern)
+  bullets:
+  - 'Test layer: Selects scenario, configures plusargs, sets pass criteria'
+  - 'Environment layer: Agents, scoreboard, coverage collectors — reusable per project'
+  - 'DUT layer: RTL with assertions and optional bind modules'
+  - 'Tool layer: Simulator choice (iverilog vs Verilator) per block complexity and
+    SV needs'
+  notes: From MODULE8 Design Architecture.
+- type: bullets
+  title: 3. Verification infrastructure
+  bullets:
+  - 'Regression shell: Scripts batch examples; logs archived for trend analysis'
+  - 'Documentation: Test plans, coding standards, tool comparison guides in-repo'
+  - 'Metrics store: Example formats for coverage/assertion summaries before sign-off'
+  notes: From MODULE8 Design Architecture.
+- type: section
+  title: Verification & testing methods
+- type: image
+  title: Testing and closure flow
+  image: assets/diagrams/testing_methods.png
+  caption: 'Module 8: how tests, checks, and metrics close verification goals.'
+- type: bullets
+  title: 1. Verification planning and strategy
+  bullets:
+  - 'Test plan: Features → test cases → priority → owner → status'
+  - 'Strategy selection: Directed vs random vs assertion-heavy per risk area'
+  - 'Entry/exit criteria: Definition of done per milestone (smoke, feature, full regression)'
+  notes: From MODULE8 Verification & Testing Methods.
+- type: bullets
+  title: 2. Metrics, regression, and debug methodology
+  bullets:
+  - 'Metrics: Functional coverage, assertion pass rate, test count, bug find rate'
+  - 'Regression: Nightly `./scripts/module8.sh` style runs; compare logs to golden'
+  - 'Debug process: Reproduce → minimize → fix → add regression test (examples in
+    `debugging_methodology/`)'
+  notes: From MODULE8 Verification & Testing Methods.
+- type: bullets
+  title: 3. Sign-off and industry practice
+  bullets:
+  - 'Sign-off checklist: Coverage goals met, zero outstanding sev-1 assertions, plan
+    executed'
+  - 'Tool selection: Decision matrix (iverilog vs Verilator) from `tool_selection/`
+    guide'
+  - 'Maintainability: Coding standards and modular TB rules for team-scale projects'
+  notes: From MODULE8 Verification & Testing Methods.
+- type: section
+  title: Syllabus topics
+- type: bullets
+  title: 1. Verification Planning (1/5)
+  bullets:
+  - Test Plan Development
+  - Test plan structure
+  - Test plan content
+  - Test plan review
+  - Test plan maintenance
+  - Verification Strategy
+  notes: From MODULE8 Topics Covered.
+- type: bullets
+  title: 1. Verification Planning (2/5)
+  bullets:
+  - Strategy definition
+  - Strategy selection
+  - Strategy implementation
+  - Strategy evaluation
+  - Test Case Identification
+  - Test case types
+  notes: From MODULE8 Topics Covered.
+- type: bullets
+  title: 1. Verification Planning (3/5)
+  bullets:
+  - Test case identification
+  - Test case prioritization
+  - Test case documentation
+  - Coverage Planning
+  - Coverage goals
+  - Coverage strategy
+  notes: From MODULE8 Topics Covered.
+- type: bullets
+  title: 1. Verification Planning (4/5)
+  bullets:
+  - Coverage tracking
+  - Coverage closure
+  - Resource Estimation
+  - Resource planning
+  - Resource allocation
+  - Resource tracking
+  notes: From MODULE8 Topics Covered.
+- type: bullets
+  title: 1. Verification Planning (5/5)
+  bullets:
+  - Resource optimization
+  notes: From MODULE8 Topics Covered.
+- type: bullets
+  title: 2. Testbench Architecture Best Practices (1/5)
+  bullets:
+  - Modular Design Principles
+  - Module separation
+  - Interface definition
+  - Module communication
+  - Module testing
+  - Reusability Strategies
+  notes: From MODULE8 Topics Covered.
+- type: bullets
+  title: 2. Testbench Architecture Best Practices (2/5)
+  bullets:
+  - Reusable components
+  - Component libraries
+  - Component configuration
+  - Component documentation
+  - Configurability
+  - Parameterization
+  notes: From MODULE8 Topics Covered.
+- type: bullets
+  title: 2. Testbench Architecture Best Practices (3/5)
+  bullets:
+  - Configuration management
+  - Configuration testing
+  - Configuration documentation
+  - Maintainability
+  - Code organization
+  - Code documentation
+  notes: From MODULE8 Topics Covered.
+- type: bullets
+  title: 2. Testbench Architecture Best Practices (4/5)
+  bullets:
+  - Code review
+  - Code refactoring
+  - Scalability
+  - Scalable architecture
+  - Performance optimization
+  - Resource management
+  notes: From MODULE8 Topics Covered.
+- type: bullets
+  title: 2. Testbench Architecture Best Practices (5/5)
+  bullets:
+  - Growth planning
+  - '`modular_testbench_verilog.v`: Well-structured modular testbench in Verilog'
+  - '`modular_testbench_cpp.cpp`: Well-structured modular testbench in C++'
+  notes: From MODULE8 Topics Covered.
+- type: bullets
+  title: 3. Coding Standards for Testbenches (1/5)
+  bullets:
+  - Naming Conventions
+  - Module naming
+  - Signal naming
+  - Parameter naming
+  - Function/task naming
+  - Code Organization
+  notes: From MODULE8 Topics Covered.
+- type: bullets
+  title: 3. Coding Standards for Testbenches (2/5)
+  bullets:
+  - File structure
+  - Module organization
+  - Function organization
+  - Code layout
+  - Commenting Standards
+  - Header comments
+  notes: From MODULE8 Topics Covered.
+- type: bullets
+  title: 3. Coding Standards for Testbenches (3/5)
+  bullets:
+  - Inline comments
+  - Section comments
+  - Documentation comments
+  - Documentation Practices
+  - README files
+  - Code documentation
+  notes: From MODULE8 Topics Covered.
+- type: bullets
+  title: 3. Coding Standards for Testbenches (4/5)
+  bullets:
+  - Test documentation
+  - User guides
+  - Style Guides
+  - Verilog style
+  - C++ style
+  - Consistency
+  notes: From MODULE8 Topics Covered.
+- type: bullets
+  title: 3. Coding Standards for Testbenches (5/5)
+  bullets:
+  - Tools
+  - '`coding_standards_guide.md`: Comprehensive coding standards guide'
+  notes: From MODULE8 Topics Covered.
+- type: bullets
+  title: 4. Verification Metrics (1/5)
+  bullets:
+  - Coverage Metrics
+  - Code coverage
+  - Functional coverage
+  - Toggle coverage
+  - Coverage analysis
+  - Bug Metrics
+  notes: From MODULE8 Topics Covered.
+- type: bullets
+  title: 4. Verification Metrics (2/5)
+  bullets:
+  - Bug tracking
+  - Bug analysis
+  - Bug closure
+  - Bug reporting
+  - Test Metrics
+  - Test count
+  notes: From MODULE8 Topics Covered.
+- type: bullets
+  title: 4. Verification Metrics (3/5)
+  bullets:
+  - Test pass rate
+  - Test execution time
+  - Test efficiency
+  - Progress Tracking
+  - Progress measurement
+  - Progress reporting
+  notes: From MODULE8 Topics Covered.
+- type: bullets
+  title: 4. Verification Metrics (4/5)
+  bullets:
+  - Progress analysis
+  - Progress optimization
+  - Quality Metrics
+  - Quality measurement
+  - Quality analysis
+  - Quality improvement
+  notes: From MODULE8 Topics Covered.
+- type: bullets
+  title: 4. Verification Metrics (5/5)
+  bullets:
+  - Quality reporting
+  - '`metrics_tracker_verilog.v`: Metrics tracking in Verilog'
+  - '`metrics_tracker_cpp.cpp`: Metrics tracking in C++'
+  notes: From MODULE8 Topics Covered.
+- type: bullets
+  title: 5. Debugging Methodology (1/5)
+  bullets:
+  - Systematic Debugging Approach
+  - Debugging process
+  - Debugging steps
+  - Debugging techniques
+  - Debugging best practices
+  - Debugging Tools and Techniques
+  notes: From MODULE8 Topics Covered.
+- type: bullets
+  title: 5. Debugging Methodology (2/5)
+  bullets:
+  - Waveform viewers
+  - Logging tools
+  - Debugging utilities
+  - Debugging scripts
+  - Logging Strategies
+  - Log levels
+  notes: From MODULE8 Topics Covered.
+- type: bullets
+  title: 5. Debugging Methodology (3/5)
+  bullets:
+  - Log format
+  - Log management
+  - Log analysis
+  - Error Reporting
+  - Error messages
+  - Error logging
+  notes: From MODULE8 Topics Covered.
+- type: bullets
+  title: 5. Debugging Methodology (4/5)
+  bullets:
+  - Error tracking
+  - Error analysis
+  - Root Cause Analysis
+  - Problem identification
+  - Cause analysis
+  - Solution development
+  notes: From MODULE8 Topics Covered.
+- type: bullets
+  title: 5. Debugging Methodology (5/5)
+  bullets:
+  - Solution verification
+  notes: From MODULE8 Topics Covered.
+- type: bullets
+  title: 6. Regression Testing (1/5)
+  bullets:
+  - Regression Test Suite Organization
+  - Test suite structure
+  - Test organization
+  - Test categorization
+  - Test maintenance
+  - Test Selection Strategies
+  notes: From MODULE8 Topics Covered.
+- type: bullets
+  title: 6. Regression Testing (2/5)
+  bullets:
+  - Test selection methods
+  - Test prioritization
+  - Test optimization
+  - Test efficiency
+  - Automation
+  - Test automation
+  notes: From MODULE8 Topics Covered.
+- type: bullets
+  title: 6. Regression Testing (3/5)
+  bullets:
+  - Build automation
+  - Report automation
+  - Automation tools
+  - Continuous Integration
+  - CI setup
+  - CI workflows
+  notes: From MODULE8 Topics Covered.
+- type: bullets
+  title: 6. Regression Testing (4/5)
+  bullets:
+  - CI best practices
+  - CI maintenance
+  - Regression Analysis
+  - Regression detection
+  - Regression analysis
+  - Regression reporting
+  notes: From MODULE8 Topics Covered.
+- type: bullets
+  title: 6. Regression Testing (5/5)
+  bullets:
+  - Regression closure
+  notes: From MODULE8 Topics Covered.
+- type: bullets
+  title: 7. Verification Sign-Off (1/5)
+  bullets:
+  - Sign-Off Criteria
+  - Criteria definition
+  - Criteria measurement
+  - Criteria achievement
+  - Criteria documentation
+  - Coverage Closure
+  notes: From MODULE8 Topics Covered.
+- type: bullets
+  title: 7. Verification Sign-Off (2/5)
+  bullets:
+  - Coverage goals
+  - Coverage achievement
+  - Coverage verification
+  - Coverage documentation
+  - Bug Closure
+  - Bug resolution
+  notes: From MODULE8 Topics Covered.
+- type: bullets
+  title: 7. Verification Sign-Off (3/5)
+  bullets:
+  - Bug verification
+  - Bug documentation
+  - Bug closure process
+  - Documentation Requirements
+  - Documentation types
+  - Documentation content
+  notes: From MODULE8 Topics Covered.
+- type: bullets
+  title: 7. Verification Sign-Off (4/5)
+  bullets:
+  - Documentation review
+  - Documentation maintenance
+  - Review Process
+  - Review preparation
+  - Review execution
+  - Review follow-up
+  notes: From MODULE8 Topics Covered.
+- type: bullets
+  title: 7. Verification Sign-Off (5/5)
+  bullets:
+  - Review closure
+  notes: From MODULE8 Topics Covered.
+- type: bullets
+  title: 8. Tool Selection and Integration (1/6)
+  bullets:
+  - When to Use iverilog
+  - Use cases
+  - Advantages
+  - Limitations
+  - Best practices
+  - When to Use Verilator
+  notes: From MODULE8 Topics Covered.
+- type: bullets
+  title: 8. Tool Selection and Integration (2/6)
+  bullets:
+  - Use cases
+  - Advantages
+  - Limitations
+  - Best practices
+  - Tool Comparison and Trade-offs
+  - Feature comparison
+  notes: From MODULE8 Topics Covered.
+- type: bullets
+  title: 8. Tool Selection and Integration (3/6)
+  bullets:
+  - Performance comparison
+  - Cost comparison
+  - Selection criteria
+  - Performance Considerations
+  - Simulation speed
+  - Memory usage
+  notes: From MODULE8 Topics Covered.
+- type: bullets
+  title: 8. Tool Selection and Integration (4/6)
+  bullets:
+  - Compilation time
+  - Optimization
+  - Feature Comparison
+  - Verilog support
+  - SystemVerilog support
+  - Testbench support
+  notes: From MODULE8 Topics Covered.
+- type: bullets
+  title: 8. Tool Selection and Integration (5/6)
+  bullets:
+  - Coverage support
+  - Hybrid Approaches
+  - Tool combination
+  - Workflow integration
+  - Best practices
+  - Examples
+  notes: From MODULE8 Topics Covered.
+- type: bullets
+  title: 8. Tool Selection and Integration (6/6)
+  bullets:
+  - '`tool_comparison_guide.md`: Tool selection and comparison guide'
+  notes: From MODULE8 Topics Covered.
+- type: bullets
+  title: 9. Project Management (1/5)
+  bullets:
+  - Verification Project Planning
+  - Project planning
+  - Project structure
+  - Project execution
+  - Project closure
+  - Resource Management
+  notes: From MODULE8 Topics Covered.
+- type: bullets
+  title: 9. Project Management (2/5)
+  bullets:
+  - Resource planning
+  - Resource allocation
+  - Resource tracking
+  - Resource optimization
+  - Schedule Management
+  - Schedule planning
+  notes: From MODULE8 Topics Covered.
+- type: bullets
+  title: 9. Project Management (3/5)
+  bullets:
+  - Schedule tracking
+  - Schedule optimization
+  - Schedule reporting
+  - Risk Management
+  - Risk identification
+  - Risk analysis
+  notes: From MODULE8 Topics Covered.
+- type: bullets
+  title: 9. Project Management (4/5)
+  bullets:
+  - Risk mitigation
+  - Risk monitoring
+  - Communication and Reporting
+  - Communication plan
+  - Reporting structure
+  - Reporting frequency
+  notes: From MODULE8 Topics Covered.
+- type: bullets
+  title: 9. Project Management (5/5)
+  bullets:
+  - Reporting tools
+  notes: From MODULE8 Topics Covered.
+- type: bullets
+  title: 10. Industry Practices (1/7)
+  bullets:
+  - Open-Source Verification Tools
+  - Tool ecosystem
+  - Tool selection
+  - Tool integration
+  - Tool maintenance
+  - Industry Standards
+  notes: From MODULE8 Topics Covered.
+- type: bullets
+  title: 10. Industry Practices (2/7)
+  bullets:
+  - IEEE standards
+  - Industry practices
+  - Compliance
+  - Certification
+  - Tool Ecosystems
+  - Tool integration
+  notes: From MODULE8 Topics Covered.
+- type: bullets
+  title: 10. Industry Practices (3/7)
+  bullets:
+  - Tool workflows
+  - Tool best practices
+  - Tool evolution
+  - Career Development
+  - Skill development
+  - Career paths
+  notes: From MODULE8 Topics Covered.
+- type: bullets
+  title: 10. Industry Practices (4/7)
+  bullets:
+  - Professional growth
+  - Continuing education
+  - Continuing Education
+  - Learning resources
+  - Training programs
+  - Certifications
+  notes: From MODULE8 Topics Covered.
+- type: bullets
+  title: 10. Industry Practices (5/7)
+  bullets:
+  - Professional development
+  - Transition to Commercial Tools
+  - Tool evaluation
+  - Tool migration
+  - Tool training
+  - Tool adoption
+  notes: From MODULE8 Topics Covered.
+- type: bullets
+  title: 10. Industry Practices (6/7)
+  bullets:
+  - 'Location: See testbench architecture examples'
+  - 'Demonstrates: Complete verification environment following best practices'
+  - 'Location: `module8/examples/testbench_architecture/`'
+  - 'Demonstrates: Modular, reusable, configurable testbench architecture'
+  - 'Location: See coding standards and guides'
+  - 'Demonstrates: Comprehensive documentation practices'
+  notes: From MODULE8 Topics Covered.
+- type: bullets
+  title: 10. Industry Practices (7/7)
+  bullets:
+  - 'Location: See verification metrics examples'
+  - 'Demonstrates: Metrics tracking and sign-off criteria'
+  - 'Location: Various example directories'
+  - 'Demonstrates: Best practices and methodologies'
+  notes: From MODULE8 Topics Covered.
+- type: section
+  title: Hands-on examples
+- type: demo
+  title: Module 8 self-check
+  command: ./scripts/module8.sh --check
+  screenshot: assets/screenshots/module8_check.png
+  expect_stdout_contains: All required checks passed
+  notes: Run from course repository root.
+- type: demo
+  title: 'Demo: Testbench architecture'
+  command: cd module8/examples/testbench_architecture && make all
+  screenshot: assets/screenshots/ex01_testbench_architecture.png
+  notes: 'Hands-on: module8/examples/testbench_architecture/'
+  expect_stdout_contains: ===
+- type: demo
+  title: 'Demo: Verification metrics'
+  command: cd module8/examples/verification_metrics && make all
+  screenshot: assets/screenshots/ex02_verification_metrics.png
+  notes: 'Hands-on: module8/examples/verification_metrics/'
+  expect_stdout_contains: ===
+- type: demo
+  title: 'Demo: Tool selection'
+  command: head -25 module8/examples/tool_selection/tool_comparison_guide.md
+  screenshot: assets/screenshots/ex03_tool_selection.png
+  notes: 'Hands-on: module8/examples/tool_selection/'
+  expect_stdout_contains: iverilog
+- type: demo
+  title: 'Demo: Coding standards'
+  command: head -25 module8/examples/coding_standards/coding_standards_guide.md
+  screenshot: assets/screenshots/ex04_coding_standards.png
+  notes: 'Hands-on: module8/examples/coding_standards/'
+  expect_stdout_contains: testbench
+- type: section
+  title: Practice & assessment
+- type: bullets
+  title: Assessment checklist
+  bullets:
+  - Can plan verification projects
+  - Can apply best practices
+  - Can measure verification progress
+  - Can debug systematically
+  - Can manage regression testing
+  - Can achieve verification sign-off
+- type: bullets
+  title: Summary & next steps
+  bullets:
+  - Master verification methodology and industry best practices
+  - Complete module8/CHECKLIST.md
+  - Run ./scripts/module8.sh --check
+  - 'Next: Next module in course'

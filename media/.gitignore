@@ -1,0 +1,4 @@
+# Intermediate build artifacts (keep pptx/pdf/mp4 if you commit media)
+**/frames/
+**/*.log
+**/build.log

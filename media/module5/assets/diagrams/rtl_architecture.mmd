@@ -1,0 +1,9 @@
+flowchart LR
+  subgraph tb5["Procedural TB"]
+    TASKS[tasks / C++ methods]
+    CLK[clock generator]
+  end
+  UART[simple_uart FSM]
+  TASKS -->|tx_start data| UART
+  UART -->|tx_done tx| TASKS
+  CLK --> UART

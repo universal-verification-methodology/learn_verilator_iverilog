@@ -10,6 +10,9 @@
 
 [↑ Back to README](../README.md) | [📚 Full Syllabus](SYLLABUS2.md)
 
+
+
+- **Slides & video**: [slides.pptx](../media/module6/slides.pptx) · [slides.pdf](../media/module6/slides.pdf) · [video.mp4](../media/module6/video.mp4) — regenerate: `./scripts/build_all_media.sh --module 6`
 ---
 
 ## Overview
@@ -86,6 +89,49 @@ make all
 cd module6/examples/interfaces
 make all
 ```
+
+
+## Design Architecture
+
+### 1. SystemVerilog testbench layer
+
+- **Classes**: Encapsulate transactions, drivers, and test state (`sv_classes` examples)
+- **Interfaces**: Bundle DUT-facing signals; connect TB components via modports
+- **Packages**: Shared types, parameters, and class declarations across compilation units
+- **Randomization**: Constraint blocks on transaction fields for varied legal stimulus
+
+### 2. DUT and tool considerations
+
+- **`dut/simple_gates/`**, **`dut/multiplexers/`**: RTL exercised with SV TB features
+- **iverilog**: Primary target for classes, interfaces, and `randomize()`
+- **Verilator**: Limited SV — `equivalent_cpp/` documents C++ workarounds for unsupported constructs
+- **Compilation order**: Package → interface → classes → TB top (see example Makefiles)
+
+### 3. Object-oriented TB topology
+
+- **Transaction item**: Data class holding addr, data, or opcode fields
+- **Driver class**: `randomize()` item, drive interface signals, wait for handshake
+- **Test class**: Builds environment, runs sequences, reports `uvm-style` summary without UVM libs
+
+## Verification & Testing Methods
+
+### 1. Constrained-random stimulus
+
+- **Constraints**: Legal opcodes, address ranges, and timing gaps enforced in class
+- **Seeds**: Repeatable runs with `srandom(seed)` for debug vs random exploration
+- **Coverage of space**: Many transactions from few lines of sequence code
+
+### 2. Interface-based checking
+
+- **Modports**: Driver drives `DUT_MP`; monitor samples `MON_MP` on same interface
+- **Scoreboard hook**: Monitor pushes observed transactions to checker class
+- **Encapsulation**: DUT port list changes localized to interface definition
+
+### 3. SV vs C++ equivalence verification
+
+- **Dual implementation**: Compare SV class TB behavior to C++ equivalent where Verilator used
+- **Limitation tests**: Document constructs that fail Verilator lint — plan tool split
+- **Regression**: `./scripts/module6.sh` runs iverilog-first examples then C++ equivalents
 
 ## Topics Covered
 

@@ -1,0 +1,12 @@
+flowchart TB
+  subgraph paradigms["Dual TB"]
+    VTB[Verilog TB iverilog]
+    CTB[C++ TB Verilator]
+  end
+  subgraph dut3["module3/dut"]
+    GATE[and_gate]
+    MUX[mux_4to1]
+    CTR[counter_4bit]
+  end
+  VTB --> dut3
+  CTB --> dut3

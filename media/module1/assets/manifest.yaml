@@ -1,0 +1,92 @@
+module: 1
+course: learn_verilator_iverilog
+assets:
+- id: learning_path
+  type: diagram
+  file: assets/diagrams/learning_path.png
+  source: assets/diagrams/learning_path.mmd
+  generator: render_diagrams.sh
+  slides:
+  - 4
+  - 4
+  license: learn_verilator_iverilog course materials
+- id: rtl_architecture
+  type: diagram
+  file: assets/diagrams/rtl_architecture.png
+  source: assets/diagrams/rtl_architecture.mmd
+  generator: render_diagrams.sh
+  slides:
+  - 7
+  license: learn_verilator_iverilog course materials
+- id: verification_architecture
+  type: diagram
+  file: assets/diagrams/verification_architecture.png
+  source: assets/diagrams/verification_architecture.mmd
+  generator: render_diagrams.sh
+  slides:
+  - 8
+  license: learn_verilator_iverilog course materials
+- id: testing_methods
+  type: diagram
+  file: assets/diagrams/testing_methods.png
+  source: assets/diagrams/testing_methods.mmd
+  generator: render_diagrams.sh
+  slides:
+  - 13
+  license: learn_verilator_iverilog course materials
+- id: module1_check
+  type: screenshot
+  file: assets/screenshots/module1_check.png
+  capture_command: ./scripts/module1.sh --check
+  cwd: .
+  slides:
+  - 67
+  expect_stdout_contains: All required checks passed
+- id: ex01_compilation
+  type: screenshot
+  file: assets/screenshots/ex01_compilation.png
+  capture_command: cd module1/examples/compilation && make basic_compilation
+  cwd: .
+  slides:
+  - 69
+  expect_stdout_contains: ===
+- id: ex02_simulation
+  type: screenshot
+  file: assets/screenshots/ex02_simulation.png
+  capture_command: cd module1/examples/simulation && make all
+  cwd: .
+  slides:
+  - 70
+  expect_stdout_contains: ===
+- id: ex03_testbench_basics
+  type: screenshot
+  file: assets/screenshots/ex03_testbench_basics.png
+  capture_command: cd module1/examples/testbench_basics && make all
+  cwd: .
+  slides:
+  - 71
+  expect_stdout_contains: ===
+- id: ex04_file_io
+  type: screenshot
+  file: assets/screenshots/ex04_file_io.png
+  capture_command: cd module1/examples/file_io && make all
+  cwd: .
+  slides:
+  - 72
+  expect_stdout_contains: ===
+- id: ex05_waveforms
+  type: screenshot
+  file: assets/screenshots/ex05_waveforms.png
+  capture_command: cd module1/examples/waveforms && make all
+  cwd: .
+  slides:
+  - 73
+  expect_stdout_contains: ===
+- id: ex06_debugging
+  type: screenshot
+  file: assets/screenshots/ex06_debugging.png
+  capture_command: cd module1/examples/debugging && make all
+  cwd: .
+  slides:
+  - 74
+  expect_stdout_contains: ===

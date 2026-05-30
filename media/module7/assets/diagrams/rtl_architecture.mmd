@@ -1,0 +1,6 @@
+flowchart LR
+  STIM[stimulus] --> DUT[dut gates/mux/counter]
+  DUT --> ASRT[assertions]
+  DUT --> COV[coverage points]
+  ASRT --> RPT[report]
+  COV --> RPT

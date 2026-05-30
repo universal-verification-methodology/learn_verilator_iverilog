@@ -10,6 +10,9 @@
 
 [↑ Back to README](../README.md) | [📚 Full Syllabus](SYLLABUS2.md)
 
+
+
+- **Slides & video**: [slides.pptx](../media/module2/slides.pptx) · [slides.pdf](../media/module2/slides.pdf) · [video.mp4](../media/module2/video.mp4) — regenerate: `./scripts/build_all_media.sh --module 2`
 ---
 
 ## Overview
@@ -112,6 +115,50 @@ make all
 cd module2/examples/file_io
 make all
 ```
+
+
+## Design Architecture
+
+### 1. Verilator compilation model
+
+- **Input**: Verilog/SystemVerilog RTL + optional `--timing` / lint flags per example
+- **Output**: C++ classes (`V<top>`) in `obj_dir/` with fast cycle-accurate `eval()`
+- **Linkage**: C++ `main()` or test class calls `dut->eval()` each cycle or on events
+- **Tracing**: `--trace` / `--trace-fst` for waveform dumps from the C++ side
+
+### 2. Module 2 DUT catalog
+
+- **`dut/multiplexers/`**: Same MUX family as Module 1 — cross-tool comparison baseline
+- **`dut/counters/`**: `counter_4bit` — exercises sequential C++ drive/monitor loops
+- **Port mapping**: Verilator flattens ports to struct members (`dut->clk`, `dut->count`)
+- **Performance**: Large test suites favor Verilator’s compiled model over interpreted VVP
+
+### 3. C++ testbench architecture
+
+- **Top-level `main`**: Allocates `Vtop`, applies reset sequence, runs clock loop
+- **Stimulus loop**: `for`/`while` sets inputs then `eval()` advances time
+- **Optional OOP**: Advanced tests organize Driver/Monitor/Checker as C++ classes
+- **Build**: Generated `Vtop.mk` plus user `Makefile` link testbench and model
+
+## Verification & Testing Methods
+
+### 1. Cycle-based C++ testing
+
+- **Clock generation**: Toggle clock in loop with `eval()` between edges
+- **Reset sequence**: Hold `rst_n` low N cycles, release, verify known state
+- **Checking**: `assert()` or explicit compare with `std::cerr` on mismatch
+
+### 2. Tracing and performance checks
+
+- **Waveforms**: Enable Verilator trace API; view in GTKWave for debug examples
+- **Printf debug**: Structured logging before/after `eval()` for signal snapshots
+- **Regression**: `./scripts/module2.sh --all-tests` batches compile+run across examples
+
+### 3. File I/O and scalable stimulus
+
+- **Vector files**: Read test data in C++ (`file_io` examples) for long sequences
+- **Repeatability**: Fixed seeds and deterministic loops for comparable runs
+- **Failure isolation**: Run single `obj_dir` binary with minimal stimulus to bisect bugs
 
 ## Topics Covered
 

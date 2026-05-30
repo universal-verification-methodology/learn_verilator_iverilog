@@ -333,6 +333,12 @@ while [[ $# -gt 0 ]]; do
             CLEAN_BUILDS=false
             shift
             ;;
+        --check)
+            # shellcheck source=lib/media_check.sh
+            source "$SCRIPT_DIR/lib/media_check.sh"
+            media_module_check "$PROJECT_ROOT" 2
+            exit $?
+            ;;
         --help|-h)
             show_usage
             exit 0
@@ -468,4 +474,4 @@ main() {
 }
 
 # Run main function
-main
+main "$@"

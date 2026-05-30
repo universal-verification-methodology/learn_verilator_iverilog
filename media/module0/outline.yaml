@@ -1,0 +1,644 @@
+title: Module 0 — Installation and Setup
+course: learn_verilator_iverilog
+module: 0
+subtitle: Set up verification environment with iverilog and Verilator
+footer: learn_verilator_iverilog / Module 0
+slides:
+- type: title
+  title: Module 0
+  subtitle: Installation and Setup
+- type: bullets
+  title: Learning objectives
+  bullets:
+  - 'Tool Installation: Automated and manual installation methods for all verification
+    tools'
+  - 'Environment Setup: Configure your development environment for efficient verification
+    work'
+  - 'First Testbenches: Create and run your first "Hello World" testbenches in both
+    paradigms'
+  - 'Waveform Analysis: Generate and view waveforms using GTKWave'
+  - 'Project Structure: Organize your verification project following best practices'
+  - 'Tool Comparison: Understand when to use iverilog vs Verilator'
+- type: bullets
+  title: Prerequisites
+  bullets:
+  - Have a Linux, macOS, or Windows (WSL2) system
+  - Have basic command-line knowledge
+  - Have Git installed (for cloning the repository)
+  - Have a C/C++ compiler available (GCC, Clang, or MSVC)
+- type: image
+  title: Learning path
+  image: assets/diagrams/learning_path.png
+  caption: Set up verification environment with iverilog and Verilator
+- type: bullets
+  title: Overview
+  bullets:
+  - This module covers the complete setup of your verification environment, including
+    installation of iverilog, Verilator, GTKWave, and other verification tools. You'll
+    learn the differences between these simulators and when
+- type: section
+  title: Design architecture
+- type: image
+  title: RTL / block architecture
+  image: assets/diagrams/rtl_architecture.png
+  caption: 'Module 0: DUT / block hierarchy (see module0/examples/).'
+- type: image
+  title: Verification environment architecture
+  image: assets/diagrams/verification_architecture.png
+  caption: 'Module 0: UVM layers, agents, and checkers for this phase.'
+- type: bullets
+  title: 1. Verification toolchain layout
+  bullets:
+  - 'Host environment: Linux, macOS, or WSL2 with GCC/Clang, Make, and Git'
+  - 'Icarus path: `iverilog` compiles RTL + TB → `simv` (or named binary) executed
+    by `vvp`'
+  - 'Verilator path: `verilator --cc` emits C++ model under `obj_dir/` linked with
+    a C++ testbench'
+  - 'Waveform path: Simulators write VCD/FST; GTKWave visualizes signal transitions'
+  - 'Course layout: `scripts/install_*.sh`, `module0/examples/`, `module0/dut/`, `module0/tests/`'
+  notes: From MODULE0 Design Architecture.
+- type: bullets
+  title: 2. Reference DUT hierarchy (Module 0)
+  bullets:
+  - '`module0/dut/simple_gates/`: Combinational `and_gate`, `or_gate` — minimal port
+    lists (a, b, y)'
+  - '`module0/dut/counters/`: `simple_counter` — clocked sequential logic with enable
+    and reset'
+  - 'Hierarchy depth: Flat RTL (no sub-modules) so install smoke tests stay fast'
+  - 'TB attachment: Testbench modules instantiate DUT at top level; no bus fabric
+    yet'
+  notes: From MODULE0 Design Architecture.
+- type: bullets
+  title: 3. First simulation artifact flow
+  bullets:
+  - 'iverilog: `iverilog -o sim tb.v dut.v` → `vvp sim` → optional `$dumpfile` VCD'
+  - 'Verilator: `verilator --cc --exe` → `make -C obj_dir` → `./obj_dir/Vdut`'
+  - 'Build dirs: Per-example `Makefile` targets; artifacts under `build/` or `obj_dir/`
+    (gitignored)'
+  notes: From MODULE0 Design Architecture.
+- type: section
+  title: Verification & testing methods
+- type: image
+  title: Testing and closure flow
+  image: assets/diagrams/testing_methods.png
+  caption: 'Module 0: how tests, checks, and metrics close verification goals.'
+- type: bullets
+  title: 1. Install and environment verification
+  bullets:
+  - 'Version checks: `iverilog -v`, `verilator --version`, `gtkwave --version`'
+  - 'PATH and compiler: Confirm `g++`/`gcc` available for Verilator link step'
+  - 'Self-check: `./scripts/module0.sh --check` validates examples and DUT compiles'
+  notes: From MODULE0 Verification & Testing Methods.
+- type: bullets
+  title: 2. Hello-world test methodology
+  bullets:
+  - 'Smoke test: Minimal compile-and-run per tool (no functional depth required)'
+  - 'Pass criteria: Clean compile, simulation exits 0, expected `$display` or C++
+    `printf`'
+  - 'Waveform spot-check: Open generated VCD in GTKWave to confirm clock/reset toggles'
+  notes: From MODULE0 Verification & Testing Methods.
+- type: bullets
+  title: 3. Debugging and regression basics
+  bullets:
+  - 'Log-first: Capture simulator stdout; use `-g` / `--trace` when examples enable
+    it'
+  - 'Compare tools: Run same DUT with iverilog vs Verilator to see flow differences'
+  - 'Repeatability: Document working directory and Make target in `commands_to_try.txt`'
+  notes: From MODULE0 Verification & Testing Methods.
+- type: section
+  title: Syllabus topics
+- type: bullets
+  title: 1. System Requirements and Prerequisites (1/3)
+  bullets:
+  - Operating System Support
+  - Linux (Ubuntu/Debian, CentOS/RHEL, Fedora)
+  - macOS (Intel and Apple Silicon)
+  - Windows (WSL2 recommended)
+  - Hardware Requirements
+  - Minimum 4GB RAM (8GB+ recommended)
+  notes: From MODULE0 Topics Covered.
+- type: bullets
+  title: 1. System Requirements and Prerequisites (2/3)
+  bullets:
+  - 5GB free disk space
+  - Multi-core processor recommended
+  - Software Prerequisites
+  - C/C++ compiler (GCC 7+, Clang 10+, or MSVC)
+  - Make or Ninja build system
+  - Git
+  notes: From MODULE0 Topics Covered.
+- type: bullets
+  title: 1. System Requirements and Prerequisites (3/3)
+  bullets:
+  - Perl (for some tools)
+  notes: From MODULE0 Topics Covered.
+- type: bullets
+  title: 2. Icarus Verilog (iverilog) Installation (1/5)
+  bullets:
+  - What is iverilog?
+  - Open-source Verilog/SystemVerilog simulator
+  - Good for learning and prototyping
+  - Supports most Verilog constructs
+  - Limited SystemVerilog support
+  - Automated Installation (Recommended)
+  notes: From MODULE0 Topics Covered.
+- type: bullets
+  title: 2. Icarus Verilog (iverilog) Installation (2/5)
+  bullets:
+  - 'Using the installation script:'
+  - 'The script automatically:'
+  - Checks for existing installations
+  - Installs system dependencies (build tools, libraries)
+  - Builds and installs iverilog
+  - Verifies the installation
+  notes: From MODULE0 Topics Covered.
+- type: bullets
+  title: 2. Icarus Verilog (iverilog) Installation (3/5)
+  bullets:
+  - Manual Installation Methods
+  - Linux Installation
+  - 'Ubuntu/Debian: `sudo apt-get install iverilog gtkwave`'
+  - 'CentOS/RHEL: `sudo yum install iverilog gtkwave`'
+  - 'Fedora: `sudo dnf install iverilog gtkwave`'
+  - Building from source (latest features)
+  notes: From MODULE0 Topics Covered.
+- type: bullets
+  title: 2. Icarus Verilog (iverilog) Installation (4/5)
+  bullets:
+  - macOS Installation
+  - 'Homebrew installation: `brew install icarus-verilog gtkwave`'
+  - Building from source
+  - Windows/WSL2 Installation
+  - 'Installing in WSL2 Ubuntu: `sudo apt-get install iverilog gtkwave`'
+  - Building from source in WSL2
+  notes: From MODULE0 Topics Covered.
+- type: bullets
+  title: 2. Icarus Verilog (iverilog) Installation (5/5)
+  bullets:
+  - Verification Steps
+  - 'Check iverilog version: `iverilog -v`'
+  - 'Check vvp runtime: `vvp -v`'
+  - 'Run simple test: `echo ''module test; initial $display("Hello"); endmodule''
+    | iverilog -o test - && vvp test`'
+  notes: From MODULE0 Topics Covered.
+- type: bullets
+  title: 3. Verilator Installation (1/5)
+  bullets:
+  - What is Verilator?
+  - Fast Verilog/SystemVerilog simulator
+  - Generates C++ code from Verilog
+  - Excellent performance
+  - Limited SystemVerilog support (some features)
+  - Automated Installation (Recommended)
+  notes: From MODULE0 Topics Covered.
+- type: bullets
+  title: 3. Verilator Installation (2/5)
+  bullets:
+  - 'Using the installation script:'
+  - 'The script automatically:'
+  - Checks for existing installations
+  - Installs system dependencies (build tools, libraries)
+  - Sets up git submodule in `tools/verilator/`
+  - Builds and installs Verilator
+  notes: From MODULE0 Topics Covered.
+- type: bullets
+  title: 3. Verilator Installation (3/5)
+  bullets:
+  - Verifies the installation
+  - Manual Installation Methods
+  - Linux Installation
+  - 'Ubuntu/Debian: `sudo apt-get install verilator`'
+  - 'CentOS/RHEL: `sudo yum install verilator`'
+  - 'Fedora: `sudo dnf install verilator`'
+  notes: From MODULE0 Topics Covered.
+- type: bullets
+  title: 3. Verilator Installation (4/5)
+  bullets:
+  - Building from source (latest features)
+  - macOS Installation
+  - 'Homebrew installation: `brew install verilator`'
+  - Building from source
+  - Windows/WSL2 Installation
+  - 'Installing in WSL2 Ubuntu: `sudo apt-get install verilator`'
+  notes: From MODULE0 Topics Covered.
+- type: bullets
+  title: 3. Verilator Installation (5/5)
+  bullets:
+  - Building from source in WSL2
+  - Verification Steps
+  - 'Check Verilator version: `verilator --version`'
+  - 'Run simple test: Create a minimal Verilog file and compile with Verilator'
+  notes: From MODULE0 Topics Covered.
+- type: bullets
+  title: 4. GTKWave Installation (1/2)
+  bullets:
+  - What is GTKWave?
+  - Waveform viewer for VCD and FST files
+  - Essential for debugging testbenches
+  - Open-source and cross-platform
+  - Installation
+  - Usually installed with iverilog package
+  notes: From MODULE0 Topics Covered.
+- type: bullets
+  title: 4. GTKWave Installation (2/2)
+  bullets:
+  - 'Linux: `sudo apt-get install gtkwave` (or included with iverilog)'
+  - 'macOS: `brew install gtkwave` (or included with icarus-verilog)'
+  - 'Windows: Available as standalone installer'
+  - Verification Steps
+  - 'Check GTKWave: `gtkwave --version`'
+  - 'Open a VCD file: `gtkwave waveform.vcd`'
+  notes: From MODULE0 Topics Covered.
+- type: bullets
+  title: 5. Build System Configuration (1/4)
+  bullets:
+  - Makefile Setup
+  - Basic Makefile for iverilog
+  - Basic Makefile for Verilator
+  - Compilation flags
+  - Include paths
+  - Test execution
+  notes: From MODULE0 Topics Covered.
+- type: bullets
+  title: 5. Build System Configuration (2/4)
+  bullets:
+  - iverilog Compilation
+  - 'Compilation command: `iverilog -o output input.v`'
+  - 'Include paths: `-I<directory>`'
+  - 'Define macros: `-D<macro>`'
+  - Timescale handling
+  - Multi-file compilation
+  notes: From MODULE0 Topics Covered.
+- type: bullets
+  title: 5. Build System Configuration (3/4)
+  bullets:
+  - Verilator Compilation
+  - 'Compilation command: `verilator --cc --exe design.v testbench.cpp`'
+  - 'SystemVerilog flags: `-sv`, `--timing`'
+  - 'Include paths: `-I<directory>`'
+  - 'Optimization flags: `-O0`, `-O1`, `-O2`, `-O3`'
+  - 'Coverage options: `--coverage`'
+  notes: From MODULE0 Topics Covered.
+- type: bullets
+  title: 5. Build System Configuration (4/4)
+  bullets:
+  - 'Waveform generation: `--trace`, `--trace-fst`'
+  notes: From MODULE0 Topics Covered.
+- type: bullets
+  title: 6. IDE Setup and Configuration (1/3)
+  bullets:
+  - Recommended IDEs
+  - VS Code with Verilog/SystemVerilog extension
+  - Verible (SystemVerilog linter/formatter)
+  - Vim/Neovim with LSP
+  - Emacs with Verilog mode
+  - VS Code Configuration
+  notes: From MODULE0 Topics Covered.
+- type: bullets
+  title: 6. IDE Setup and Configuration (2/3)
+  bullets:
+  - SystemVerilog extension setup
+  - iverilog integration
+  - Verilator integration
+  - Debugging configuration
+  - Task runner setup for simulations
+  - Extension recommendations
+  notes: From MODULE0 Topics Covered.
+- type: bullets
+  title: 6. IDE Setup and Configuration (3/3)
+  bullets:
+  - Editor Configuration
+  - SystemVerilog formatting (Verible)
+  - Linting (Verilator, Verible)
+  - Code formatting on save
+  - Syntax highlighting
+  notes: From MODULE0 Topics Covered.
+- type: bullets
+  title: 7. Project Structure Setup (1/4)
+  bullets:
+  - Directory Structure
+  - Source code organization
+  - Test directory structure
+  - DUT (Design Under Test) organization
+  - Configuration files
+  - '`tools/` directory for tools (Verilator as git submodule)'
+  notes: From MODULE0 Topics Covered.
+- type: bullets
+  title: 7. Project Structure Setup (2/4)
+  bullets:
+  - Git Submodules Management
+  - Verilator is managed as a git submodule in `tools/verilator/`
+  - 'Initialize submodules: `./scripts/init_submodules.sh` or `git submodule update
+    --init --recursive`'
+  - 'Update submodules: `./scripts/update_submodules.sh` or `git submodule update
+    --remote`'
+  - 'Add new submodule: `./scripts/add_submodule.sh <repo_url> <path>`'
+  - 'Remove submodule: `./scripts/remove_submodule.sh <path>`'
+  notes: From MODULE0 Topics Covered.
+- type: bullets
+  title: 7. Project Structure Setup (3/4)
+  bullets:
+  - Makefile/Configuration
+  - Simple Makefile for running tests
+  - iverilog configuration
+  - Verilator configuration
+  - Environment variable management
+  - Version Control
+  notes: From MODULE0 Topics Covered.
+- type: bullets
+  title: 7. Project Structure Setup (4/4)
+  bullets:
+  - Git initialization
+  - .gitignore for Verilog and simulation (include build artifacts, waveforms)
+  - Initial commit structure
+  - Git submodules in `.gitmodules` file
+  notes: From MODULE0 Topics Covered.
+- type: bullets
+  title: 8. First "Hello World" Verification Test (1/8)
+  bullets:
+  - Prerequisites
+  - Ensure all tools are installed
+  - 'Verify tools are accessible: `iverilog -v` and `verilator --version`'
+  - iverilog Hello World
+  - 'Location: `module0/examples/iverilog_basics/hello_world.v`'
+  - 'Purpose: Simplest possible testbench to verify iverilog installation'
+  notes: From MODULE0 Topics Covered.
+- type: bullets
+  title: 8. First "Hello World" Verification Test (2/8)
+  bullets:
+  - 'Key Concepts:'
+  - '`module` declaration (testbench has no ports)'
+  - '`initial` block for procedural code execution'
+  - '`$display` system task for output'
+  - '`$finish` system task to end simulation'
+  - Time delays with `#delay`
+  notes: From MODULE0 Topics Covered.
+- type: bullets
+  title: 8. First "Hello World" Verification Test (3/8)
+  bullets:
+  - 'Compilation: `iverilog -o hello_world hello_world.v`'
+  - 'Simulation: `vvp hello_world`'
+  - 'Understanding Output: Console messages confirm successful execution'
+  - GTKWave Waveform Example
+  - 'Location: `module0/examples/iverilog_basics/gtkwave_example.v`'
+  - 'Purpose: Comprehensive example demonstrating waveform generation and analysis'
+  notes: From MODULE0 Topics Covered.
+- type: bullets
+  title: 8. First "Hello World" Verification Test (4/8)
+  bullets:
+  - 'Key Concepts:'
+  - VCD (Value Change Dump) file generation with `$dumpfile` and `$dumpvars`
+  - Clock generation using `forever` loops
+  - Multiple signal types (clock, data, control signals)
+  - Signal transitions for timing analysis
+  - Test phases and patterns
+  notes: From MODULE0 Topics Covered.
+- type: bullets
+  title: 8. First "Hello World" Verification Test (5/8)
+  bullets:
+  - 'Compilation: `iverilog -o gtkwave_example gtkwave_example.v ../../dut/simple_gates/and_gate.v`'
+  - 'Simulation: `vvp gtkwave_example` (generates `gtkwave_example.vcd`)'
+  - 'Viewing: `gtkwave gtkwave_example.vcd` or `make view_waveforms`'
+  - 'GTKWave Features Demonstrated:'
+  - Signal hierarchy navigation
+  - Time marker placement
+  notes: From MODULE0 Topics Covered.
+- type: bullets
+  title: 8. First "Hello World" Verification Test (6/8)
+  bullets:
+  - Zoom and pan operations
+  - Save file creation for quick reload
+  - Verilator Hello World
+  - 'Location: `module0/examples/verilator_basics/hello_world.cpp` and `hello_world.v`'
+  - 'Purpose: Simplest possible C++ testbench to verify Verilator installation'
+  - 'Key Concepts:'
+  notes: From MODULE0 Topics Covered.
+- type: bullets
+  title: 8. First "Hello World" Verification Test (7/8)
+  bullets:
+  - Verilator compilation process (`verilator --cc --exe --build`)
+  - Generated C++ class structure (`V<module_name>`)
+  - DUT instantiation in C++
+  - '`eval()` method for simulation'
+  - '`final()` method for cleanup'
+  - Verilator initialization with `Verilated::commandArgs()`
+  notes: From MODULE0 Topics Covered.
+- type: bullets
+  title: 8. First "Hello World" Verification Test (8/8)
+  bullets:
+  - 'Compilation: `verilator --cc --exe --build hello_world.v hello_world.cpp`'
+  - 'Running: `./obj_dir/Vhello_world`'
+  - 'Understanding Output: Console messages confirm successful execution'
+  notes: From MODULE0 Topics Covered.
+- type: bullets
+  title: 9. Tool Comparison and Selection Criteria (1/4)
+  bullets:
+  - iverilog Characteristics
+  - Verilog/SystemVerilog testbenches
+  - Good for learning
+  - Easy to use
+  - Good waveform support
+  - Moderate performance
+  notes: From MODULE0 Topics Covered.
+- type: bullets
+  title: 9. Tool Comparison and Selection Criteria (2/4)
+  bullets:
+  - Verilator Characteristics
+  - C++ testbenches
+  - Excellent performance
+  - Good for large designs
+  - Requires C++ knowledge
+  - Limited SystemVerilog support
+  notes: From MODULE0 Topics Covered.
+- type: bullets
+  title: 9. Tool Comparison and Selection Criteria (3/4)
+  bullets:
+  - When to Use Each
+  - 'Use iverilog for:'
+  - Learning Verilog testbench concepts
+  - Quick prototyping
+  - Simple to medium complexity designs
+  - When you prefer Verilog syntax
+  notes: From MODULE0 Topics Covered.
+- type: bullets
+  title: 9. Tool Comparison and Selection Criteria (4/4)
+  bullets:
+  - 'Use Verilator for:'
+  - High-performance simulation
+  - Large designs
+  - Integration with C++ libraries
+  - Complex testbenches with advanced data structures
+  notes: From MODULE0 Topics Covered.
+- type: bullets
+  title: 10. Common Pitfalls and Solutions
+  bullets:
+  - See docs/MODULE0.md
+  notes: From MODULE0 Topics Covered.
+- type: bullets
+  title: 11. Troubleshooting Common Issues (1/8)
+  bullets:
+  - 'Cause: iverilog not installed or not in PATH'
+  - 'Solution:'
+  - 'Verify: `iverilog -v` should show version'
+  - 'Cause: SystemVerilog syntax not supported by default'
+  - 'Solution: Use `-g2012` flag for SystemVerilog support'
+  - 'Note: Some SystemVerilog features may still be limited'
+  notes: From MODULE0 Topics Covered.
+- type: bullets
+  title: 11. Troubleshooting Common Issues (2/8)
+  bullets:
+  - 'Cause: Missing include path'
+  - 'Solution: Add include directory with `-I` flag'
+  - 'Cause: VVP runtime not installed or not in PATH'
+  - 'Solution: VVP is usually installed with iverilog. Reinstall if missing:'
+  - 'Cause: Verilator not installed or not in PATH'
+  - 'Solution:'
+  notes: From MODULE0 Topics Covered.
+- type: bullets
+  title: 11. Troubleshooting Common Issues (3/8)
+  bullets:
+  - 'Cause: Installed version is too old'
+  - 'Solution: Install from source for latest version'
+  - 'Cause: C++ compiler not installed'
+  - 'Solution: Install build essentials'
+  - 'Cause: Verilator headers not found'
+  - 'Solution: Check Verilator installation and include paths'
+  notes: From MODULE0 Topics Covered.
+- type: bullets
+  title: 11. Troubleshooting Common Issues (4/8)
+  bullets:
+  - 'Cause: Missing Verilator library linking'
+  - 'Solution: Ensure Makefile includes Verilator libraries'
+  - 'Cause: GTKWave not installed'
+  - 'Solution:'
+  - 'Cause: File format issue or corrupted file'
+  - 'Solution:'
+  notes: From MODULE0 Topics Covered.
+- type: bullets
+  title: 11. Troubleshooting Common Issues (5/8)
+  bullets:
+  - Verify VCD file was generated correctly
+  - Check file permissions
+  - 'Try regenerating: `vvp executable` (should create .vcd file)'
+  - 'Issue: Package manager version may be outdated'
+  - 'Solution: Use installation scripts or build from source'
+  - 'Issue: Homebrew version may be outdated'
+  notes: From MODULE0 Topics Covered.
+- type: bullets
+  title: 11. Troubleshooting Common Issues (6/8)
+  bullets:
+  - 'Solution: Use `--source` flag to build from source'
+  - 'Issue: Some tools may not work in Windows directly'
+  - 'Solution: Use WSL2 Ubuntu and install there'
+  - 'Issue: `make: *** No targets specified and no makefile found`'
+  - 'Solution: Ensure you''re in the correct directory with a Makefile'
+  - 'Issue: Files not found during compilation'
+  notes: From MODULE0 Topics Covered.
+- type: bullets
+  title: 11. Troubleshooting Common Issues (7/8)
+  bullets:
+  - 'Solution: Check relative paths and use `-I` flags correctly'
+  - 'VS Code: Install "SystemVerilog" extension by mshr-h'
+  - 'Vim: Install vim-systemverilog plugin'
+  - 'Verification: Open a `.sv` file and check for syntax highlighting'
+  - 'Issue: IDE can''t find included files'
+  - 'Solution: Configure include paths in IDE settings'
+  notes: From MODULE0 Topics Covered.
+- type: bullets
+  title: 11. Troubleshooting Common Issues (8/8)
+  bullets:
+  - 'VS Code: Add to `settings.json`:'
+  - 'Issue: Can''t set breakpoints or debug'
+  - 'Solution:'
+  - 'For Verilator: Use GDB with compiled executable'
+  - 'For iverilog: Use VCD waveforms for debugging'
+  notes: From MODULE0 Topics Covered.
+- type: bullets
+  title: 12. Verification Checklist (1/3)
+  bullets:
+  - C/C++ compiler installed and working
+  - iverilog installed and verified
+  - 'Using script: `./scripts/install_iverilog.sh`'
+  - 'Verify: `iverilog -v` and `vvp -v`'
+  - Verilator installed and verified
+  - 'Using script: `./scripts/install_verilator.sh`'
+  notes: From MODULE0 Topics Covered.
+- type: bullets
+  title: 12. Verification Checklist (2/3)
+  bullets:
+  - 'Verify: `verilator --version`'
+  - GTKWave installed and verified
+  - 'Verify: `gtkwave --version`'
+  - All tools verified together
+  - IDE configured and working
+  - First test runs successfully (both iverilog and Verilator)
+  notes: From MODULE0 Topics Covered.
+- type: bullets
+  title: 12. Verification Checklist (3/3)
+  bullets:
+  - Can create and run simple testbench
+  - Understand basic project structure
+  - Know how to get help when stuck
+  - Understand tool differences and when to use each
+  notes: From MODULE0 Topics Covered.
+- type: section
+  title: Hands-on examples
+- type: demo
+  title: Module 0 self-check
+  command: ./scripts/module0.sh --check
+  screenshot: assets/screenshots/module0_check.png
+  expect_stdout_contains: All required checks passed
+  notes: Run from course repository root.
+- type: code
+  title: Exercise scaffold
+  language: bash
+  source_file: scripts/module0.sh
+  code: ./scripts/module0.sh --scaffold
+- type: demo
+  title: 'Demo: iverilog basics'
+  command: cd module0/examples/iverilog_basics && make hello_world
+  screenshot: assets/screenshots/ex01_iverilog_basics.png
+  notes: 'Hands-on: module0/examples/iverilog_basics/'
+- type: demo
+  title: 'Demo: Verilator basics'
+  command: ls -la module0/examples/verilator_basics && head -20 module0/examples/verilator_basics/Makefile
+  screenshot: assets/screenshots/ex02_verilator_basics.png
+  notes: 'Hands-on: module0/examples/verilator_basics/'
+  expect_stdout_contains: Makefile
+- type: demo
+  title: 'Demo: Tool comparison'
+  command: cd module0/examples/comparison && ls -la && head -30 README.md 2>/dev/null
+    || head -30 Makefile
+  screenshot: assets/screenshots/ex03_comparison.png
+  notes: 'Hands-on: module0/examples/comparison/'
+  expect_stdout_contains: total
+- type: section
+  title: Practice & assessment
+- type: bullets
+  title: Exercises
+  bullets:
+  - Installation Verification
+  - Environment Setup
+  - First Tests
+  - IDE Configuration
+  - Project Structure
+- type: bullets
+  title: Exercises
+  bullets:
+  - Tool Comparison
+- type: bullets
+  title: Assessment checklist
+  bullets:
+  - Can install all required tools independently
+  - Can set up iverilog
+  - Can verify iverilog installation
+  - Can set up Verilator
+  - Can verify Verilator installation
+  - Can install and verify GTKWave
+- type: bullets
+  title: Summary & next steps
+  bullets:
+  - Set up verification environment with iverilog and Verilator
+  - Complete module0/CHECKLIST.md
+  - Run ./scripts/module0.sh --check
+  - 'Next: Next module in course'

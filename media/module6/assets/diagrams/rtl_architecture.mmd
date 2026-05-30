@@ -1,0 +1,6 @@
+flowchart TB
+  PKG[package] --> IF[interface]
+  IF --> CLS[SV classes]
+  CLS --> DRV[class driver]
+  DRV --> dut6["module6/dut gates/mux"]
+  RAND[randomize] --> CLS
