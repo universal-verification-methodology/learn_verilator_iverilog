@@ -1,3 +1,6 @@
 flowchart TD
-  A[directed tests] --> B[file regression]
-  B --> C[waveform sign-off]
+  COMP[make compilation] --> SIM[make simulation]
+  SIM --> TB[testbench_basics]
+  TB --> WAVE[waveforms + GTKWave]
+  WAVE --> DBG[debug narrowed stimulus]
+  DBG --> CI[module1.sh --check]

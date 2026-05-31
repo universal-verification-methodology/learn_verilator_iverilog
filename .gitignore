@@ -22,3 +22,6 @@
 
 # Dependency files
 *.d
+
+# Over GitHub's 100 MB file limit (keep locally; regenerate via build_all_media.sh)
+media/module2/audio/narration.wav

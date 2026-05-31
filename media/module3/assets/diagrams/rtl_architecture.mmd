@@ -1,9 +1,9 @@
 flowchart TB
-  subgraph paradigms["Dual TB"]
-    VTB[Verilog TB iverilog]
-    CTB[C++ TB Verilator]
+  subgraph paradigms["Dual testbench paradigms"]
+    VTB[Verilog TB → iverilog → vvp]
+    CTB[C++ TB → verilator → obj_dir]
   end
-  subgraph dut3["module3/dut"]
+  subgraph dut3["module3/dut — same RTL"]
     GATE[and_gate]
     MUX[mux_4to1]
     CTR[counter_4bit]

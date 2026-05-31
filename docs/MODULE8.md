@@ -97,6 +97,12 @@ make all
 - **Documentation**: Test plans, coding standards, tool comparison guides in-repo
 - **Metrics store**: Example formats for coverage/assertion summaries before sign-off
 
+**Simulation flow**: `cd module8/examples/testbench_architecture && make modular_testbench_verilog` → layered TB modules wire together → `verification_metrics/` tracks closure
+
+**Execution sequence**: Plan tests → run modular environment → track metrics → apply tool selection guide → `./scripts/module8.sh --check` for sign-off readiness
+
+**Self-check flow**: scoreboard aggregates checker results → metrics tracker reports pass rate and coverage bins
+
 ## Verification & Testing Methods
 
 ### 1. Verification planning and strategy

@@ -117,6 +117,12 @@ make all
 - **C++ helpers**: Same operations as methods on a `UartDriver` helper class
 - **File-driven layer**: Sequences can be loaded from vector files for long regressions
 
+**Simulation flow**: `cd module5/examples/reusable_routines && make task_function_test_verilog` → tasks apply multi-step stimulus → `cd ../file_io && make` for vector files
+
+**Execution sequence**: Define tasks/functions → call from initial block → load file vectors → log results → `./scripts/module5.sh --check`
+
+**Self-check flow**: task/function computes expected → compare DUT output → write pass/fail to log file
+
 ## Verification & Testing Methods
 
 ### 1. Sequence-based stimulus

@@ -17,6 +17,7 @@ assets:
   generator: render_diagrams.sh
   slides:
   - 7
+  - 11
   license: learn_verilator_iverilog course materials
 - id: verification_architecture
   type: diagram
@@ -24,7 +25,7 @@ assets:
   source: assets/diagrams/verification_architecture.mmd
   generator: render_diagrams.sh
   slides:
-  - 8
+  - 9
   license: learn_verilator_iverilog course materials
 - id: testing_methods
   type: diagram
@@ -32,30 +33,34 @@ assets:
   source: assets/diagrams/testing_methods.mmd
   generator: render_diagrams.sh
   slides:
-  - 13
+  - 10
+  - 23
+  - 24
+  - 25
+  - 40
   license: learn_verilator_iverilog course materials
 - id: module0_check
   type: screenshot
   file: assets/screenshots/module0_check.png
-  capture_command: ./scripts/module0.sh --check
+  capture_command: ./scripts/module0.sh --help
   cwd: .
   slides:
-  - 69
-  expect_stdout_contains: All required checks passed
+  - 92
+  expect_stdout_contains: Module
 - id: ex01_iverilog_basics
   type: screenshot
   file: assets/screenshots/ex01_iverilog_basics.png
   capture_command: cd module0/examples/iverilog_basics && make hello_world
   cwd: .
   slides:
-  - 71
+  - 94
 - id: ex02_verilator_basics
   type: screenshot
   file: assets/screenshots/ex02_verilator_basics.png
   capture_command: ls -la module0/examples/verilator_basics && head -20 module0/examples/verilator_basics/Makefile
   cwd: .
   slides:
-  - 72
+  - 95
   expect_stdout_contains: Makefile
 - id: ex03_comparison
   type: screenshot
@@ -64,5 +69,5 @@ assets:
     2>/dev/null || head -30 Makefile
   cwd: .
   slides:
-  - 73
+  - 96
   expect_stdout_contains: total

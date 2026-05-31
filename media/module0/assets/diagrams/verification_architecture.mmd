@@ -1,3 +1,16 @@
-flowchart LR
-  INSTALL[install scripts] --> SMOKE[hello-world tests]
-  SMOKE --> WAVE[VCD + GTKWave]
+flowchart TB
+  subgraph env["Verification environment"]
+    TBV[Verilog hello_world TB]
+    TBC[C++ hello_world TB]
+  end
+  subgraph dut["DUT under test"]
+    RTL[simple_gates / counters]
+  end
+  subgraph observe["Observation"]
+    DISP[console $display / cout]
+    VCD[VCD + GTKWave]
+  end
+  TBV --> RTL
+  TBC --> RTL
+  RTL --> DISP
+  RTL --> VCD

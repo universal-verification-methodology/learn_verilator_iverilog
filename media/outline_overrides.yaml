@@ -1,13 +1,117 @@
-# Per-example capture overrides (command / expect_stdout_contains).
-# Keys match EXAMPLES.md folder names or demo ids exNN_folder.
+# Per-example capture overrides and architecture / execution slides.
+# Keys: rtl_code, tb_code, env_code, design_code (Design architecture section)
+#       make_code, exec_code, sim_code (Execution & simulation flow section)
+#       test_code, method_code, closure_code (Verification & testing methods section)
 
 module0:
+  architecture:
+    two_column: true
+    rtl_code:
+      title: "iverilog — compile then simulate"
+      source_file: module0/examples/iverilog_basics/hello_world.v
+      start_line: 46
+      end_line: 60
+      notes: "Step 1: iverilog -o hello_world hello_world.v. Step 2: vvp hello_world."
+    tb_code:
+      title: "Verilator — C++ model and eval()"
+      source_file: module0/examples/verilator_basics/hello_world.cpp
+      start_line: 60
+      end_line: 95
+      language: cpp
+      notes: "verilator --cc --exe --build; run ./obj_dir/Vhello_world; dut->eval() each step."
+    design_code:
+      title: "Reference DUT — and_gate"
+      source_file: module0/dut/simple_gates/and_gate.v
+      start_line: 48
+      end_line: 54
+      notes: "Flat combinational RTL; TB instantiates at top level for smoke tests."
+    make_code:
+      title: "Makefile — iverilog hello_world target"
+      source_file: module0/examples/iverilog_basics/Makefile
+      start_line: 30
+      end_line: 37
+      language: makefile
+      notes: "make hello_world runs iverilog then vvp from the example directory."
+    exec_code:
+      title: "Verilator Makefile — build and run"
+      source_file: module0/examples/verilator_basics/Makefile
+      start_line: 44
+      end_line: 52
+      language: makefile
+      notes: "VERILATOR_FLAGS --cc --exe --build; output binary under obj_dir/."
+    sim_code:
+      title: "GTKWave example — VCD generation"
+      source_file: module0/examples/iverilog_basics/gtkwave_example.v
+      start_line: 1
+      end_line: 35
+      notes: "$dumpfile and $dumpvars create VCD; open with gtkwave for debug."
+    method_code:
+      title: "Install verification — version checks"
+      source_file: scripts/install_iverilog.sh
+      start_line: 1
+      end_line: 25
+      language: bash
+      notes: "Run install scripts once; verify with iverilog -v and verilator --version."
   demos:
     verilator_basics:
       command: "ls -la module0/examples/verilator_basics && head -20 module0/examples/verilator_basics/Makefile"
       expect: "Makefile"
 
 module1:
+  architecture:
+    two_column: true
+    rtl_code:
+      title: "Compilation Makefile — iverilog targets"
+      source_file: module1/examples/compilation/Makefile
+      start_line: 11
+      end_line: 28
+      language: makefile
+      notes: "iverilog elaborates RTL+TB into VVP bytecode; vvp runs the event scheduler."
+    tb_code:
+      title: "Verilog TB — DUT instantiation"
+      source_file: module1/examples/testbench_basics/mux_4to1_test.v
+      start_line: 33
+      end_line: 55
+      notes: "Top module wires regs to DUT ports; initial blocks drive stimulus."
+    design_code:
+      title: "DUT — mux_4to1 select logic"
+      source_file: module1/dut/multiplexers/mux_4to1.v
+      start_line: 43
+      end_line: 74
+      notes: "Combinational case(sel) drives out; exercised by directed vectors."
+    env_code:
+      title: "VVP simulation Makefile"
+      source_file: module1/examples/simulation/Makefile
+      start_line: 8
+      end_line: 14
+      language: makefile
+      notes: "Compile to named binary, then vvp executes the bytecode simulator."
+    make_code:
+      title: "Run compilation example"
+      source_file: module1/examples/compilation/Makefile
+      start_line: 11
+      end_line: 15
+      language: makefile
+      notes: "cd module1/examples/compilation && make basic_compilation"
+    exec_code:
+      title: "VVP runtime invocation"
+      source_file: module1/examples/simulation/Makefile
+      start_line: 8
+      end_line: 14
+      language: makefile
+      notes: "vvp drives time; use -v for verbose scheduler output when debugging."
+    sim_code:
+      title: "Self-checking stimulus loop"
+      source_file: module1/examples/testbench_basics/mux_4to1_test.v
+      start_line: 100
+      end_line: 130
+      notes: "Apply sel/in patterns, compare out, increment error count, $finish."
+    test_code:
+      title: "Self-check — expected vs actual"
+      source_file: module1/examples/testbench_basics/mux_4to1_test.v
+      start_line: 130
+      end_line: 155
+      notes: "Inline if (expected !== actual); final summary before $finish."
   demos:
     compilation:
       expect: "==="
@@ -23,6 +127,64 @@ module1:
       expect: "==="
 
 module2:
+  architecture:
+    two_column: true
+    rtl_code:
+      title: "Verilator compile flags"
+      source_file: module2/examples/compilation/Makefile
+      start_line: 24
+      end_line: 42
+      language: makefile
+      notes: "verilator --cc --exe --build emits obj_dir/ with Vmodule and Makefile."
+    tb_code:
+      title: "C++ TB — init, eval, final"
+      source_file: module2/examples/cpp_testbench/mux_4to1_test.cpp
+      start_line: 44
+      end_line: 70
+      language: cpp
+      notes: "Verilated::commandArgs, new Vmodule, dut->eval(), dut->final()."
+    design_code:
+      title: "DUT ports as C++ members"
+      source_file: module2/examples/cpp_testbench/mux_4to1_test.cpp
+      start_line: 80
+      end_line: 105
+      language: cpp
+      notes: "Write dut->sel and inputs, call eval(), read dut->out."
+    env_code:
+      title: "obj_dir layout after verilator"
+      source_file: module2/examples/cpp_testbench/Makefile
+      start_line: 40
+      end_line: 58
+      language: makefile
+      notes: "make mux_4to1_test compiles and runs ./obj_dir/Vmux_4to1."
+    make_code:
+      title: "Build C++ testbench target"
+      source_file: module2/examples/cpp_testbench/Makefile
+      start_line: 50
+      end_line: 58
+      language: makefile
+      notes: "From module2/examples/cpp_testbench: make mux_4to1_test"
+    exec_code:
+      title: "Verilator --trace for waveforms"
+      source_file: module2/examples/waveforms/Makefile
+      start_line: 1
+      end_line: 25
+      language: makefile
+      notes: "Add --trace or --trace-fst; open VCD/FST in GTKWave after run."
+    sim_code:
+      title: "Sequential eval loop — counter"
+      source_file: module2/examples/cpp_testbench/counter_test.cpp
+      start_line: 115
+      end_line: 140
+      language: cpp
+      notes: "Toggle clk, eval(), check count — manual clock in C++ loop."
+    test_code:
+      title: "Assert-based checking"
+      source_file: module2/examples/cpp_testbench/mux_4to1_test.cpp
+      start_line: 105
+      end_line: 130
+      language: cpp
+      notes: "assert() on mismatch; All tests passed on stdout at end."
   demos:
     compilation:
       command: "head -25 module2/examples/compilation/Makefile"
@@ -41,6 +203,54 @@ module2:
       expect: "total"
 
 module3:
+  architecture:
+    two_column: true
+    rtl_code:
+      title: "Verilog TB Makefile — counter_test"
+      source_file: module3/examples/verilog_testbenches/Makefile
+      start_line: 23
+      end_line: 27
+      language: makefile
+      notes: "iverilog links TB + counter_4bit.v; vvp runs event-driven simulation."
+    tb_code:
+      title: "Verilog TB — clock and reset"
+      source_file: module3/examples/verilog_testbenches/counter_test.v
+      start_line: 55
+      end_line: 90
+      notes: "always #half clk=~clk; reset sequence in initial block."
+    design_code:
+      title: "Shared DUT — counter_4bit"
+      source_file: module1/dut/counters/counter_4bit.v
+      start_line: 1
+      end_line: 45
+      notes: "Same RTL verified by both Verilog and C++ testbench paradigms."
+    make_code:
+      title: "C++ TB Makefile — Verilator build"
+      source_file: module3/examples/cpp_testbenches/Makefile
+      start_line: 25
+      end_line: 30
+      language: makefile
+      notes: "cd module3/examples/cpp_testbenches && make counter_test"
+    exec_code:
+      title: "C++ TB — DUT init and reset test"
+      source_file: module3/examples/cpp_testbenches/counter_test.cpp
+      start_line: 77
+      end_line: 110
+      language: cpp
+      notes: "new Vcounter_4bit; drive rst_n low; eval loop verifies count==0."
+    sim_code:
+      title: "Manual clock toggle pattern"
+      source_file: module3/examples/cpp_testbenches/counter_test.cpp
+      start_line: 121
+      end_line: 135
+      language: cpp
+      notes: "dut->clk = !dut->clk; dut->eval(); sim_time++ — C++ clock agent."
+    test_code:
+      title: "Paradigm comparison checklist"
+      source_file: module3/examples/comparison/README.md
+      start_line: 1
+      end_line: 30
+      notes: "Side-by-side: initial blocks vs eval loop; same pass criteria."
   demos:
     verilog_testbenches:
       expect: "==="
@@ -52,6 +262,52 @@ module3:
       expect: "total"
 
 module4:
+  architecture:
+    two_column: true
+    rtl_code:
+      title: "Clock/reset Makefile target"
+      source_file: module4/examples/clock_reset/Makefile
+      start_line: 9
+      end_line: 13
+      language: makefile
+      notes: "Parameterize period; compile and vvp in one make target."
+    tb_code:
+      title: "Configurable clock generation"
+      source_file: module4/examples/clock_reset/configurable_clock_reset_verilog.v
+      start_line: 54
+      end_line: 95
+      notes: "forever #(PERIOD/2) clk=~clk; coordinated reset release."
+    design_code:
+      title: "Self-checking ALU ports"
+      source_file: module4/examples/self_checking/alu_self_checking_verilog.v
+      start_line: 41
+      end_line: 75
+      notes: "simple_alu instantiated; wires for a, b, op, result, zero."
+    make_code:
+      title: "Self-checking example build"
+      source_file: module4/examples/self_checking/Makefile
+      start_line: 1
+      end_line: 20
+      language: makefile
+      notes: "cd module4/examples/self_checking && make"
+    exec_code:
+      title: "Reference model function"
+      source_file: module4/examples/self_checking/alu_self_checking_verilog.v
+      start_line: 80
+      end_line: 110
+      notes: "calculate_expected(op,a,b) — golden model in TB."
+    sim_code:
+      title: "Test task — drive and compare"
+      source_file: module4/examples/self_checking/alu_self_checking_verilog.v
+      start_line: 120
+      end_line: 150
+      notes: "task runs vector, waits #delay, compares, updates pass/fail count."
+    test_code:
+      title: "Modular TB — checker module"
+      source_file: module4/examples/modular_testbenches/register_file_test_verilog.v
+      start_line: 1
+      end_line: 40
+      notes: "Separate stimulus, monitor, and checker blocks wired at top."
   demos:
     clock_reset:
       expect: "==="
@@ -63,6 +319,58 @@ module4:
       expect: "==="
 
 module5:
+  architecture:
+    two_column: true
+    rtl_code:
+      title: "Task/function Makefile"
+      source_file: module5/examples/reusable_routines/Makefile
+      start_line: 10
+      end_line: 14
+      language: makefile
+      notes: "Links ALU DUT; vvp runs procedural task-based test sequence."
+    tb_code:
+      title: "Task — apply stimulus and check"
+      source_file: module5/examples/reusable_routines/task_function_test_verilog.v
+      start_line: 129
+      end_line: 160
+      notes: "test_alu_operation task: drive inputs, #delay, compare, log result."
+    design_code:
+      title: "Function — expected ALU result"
+      source_file: module5/examples/reusable_routines/task_function_test_verilog.v
+      start_line: 63
+      end_line: 77
+      notes: "calculate_expected encodes reference model for each opcode."
+    make_code:
+      title: "File I/O regression build"
+      source_file: module5/examples/file_io/Makefile
+      start_line: 1
+      end_line: 18
+      language: makefile
+      notes: "cd module5/examples/file_io && make — reads vectors from file."
+    exec_code:
+      title: "File read and test loop"
+      source_file: module5/examples/file_io/file_based_test_verilog.v
+      start_line: 38
+      end_line: 75
+      notes: "$fopen/$fscanf load vectors; loop until EOF; write results log."
+    sim_code:
+      title: "Test sequence orchestration"
+      source_file: module5/examples/reusable_routines/task_function_test_verilog.v
+      start_line: 180
+      end_line: 210
+      notes: "initial block calls tasks for each opcode; prints final summary."
+    method_code:
+      title: "Procedural control — initial/always"
+      source_file: module5/examples/reusable_routines/task_function_test_verilog.v
+      start_line: 1
+      end_line: 35
+      notes: "initial for sequences; tasks encapsulate multi-step protocol."
+    closure_code:
+      title: "Result logging to file"
+      source_file: module5/examples/file_io/file_based_test_verilog.v
+      start_line: 75
+      end_line: 105
+      notes: "$fwrite pass/fail lines; archive for regression diff."
   demos:
     procedural_constructs:
       expect: "==="
@@ -74,6 +382,52 @@ module5:
       expect: "==="
 
 module6:
+  architecture:
+    two_column: true
+    rtl_code:
+      title: "SV compile — iverilog -g2012"
+      source_file: module6/examples/sv_classes/Makefile
+      start_line: 11
+      end_line: 15
+      language: makefile
+      notes: "SystemVerilog classes require -g2012; package order matters."
+    tb_code:
+      title: "Transaction class definition"
+      source_file: module6/examples/sv_classes/class_based_testbench.sv
+      start_line: 59
+      end_line: 95
+      notes: "rand fields, post_randomize(), new() — UVM sequence_item pattern."
+    design_code:
+      title: "Interface — signal bundle"
+      source_file: module6/examples/interfaces/interface_based_testbench.sv
+      start_line: 44
+      end_line: 85
+      notes: "interface and_gate_if; modport driver and monitor directions."
+    make_code:
+      title: "Interface-based TB build"
+      source_file: module6/examples/interfaces/Makefile
+      start_line: 1
+      end_line: 20
+      language: makefile
+      notes: "Compile interface + TB + DUT; vvp runs class-driven test."
+    exec_code:
+      title: "Test class run method"
+      source_file: module6/examples/sv_classes/class_based_testbench.sv
+      start_line: 200
+      end_line: 240
+      notes: "and_gate_test.run() randomizes transactions and checks DUT."
+    sim_code:
+      title: "Constraint randomization"
+      source_file: module6/examples/randomization/randomized_testbench.sv
+      start_line: 1
+      end_line: 45
+      notes: "randomize() with constraints; rerun for varied legal stimulus."
+    test_code:
+      title: "Package import pattern"
+      source_file: module6/examples/packages/package_example.sv
+      start_line: 1
+      end_line: 40
+      notes: "Shared types in package; import before TB top compilation."
   demos:
     sv_classes:
       expect: "==="
@@ -88,6 +442,65 @@ module6:
       expect: "Verilator"
 
 module7:
+  architecture:
+    two_column: true
+    rtl_code:
+      title: "Assertions Makefile — compile DUT+TB"
+      source_file: module7/examples/assertions/Makefile
+      start_line: 10
+      end_line: 14
+      language: makefile
+      notes: "iverilog -g2012 links counter DUT with assertion TB."
+    tb_code:
+      title: "Clocked assertion check"
+      source_file: module7/examples/assertions/basic_assertions_verilog.v
+      start_line: 37
+      end_line: 60
+      notes: "always @(posedge clk) verify property; count pass/fail."
+    design_code:
+      title: "DUT under assertion test"
+      source_file: module7/examples/assertions/basic_assertions_verilog.v
+      start_line: 29
+      end_line: 35
+      notes: "counter_4bit instantiated; assertions observe count and reset."
+    make_code:
+      title: "Run assertion example"
+      source_file: module7/examples/assertions/Makefile
+      start_line: 10
+      end_line: 14
+      language: makefile
+      notes: "cd module7/examples/assertions && make basic_assertions_verilog"
+    exec_code:
+      title: "Reset assertion property"
+      source_file: module7/examples/assertions/basic_assertions_verilog.v
+      start_line: 43
+      end_line: 55
+      notes: "When !rst_n, count must be 0; log ASSERT PASS or FAIL."
+    sim_code:
+      title: "Stimulus for assertion coverage"
+      source_file: module7/examples/assertions/basic_assertions_verilog.v
+      start_line: 85
+      end_line: 115
+      notes: "initial block deasserts reset, enables counter, triggers checks."
+    test_code:
+      title: "Assertion library module"
+      source_file: module7/examples/assertion_libraries/assertion_lib_verilog.v
+      start_line: 1
+      end_line: 40
+      notes: "Reusable check macros; include in multiple TBs."
+    method_code:
+      title: "Coverage analysis workflow"
+      source_file: module7/examples/coverage_analysis/Makefile
+      start_line: 1
+      end_line: 20
+      language: makefile
+      notes: "Run coverage example; review bins for untested select values."
+    closure_code:
+      title: "Assertion summary before $finish"
+      source_file: module7/examples/assertions/basic_assertions_verilog.v
+      start_line: 117
+      end_line: 135
+      notes: "Print assertion_pass/fail totals; non-zero fail → debug waveforms."
   demos:
     assertions:
       expect: "==="
@@ -98,6 +511,64 @@ module7:
       expect: "total"
 
 module8:
+  architecture:
+    two_column: true
+    rtl_code:
+      title: "Modular TB Makefile"
+      source_file: module8/examples/testbench_architecture/Makefile
+      start_line: 10
+      end_line: 14
+      language: makefile
+      notes: "Compiles reusable generator modules + mux DUT + top TB."
+    tb_code:
+      title: "Reusable clock/reset generators"
+      source_file: module8/examples/testbench_architecture/modular_testbench_verilog.v
+      start_line: 20
+      end_line: 55
+      notes: "Separate clock_generator and reset_generator parameterized modules."
+    design_code:
+      title: "Top TB — wire agents to DUT"
+      source_file: module8/examples/testbench_architecture/modular_testbench_verilog.v
+      start_line: 219
+      end_line: 265
+      notes: "clk_gen, rst_gen, stim_gen, dut, monitor, checker, scoreboard hierarchy."
+    make_code:
+      title: "Metrics tracker build"
+      source_file: module8/examples/verification_metrics/Makefile
+      start_line: 1
+      end_line: 18
+      language: makefile
+      notes: "cd module8/examples/verification_metrics && make"
+    exec_code:
+      title: "Checker module — expected vs actual"
+      source_file: module8/examples/testbench_architecture/modular_testbench_verilog.v
+      start_line: 131
+      end_line: 168
+      notes: "checker samples on posedge clk; $error on mismatch."
+    sim_code:
+      title: "Scoreboard pass/fail aggregation"
+      source_file: module8/examples/testbench_architecture/modular_testbench_verilog.v
+      start_line: 174
+      end_line: 210
+      notes: "scoreboard counts transactions; reports at done."
+    test_code:
+      title: "Metrics — test counters"
+      source_file: module8/examples/verification_metrics/metrics_tracker_verilog.v
+      start_line: 23
+      end_line: 55
+      notes: "total_tests, passed_tests, failed_tests, coverage_bins tracking."
+    method_code:
+      title: "Tool selection criteria"
+      source_file: module8/examples/tool_selection/tool_comparison_guide.md
+      start_line: 1
+      end_line: 25
+      notes: "When iverilog vs Verilator; SV feature needs vs performance."
+    closure_code:
+      title: "Sign-off metrics report"
+      source_file: module8/examples/verification_metrics/metrics_tracker_verilog.v
+      start_line: 100
+      end_line: 140
+      notes: "Final $display of pass rate and coverage before regression sign-off."
   demos:
     testbench_architecture:
       expect: "==="

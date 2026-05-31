@@ -113,6 +113,12 @@ make all
 - **Driver class**: `randomize()` item, drive interface signals, wait for handshake
 - **Test class**: Builds environment, runs sequences, reports `uvm-style` summary without UVM libs
 
+**Simulation flow**: `cd module6/examples/sv_classes && make class_based_testbench` → requires `iverilog -g2012` → `cd ../interfaces && make` for modport wiring
+
+**Execution sequence**: Package → interface → class → `randomize()` → `-g2012` compile → vvp → read UVM-style summary → check Verilator limits in `equivalent_cpp/`
+
+**Self-check flow**: post_randomize() sets expected → driver applies transaction → compare before next randomize
+
 ## Verification & Testing Methods
 
 ### 1. Constrained-random stimulus

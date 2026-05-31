@@ -1,5 +1,6 @@
 flowchart TB
-  PLAN[verification plan] --> ENV[test environment]
-  ENV --> DUT8[dut portfolio]
-  ENV --> MET[metrics]
-  MET --> SIGN[sign-off]
+  PLAN[verification plan] --> ENV[layered test environment]
+  ENV --> GEN[clock / reset / stimulus modules]
+  GEN --> DUT[dut portfolio]
+  ENV --> MET[metrics tracker]
+  MET --> SIGN[sign-off criteria]

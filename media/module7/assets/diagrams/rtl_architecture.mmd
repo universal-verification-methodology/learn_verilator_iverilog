@@ -1,6 +1,6 @@
-flowchart LR
-  STIM[stimulus] --> DUT[dut gates/mux/counter]
-  DUT --> ASRT[assertions]
-  DUT --> COV[coverage points]
-  ASRT --> RPT[report]
-  COV --> RPT
+flowchart TB
+  DUT[counter_4bit] --> IMM[immediate checks]
+  DUT --> CLKAST[clocked assertions]
+  IMM --> LOG[assert pass/fail count]
+  CLKAST --> LOG
+  LIB[assertion library macros] --> CLKAST

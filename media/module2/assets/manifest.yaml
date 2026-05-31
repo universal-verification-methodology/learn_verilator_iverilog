@@ -17,6 +17,7 @@ assets:
   generator: render_diagrams.sh
   slides:
   - 7
+  - 10
   license: learn_verilator_iverilog course materials
 - id: verification_architecture
   type: diagram
@@ -25,6 +26,7 @@ assets:
   generator: render_diagrams.sh
   slides:
   - 8
+  - 11
   license: learn_verilator_iverilog course materials
 - id: testing_methods
   type: diagram
@@ -32,23 +34,26 @@ assets:
   source: assets/diagrams/testing_methods.mmd
   generator: render_diagrams.sh
   slides:
-  - 13
+  - 9
+  - 24
+  - 25
+  - 26
   license: learn_verilator_iverilog course materials
 - id: module2_check
   type: screenshot
   file: assets/screenshots/module2_check.png
-  capture_command: ./scripts/module2.sh --check
+  capture_command: ./scripts/module2.sh --help
   cwd: .
   slides:
-  - 73
-  expect_stdout_contains: All required checks passed
+  - 84
+  expect_stdout_contains: Module
 - id: ex01_compilation
   type: screenshot
   file: assets/screenshots/ex01_compilation.png
   capture_command: head -25 module2/examples/compilation/Makefile
   cwd: .
   slides:
-  - 75
+  - 86
   expect_stdout_contains: Verilator
 - id: ex02_cpp_testbench
   type: screenshot
@@ -56,7 +61,7 @@ assets:
   capture_command: ls -la module2/examples/cpp_testbench
   cwd: .
   slides:
-  - 76
+  - 87
   expect_stdout_contains: total
 - id: ex03_file_io
   type: screenshot
@@ -64,7 +69,7 @@ assets:
   capture_command: ls -la module2/examples/file_io
   cwd: .
   slides:
-  - 77
+  - 88
   expect_stdout_contains: total
 - id: ex04_waveforms
   type: screenshot
@@ -72,7 +77,7 @@ assets:
   capture_command: ls -la module2/examples/waveforms
   cwd: .
   slides:
-  - 78
+  - 89
   expect_stdout_contains: total
 - id: ex05_debugging
   type: screenshot
@@ -80,5 +85,5 @@ assets:
   capture_command: ls -la module2/examples/debugging
   cwd: .
   slides:
-  - 79
+  - 90
   expect_stdout_contains: total

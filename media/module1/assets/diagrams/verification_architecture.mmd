@@ -1,4 +1,7 @@
 flowchart LR
-  DIR[directed vectors] --> VVP[vvp run]
-  VVP --> FILE[file I/O tests]
-  FILE --> DBG[waveform debug]
+  VEC[directed vectors] --> STIM[initial / tasks]
+  STIM --> DUT[mux or counter]
+  DUT --> CHK[self-check if expected]
+  CHK --> RPT[pass/fail summary]
+  FILE[file I/O vectors] --> STIM
+  DUT --> MON[$monitor / VCD]

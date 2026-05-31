@@ -18,6 +18,7 @@ From the `learn_verilator_iverilog` repo root:
 | `--pptx-only` | Skip PDF and video |
 | `--module 1` | Single module (supports `0,1,2`) |
 | `--regenerate-outlines` | Refresh `outline.yaml` from docs + EXAMPLES |
+| `--no-narration` | Skip TTS; silent video at fixed seconds per slide (faster CI) |
 | `--run-demos` | Re-run terminal capture during verify (slow) |
 
 Requires the Cursor skill: `~/.cursor/skills/module-to-slides-video` (run `bash …/scripts/setup.sh` once).
@@ -27,11 +28,11 @@ Requires the Cursor skill: `~/.cursor/skills/module-to-slides-video` (run `bash 
 | File | Description |
 |------|-------------|
 | `outline.yaml` | Slide plan (machine input for `build_slides.py`) |
-| `script.md` | Narration / timing notes for video |
+| `script.md` | Per-slide TTS narration (one timing-table row per slide) |
 | `assets/manifest.yaml` | Images and demo capture commands |
 | `slides.pptx` | Primary deck |
 | `slides.pdf` | PDF export |
-| `video.mp4` | Silent preview (~8 s/slide; add `audio/narration.wav` for voice) |
+| `video.mp4` | Slides + TTS narration (`audio/narration.wav`, `captions.srt`, `transcript.txt`) |
 
 ## Regenerate outlines
 
@@ -40,7 +41,9 @@ Requires the Cursor skill: `~/.cursor/skills/module-to-slides-video` (run `bash 
 ./scripts/build_all_media.sh
 ```
 
-Edit `media/outline_overrides.yaml` or hand-tune `outline.yaml` after generation.
+Edit `media/outline_overrides.yaml` (demo commands + architecture code slides) or hand-tune `outline.yaml` after generation.
+
+Each deck includes **Design architecture** (two-column slides + execution code from the repo), **Verification & testing methods**, syllabus topics, command highlights, and hands-on demo slides. Narration is auto-generated from slide bullets and `notes` fields — edit `script.md` to refine voiceover text.
 
 ## Git
 

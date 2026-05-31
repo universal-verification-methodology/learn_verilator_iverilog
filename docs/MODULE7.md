@@ -101,6 +101,12 @@ make all
 - **Code coverage**: Line/branch awareness via simulator reports where available
 - **Feedback loop**: Coverage holes drive new directed or random tests (documented in guides)
 
+**Simulation flow**: `cd module7/examples/assertions && make basic_assertions_verilog` → assertion pass/fail counts on stdout → `coverage_analysis/` for bin review
+
+**Execution sequence**: Embed checks in TB → run simulation → collect assertion_pass/fail → analyze coverage gaps → `./scripts/module7.sh --check`
+
+**Self-check flow**: Clocked assertions on posedge → summary block before `$finish` → non-zero fail triggers debug
+
 ## Verification & Testing Methods
 
 ### 1. Assertion-based verification (ABV)

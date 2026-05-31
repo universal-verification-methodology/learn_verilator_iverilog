@@ -133,6 +133,12 @@ make hello_world
 - **Verilator**: `verilator --cc --exe` → `make -C obj_dir` → `./obj_dir/Vdut`
 - **Build dirs**: Per-example `Makefile` targets; artifacts under `build/` or `obj_dir/` (gitignored)
 
+**Simulation flow**: `cd module0/examples/iverilog_basics && make hello_world` → read `$display` on stdout → `cd ../verilator_basics && make hello_world` → run `./obj_dir/Vhello_world`
+
+**Execution sequence**: Install tools → `iverilog -v` / `verilator --version` → `iverilog -o sim tb.v` → `vvp sim` → optional `$dumpfile` VCD → `./scripts/module0.sh --check`
+
+**Self-check flow**: `make hello_world` → PASS console message → optional GTKWave on `.vcd`
+
 ## Verification & Testing Methods
 
 ### 1. Install and environment verification

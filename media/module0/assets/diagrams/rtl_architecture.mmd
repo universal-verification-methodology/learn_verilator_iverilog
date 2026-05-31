@@ -1,11 +1,15 @@
-flowchart TB
-  subgraph tools["Toolchain"]
-    IV[iverilog] --> VVP[vvp]
-    VER[verilator] --> OBJ[obj_dir C++ model]
+flowchart LR
+  subgraph iv["iverilog execution"]
+    IV[iverilog -o sim tb.v dut.v] --> VVP[vvp sim]
+    VVP --> LOG[stdout / VCD]
+  end
+  subgraph ver["Verilator execution"]
+    VR[verilator --cc --exe --build] --> OBJ[obj_dir/ Vmodule]
+    OBJ --> RUN[./obj_dir/Vdut]
   end
   subgraph dut0["module0/dut"]
     G[simple_gates]
     C[simple_counter]
   end
   VVP --> dut0
-  OBJ --> dut0
+  RUN --> dut0

@@ -1,3 +1,6 @@
 flowchart TD
-  A[cycle tests] --> B[trace debug]
-  B --> C[batch module2.sh]
+  LINT[--lint-only syntax] --> BUILD[--cc --exe --build]
+  BUILD --> RUN[execute obj_dir binary]
+  RUN --> TRACE[optional --trace VCD/FST]
+  TRACE --> COV[optional --coverage]
+  COV --> REG[module2.sh --check]

@@ -1,3 +1,7 @@
-flowchart LR
-  LOOP[cycle eval loop] --> TRACE[optional trace]
-  TRACE --> FILE[file-driven C++ tests]
+flowchart TB
+  MAIN[C++ main] --> INIT[Verilated::commandArgs]
+  INIT --> DUT[new Vmodule]
+  DUT --> LOOP[set inputs → eval]
+  LOOP --> ASSERT[assert / compare]
+  ASSERT --> LOOP
+  LOOP --> FINAL[dut->final cleanup]

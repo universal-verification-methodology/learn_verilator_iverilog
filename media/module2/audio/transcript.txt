@@ -1,0 +1,329 @@
+[Slide 1] Welcome to module 2, Verilator Deep Dive. In this module you will master verilator for c++ testbench development.
+
+[Slide 2] Here is what you will learn in this module. Verilator Fundamentals: Understanding how Verilator converts Verilog to C++ Compilation Process: Mastering Verilator compilation flags and options C++ Testbench Writing: Creating effective testbenches using C++ and Verilator's API Waveform Generation: Creating VCD/FST files for debugging File I/O: Managing test vectors and results with files
+
+[Slide 3] Before you start, make sure you have these prerequisites. See module README
+
+[Slide 4] Learning path. Master Verilator for C++ testbench development
+
+[Slide 5] Overview. This module provides comprehensive coverage of Verilator, a fast Verilog/SystemVerilog simulator that generates C++ code. You'll learn...
+
+[Slide 6] Next section: Design architecture.
+
+[Slide 7] 1. Verilator compilation model. Input: Verilog/SystemVerilog RTL + optional --timing / lint flags per example Output: C++ classes (V<top>) in obj_dir/ with fast cycle-accurate eval() Linkage: C++ main() or test class calls dut->eval() each cycle or on events Tracing: --trace / --trace-fst for waveform dumps from the C++ side Refer to the diagram on the right.
+
+[Slide 8] 2. Module 2 DUT catalog. dut/multiplexers/: Same MUX family as Module 1 — cross-tool comparison baseline dut/counters/: counter_4bit — exercises sequential C++ drive/monitor loops Port mapping: Verilator flattens ports to struct members (dut->clk, dut->count) Performance: Large test suites favor Verilator’s compiled model over interpreted VVP Refer to the diagram on the right.
+
+[Slide 9] 3. C++ testbench architecture. Top-level main: Allocates Vtop, applies reset sequence, runs clock loop Stimulus loop: for/while sets inputs then eval() advances time Optional OOP: Advanced tests organize Driver/Monitor/Checker as C++ classes Build: Generated Vtop.mk plus user Makefile link testbench and model Refer to the diagram on the right.
+
+[Slide 10] RTL block diagram (reference). Module 2: DUT hierarchy and signal flow.
+
+[Slide 11] Verification / testbench diagram (reference). Module 2: stimulus, observation, and checking.
+
+[Slide 12] Verilator compile flags. Review the code on screen and match it to files in the repository. verilator --cc --exe --build emits obj_dir/ with Vmodule and Makefile.
+
+[Slide 13] C++ TB — init, eval, final. Review the code on screen and match it to files in the repository. Verilated::commandArgs, new Vmodule, dut->eval(), dut->final().
+
+[Slide 14] obj_dir layout after verilator. Review the code on screen and match it to files in the repository. make mux_4to1_test compiles and runs ./obj_dir/Vmux_4to1.
+
+[Slide 15] DUT ports as C++ members. Review the code on screen and match it to files in the repository. Write dut->sel and inputs, call eval(), read dut->out.
+
+[Slide 16] Next section: Execution & simulation flow.
+
+[Slide 17] How the example runs (toolchain). Match each bullet to files in the repository. Makefile: Verilator compiles RTL + SystemVerilog testbench into a C++ model sim_main.cpp: generates clk/rst_n, calls eval() until $finish Directed test (initial block or C++): drive stimulus, wait for DUT flags Self-check: compare outputs; print PASS/FAIL (see terminal demo slide) Repo path...
+
+[Slide 18] Follow these steps in order when working through this module. C++ assert or compare after each eval final "All tests passed" message verilator --cc --exe --build rtl.v tb.cpp inspect obj_dir/ run Vtop Follow this order when tracing waveforms or debugging.
+
+[Slide 19] Follow these steps in order when working through this module. eval() each cycle optional --trace VCD ./scripts/module2.sh --check Follow this order when tracing waveforms or debugging.
+
+[Slide 20] Build C++ testbench target. Review the code on screen and match it to files in the repository. From module2/examples/cpp_testbench: make mux_4to1_test
+
+[Slide 21] Verilator --trace for waveforms. Review the code on screen and match it to files in the repository. Add --trace or --trace-fst; open VCD/FST in GTKWave after run.
+
+[Slide 22] Sequential eval loop — counter. Review the code on screen and match it to files in the repository. Toggle clk, eval(), check count — manual clock in C++ loop.
+
+[Slide 23] Next section: Verification & testing methods.
+
+[Slide 24] 1. Cycle-based C++ testing. Clock generation: Toggle clock in loop with eval() between edges Reset sequence: Hold rst_n low N cycles, release, verify known state Checking: assert() or explicit compare with std::cerr on mismatch Refer to the diagram on the right.
+
+[Slide 25] 2. Tracing and performance checks. Waveforms: Enable Verilator trace API; view in GTKWave for debug examples Printf debug: Structured logging before/after eval() for signal snapshots Regression: ./scripts/module2.sh --all-tests batches compile+run across examples Refer to the diagram on the right.
+
+[Slide 26] 3. File I/O and scalable stimulus. Vector files: Read test data in C++ (file_io examples) for long sequences Repeatability: Fixed seeds and deterministic loops for comparable runs Failure isolation: Run single obj_dir binary with minimal stimulus to bisect bugs Refer to the diagram on the right.
+
+[Slide 27] Assert-based checking. Review the code on screen and match it to files in the repository. assert() on mismatch; All tests passed on stdout at end.
+
+[Slide 28] Next section: Syllabus topics.
+
+[Slide 29] 1. Verilator Overview (1/6). What is Verilator? Fast Verilog/SystemVerilog simulator Generates C++ code from Verilog Open-source and free Excellent performance
+
+[Slide 30] 1. Verilator Overview (2/6). Two-stage compilation Verilog → C++ conversion C++ compilation and linking Generated wrapper classes C++ Wrapper Generation
+
+[Slide 31] 1. Verilator Overview (3/6). Signal access methods Evaluation methods Tracing support Verilator Capabilities and Features Fast simulation
+
+[Slide 32] 1. Verilator Overview (4/6). Limited SystemVerilog support Coverage support Waveform generation Supported Verilog/SystemVerilog Constructs Most Verilog-2001 features
+
+[Slide 33] 1. Verilator Overview (5/6). Interfaces (limited) Classes (limited) Assertions (limited) Limitations and Workarounds Limited SystemVerilog support
+
+[Slide 34] 1. Verilator Overview (6/6). Workarounds for unsupported features When to Use Verilator High-performance simulation Large designs Integration with C++ libraries
+
+[Slide 35] 2. Compilation Process (1/8). Verilator Compilation Command Basic syntax: verilator --cc --exe design.v testbench.cpp Output generation Build process Compilation Flags and Options
+
+[Slide 36] 2. Compilation Process (2/8). --exe: Generate executable --build: Build automatically -I<directory>: Add include path -D<macro>: Define macro -O0, -O1, -O2, -O3: Optimization levels
+
+[Slide 37] 2. Compilation Process (3/8). --trace-fst: Generate FST tracing --coverage: Enable coverage --lint-only: Lint without compilation Optimization Levels (-O0, -O1, -O2, -O3) -O0: No optimization (fastest compilation)
+
+[Slide 38] 2. Compilation Process (4/8). -O2: More optimization (default) -O3: Maximum optimization (slowest compilation, fastest simulation) Coverage Options (--coverage) Code coverage generation Coverage analysis
+
+[Slide 39] 2. Compilation Process (5/8). Linting Capabilities (--lint-only) Syntax checking Design rule checking No simulation generation Waveform Generation (--trace, --trace-fst)
+
+[Slide 40] 2. Compilation Process (6/8). --trace-fst: Generate FST files (smaller, faster) Signal selection GTKWave compatibility Include Path Management Adding include directories
+
+[Slide 41] 2. Compilation Process (7/8). Relative vs. absolute paths Define Macros Conditional compilation Macro definitions Usage in designs
+
+[Slide 42] 2. Compilation Process (8/8). Compiling multiple files File ordering Dependency management basic_compilation.cpp: Demonstrates basic compilation, optimization, tracing, coverage, linting
+
+[Slide 43] 3. C++ Testbench Structure (1/7). C++ Main Function Entry point Verilator initialization DUT instantiation Test sequence
+
+[Slide 44] 3. C++ Testbench Structure (2/7). Verilator-Generated Class Usage Class naming (V<module_name>) Instance creation Method calls Signal access
+
+[Slide 45] 3. C++ Testbench Structure (3/7). Creating DUT object Memory management Lifetime management Signal Access (Reading and Writing) Reading signals: dut->signal_name
+
+[Slide 46] 3. C++ Testbench Structure (4/7). Signal types Multi-bit signals Clock Generation in C++ Simulation loop Clock toggling
+
+[Slide 47] 3. C++ Testbench Structure (5/7). Multiple clocks Reset Generation in C++ Reset sequences Synchronous reset Asynchronous reset
+
+[Slide 48] 3. C++ Testbench Structure (6/7). Simulation Loop Time management Event scheduling Loop structure Termination
+
+[Slide 49] 3. C++ Testbench Structure (7/7). counter_test.cpp: Clock and reset generation, simulation loop
+
+[Slide 50] 4. C++ Testbench Writing (1/6). Basic C++ Testbench Template Standard structure Common patterns Best practices Signal Access Methods
+
+[Slide 51] 4. C++ Testbench Writing (2/6). Signal reading Signal writing Signal monitoring Clock and Reset Patterns Standard clock patterns
+
+[Slide 52] 4. C++ Testbench Writing (3/6). Clock/reset coordination Stimulus Generation in C++ Test vector generation Pattern generation Sequential stimulus
+
+[Slide 53] 4. C++ Testbench Writing (4/6). Response Monitoring in C++ Output monitoring Real-time monitoring Post-processing Logging
+
+[Slide 54] 4. C++ Testbench Writing (5/6). Expected value calculation Output comparison Error detection Assertions Error Reporting
+
+[Slide 55] 4. C++ Testbench Writing (6/6). Exit codes Test summaries Failure reporting
+
+[Slide 56] 5. Verilator C++ API (1/5). Top Module Class Structure Class name: V<module_name> Constructor/destructor Methods Signals
+
+[Slide 57] 5. Verilator C++ API (2/5). Direct member access Signal types Multi-bit signals Array signals Evaluation Method (eval())
+
+[Slide 58] 5. Verilator C++ API (3/5). When to call eval() Timing considerations Multiple evaluations Time Management Simulation time
+
+[Slide 59] 5. Verilator C++ API (4/5). Time advancement Time-based events Tracing API VerilatedVcdC class trace() method
+
+[Slide 60] 5. Verilator C++ API (5/5). File management Coverage API Coverage collection Coverage reporting Coverage analysis
+
+[Slide 61] 6. Waveform Generation (1/5). VCD File Generation Using --trace flag VerilatedVcdC class trace() method dump() method
+
+[Slide 62] 6. Waveform Generation (2/5). FST File Generation Using --trace-fst flag FST advantages GTKWave compatibility Signal Selection for Tracing
+
+[Slide 63] 6. Waveform Generation (3/5). Selective tracing Hierarchy levels GTKWave Compatibility VCD format FST format
+
+[Slide 64] 6. Waveform Generation (4/5). Signal organization Waveform Analysis Viewing waveforms Signal timing Timing relationships
+
+[Slide 65] 6. Waveform Generation (5/5). waveform_example.cpp: Comprehensive waveform generation using Verilator tracing API
+
+[Slide 66] 7. Debugging with Verilator (1/6). Compilation Error Debugging Understanding Verilator errors Common compilation errors Syntax errors Missing files
+
+[Slide 67] 7. Debugging with Verilator (2/6). Understanding C++ errors Linker errors Template errors Common mistakes Runtime Debugging
+
+[Slide 68] 7. Debugging with Verilator (3/6). Signal inspection GDB debugging Valgrind debugging Signal Inspection Printing signal values
+
+[Slide 69] 7. Debugging with Verilator (4/6). VCD file analysis Debug output Logging Strategies Debug levels Conditional logging
+
+[Slide 70] 7. Debugging with Verilator (5/6). Log organization Common Pitfalls and Solutions Forgetting to call eval() Signal initialization Memory leaks
+
+[Slide 71] 7. Debugging with Verilator (6/6). Common mistakes debug_example.cpp: C++ debugging techniques, logging strategies, error handling
+
+[Slide 72] 8. Advanced Verilator Features (1/4). Multi-Threaded Simulation Basics Thread safety Parallel simulation Synchronization Performance Optimization
+
+[Slide 73] 8. Advanced Verilator Features (2/4). Simulation optimization Memory optimization Speed optimization Large Design Handling Compiling large designs
+
+[Slide 74] 8. Advanced Verilator Features (3/4). Incremental compilation Design partitioning Custom C++ Integration Integrating C++ libraries External interfaces
+
+[Slide 75] 8. Advanced Verilator Features (4/4). System integration SystemC Integration Basics SystemC support SystemC integration When to use SystemC
+
+[Slide 76] 9. Project Organization (1/7). Makefile Integration Basic Makefile structure Verilator compilation rules Test execution Clean targets
+
+[Slide 77] 9. Project Organization (2/7). CMake Integration CMake setup Verilator integration Build configuration Scripting for Automation
+
+[Slide 78] 9. Project Organization (3/7). Batch processing Test automation Result collection Batch Simulation Running multiple tests
+
+[Slide 79] 9. Project Organization (4/7). Parallel execution Result aggregation Regression Testing Setup Test suite organization Regression test structure
+
+[Slide 80] 9. Project Organization (5/7). Test result tracking Location: module0/examples/verilator_basics/and_gate_test.cpp Demonstrates: Basic C++ testbench structure, signal access Location: module2/examples/cpp_testbench/mux_4to1_test.cpp Demonstrates: Complete C++ testbench, signal access, test patterns
+
+[Slide 81] 9. Project Organization (6/7). Demonstrates: Clock generation, reset sequences, simulation loop Location: module2/examples/file_io/file_io_test.cpp Demonstrates: Reading test vectors from files, writing results Location: See compilation examples Demonstrates: Multi-file compilation, include paths
+
+[Slide 82] 9. Project Organization (7/7). Demonstrates: Class-based organization, comprehensive testing
+
+[Slide 83] Next section: Hands-on examples.
+
+[Slide 84] Module 2 self-check. Watch the terminal output and confirm you see the expected pass message.
+
+[Slide 85] Exercise scaffold. Review the code on screen and match it to files in the repository.
+
+[Slide 86] Demo: Compilation. Watch the terminal output and confirm you see the expected pass message.
+
+[Slide 87] Demo: C++ testbench. Watch the terminal output and confirm you see the expected pass message.
+
+[Slide 88] Demo: File I/O. Watch the terminal output and confirm you see the expected pass message.
+
+[Slide 89] Demo: Waveforms. Watch the terminal output and confirm you see the expected pass message.
+
+[Slide 90] Demo: Debugging. Watch the terminal output and confirm you see the expected pass message.
+
+[Slide 91] Next section: Key concepts.
+
+[Slide 92] 1. Verilator compilation model. Input: Verilog/SystemVerilog RTL + optional --timing / lint flags per example Output: C++ classes (V<top>) in obj_dir/ with fast cycle-accurate eval() Linkage: C++ main() or test class calls dut->eval() each cycle or on events Tracing: --trace / --trace-fst for waveform dumps from the C++ side
+
+[Slide 93] 2. Module 2 DUT catalog. dut/multiplexers/: Same MUX family as Module 1 — cross-tool comparison baseline dut/counters/: counter_4bit — exercises sequential C++ drive/monitor loops Port mapping: Verilator flattens ports to struct members (dut->clk, dut->count) Performance: Large test suites favor Verilator’s compiled model over interpreted VVP
+
+[Slide 94] 3. C++ testbench architecture. Top-level main: Allocates Vtop, applies reset sequence, runs clock loop Stimulus loop: for/while sets inputs then eval() advances time Optional OOP: Advanced tests organize Driver/Monitor/Checker as C++ classes Build: Generated Vtop.mk plus user Makefile link testbench and model
+
+[Slide 95] 1. Cycle-based C++ testing. Clock generation: Toggle clock in loop with eval() between edges Reset sequence: Hold rst_n low N cycles, release, verify known state Checking: assert() or explicit compare with std::cerr on mismatch
+
+[Slide 96] 2. Tracing and performance checks. Waveforms: Enable Verilator trace API; view in GTKWave for debug examples Printf debug: Structured logging before/after eval() for signal snapshots Regression: ./scripts/module2.sh --all-tests batches compile+run across examples
+
+[Slide 97] 3. File I/O and scalable stimulus. Vector files: Read test data in C++ (file_io examples) for long sequences Repeatability: Fixed seeds and deterministic loops for comparable runs Failure isolation: Run single obj_dir binary with minimal stimulus to bisect bugs
+
+[Slide 98] 1. Verilator Overview (1/6). What is Verilator? Fast Verilog/SystemVerilog simulator Generates C++ code from Verilog Open-source and free Excellent performance
+
+[Slide 99] 1. Verilator Overview (2/6). Two-stage compilation Verilog → C++ conversion C++ compilation and linking Generated wrapper classes C++ Wrapper Generation
+
+[Slide 100] 1. Verilator Overview (3/6). Signal access methods Evaluation methods Tracing support Verilator Capabilities and Features Fast simulation
+
+[Slide 101] 1. Verilator Overview (4/6). Limited SystemVerilog support Coverage support Waveform generation Supported Verilog/SystemVerilog Constructs Most Verilog-2001 features
+
+[Slide 102] 1. Verilator Overview (5/6). Interfaces (limited) Classes (limited) Assertions (limited) Limitations and Workarounds Limited SystemVerilog support
+
+[Slide 103] 1. Verilator Overview (6/6). Workarounds for unsupported features When to Use Verilator High-performance simulation Large designs Integration with C++ libraries
+
+[Slide 104] 2. Compilation Process (1/8). Verilator Compilation Command Basic syntax: verilator --cc --exe design.v testbench.cpp Output generation Build process Compilation Flags and Options
+
+[Slide 105] 2. Compilation Process (2/8). --exe: Generate executable --build: Build automatically -I<directory>: Add include path -D<macro>: Define macro -O0, -O1, -O2, -O3: Optimization levels
+
+[Slide 106] 2. Compilation Process (3/8). --trace-fst: Generate FST tracing --coverage: Enable coverage --lint-only: Lint without compilation Optimization Levels (-O0, -O1, -O2, -O3) -O0: No optimization (fastest compilation)
+
+[Slide 107] 2. Compilation Process (4/8). -O2: More optimization (default) -O3: Maximum optimization (slowest compilation, fastest simulation) Coverage Options (--coverage) Code coverage generation Coverage analysis
+
+[Slide 108] 2. Compilation Process (5/8). Linting Capabilities (--lint-only) Syntax checking Design rule checking No simulation generation Waveform Generation (--trace, --trace-fst)
+
+[Slide 109] 2. Compilation Process (6/8). --trace-fst: Generate FST files (smaller, faster) Signal selection GTKWave compatibility Include Path Management Adding include directories
+
+[Slide 110] 2. Compilation Process (7/8). Relative vs. absolute paths Define Macros Conditional compilation Macro definitions Usage in designs
+
+[Slide 111] 2. Compilation Process (8/8). Compiling multiple files File ordering Dependency management basic_compilation.cpp: Demonstrates basic compilation, optimization, tracing, coverage, linting
+
+[Slide 112] 3. C++ Testbench Structure (1/7). C++ Main Function Entry point Verilator initialization DUT instantiation Test sequence
+
+[Slide 113] 3. C++ Testbench Structure (2/7). Verilator-Generated Class Usage Class naming (V<module_name>) Instance creation Method calls Signal access
+
+[Slide 114] 3. C++ Testbench Structure (3/7). Creating DUT object Memory management Lifetime management Signal Access (Reading and Writing) Reading signals: dut->signal_name
+
+[Slide 115] 3. C++ Testbench Structure (4/7). Signal types Multi-bit signals Clock Generation in C++ Simulation loop Clock toggling
+
+[Slide 116] 3. C++ Testbench Structure (5/7). Multiple clocks Reset Generation in C++ Reset sequences Synchronous reset Asynchronous reset
+
+[Slide 117] 3. C++ Testbench Structure (6/7). Simulation Loop Time management Event scheduling Loop structure Termination
+
+[Slide 118] 3. C++ Testbench Structure (7/7). counter_test.cpp: Clock and reset generation, simulation loop
+
+[Slide 119] 4. C++ Testbench Writing (1/6). Basic C++ Testbench Template Standard structure Common patterns Best practices Signal Access Methods
+
+[Slide 120] 4. C++ Testbench Writing (2/6). Signal reading Signal writing Signal monitoring Clock and Reset Patterns Standard clock patterns
+
+[Slide 121] 4. C++ Testbench Writing (3/6). Clock/reset coordination Stimulus Generation in C++ Test vector generation Pattern generation Sequential stimulus
+
+[Slide 122] 4. C++ Testbench Writing (4/6). Response Monitoring in C++ Output monitoring Real-time monitoring Post-processing Logging
+
+[Slide 123] 4. C++ Testbench Writing (5/6). Expected value calculation Output comparison Error detection Assertions Error Reporting
+
+[Slide 124] 4. C++ Testbench Writing (6/6). Exit codes Test summaries Failure reporting
+
+[Slide 125] 5. Verilator C++ API (1/5). Top Module Class Structure Class name: V<module_name> Constructor/destructor Methods Signals
+
+[Slide 126] 5. Verilator C++ API (2/5). Direct member access Signal types Multi-bit signals Array signals Evaluation Method (eval())
+
+[Slide 127] 5. Verilator C++ API (3/5). When to call eval() Timing considerations Multiple evaluations Time Management Simulation time
+
+[Slide 128] 5. Verilator C++ API (4/5). Time advancement Time-based events Tracing API VerilatedVcdC class trace() method
+
+[Slide 129] 5. Verilator C++ API (5/5). File management Coverage API Coverage collection Coverage reporting Coverage analysis
+
+[Slide 130] 6. Waveform Generation (1/5). VCD File Generation Using --trace flag VerilatedVcdC class trace() method dump() method
+
+[Slide 131] 6. Waveform Generation (2/5). FST File Generation Using --trace-fst flag FST advantages GTKWave compatibility Signal Selection for Tracing
+
+[Slide 132] 6. Waveform Generation (3/5). Selective tracing Hierarchy levels GTKWave Compatibility VCD format FST format
+
+[Slide 133] 6. Waveform Generation (4/5). Signal organization Waveform Analysis Viewing waveforms Signal timing Timing relationships
+
+[Slide 134] 6. Waveform Generation (5/5). waveform_example.cpp: Comprehensive waveform generation using Verilator tracing API
+
+[Slide 135] 7. Debugging with Verilator (1/6). Compilation Error Debugging Understanding Verilator errors Common compilation errors Syntax errors Missing files
+
+[Slide 136] 7. Debugging with Verilator (2/6). Understanding C++ errors Linker errors Template errors Common mistakes Runtime Debugging
+
+[Slide 137] 7. Debugging with Verilator (3/6). Signal inspection GDB debugging Valgrind debugging Signal Inspection Printing signal values
+
+[Slide 138] 7. Debugging with Verilator (4/6). VCD file analysis Debug output Logging Strategies Debug levels Conditional logging
+
+[Slide 139] 7. Debugging with Verilator (5/6). Log organization Common Pitfalls and Solutions Forgetting to call eval() Signal initialization Memory leaks
+
+[Slide 140] 7. Debugging with Verilator (6/6). Common mistakes debug_example.cpp: C++ debugging techniques, logging strategies, error handling
+
+[Slide 141] 8. Advanced Verilator Features (1/4). Multi-Threaded Simulation Basics Thread safety Parallel simulation Synchronization Performance Optimization
+
+[Slide 142] 8. Advanced Verilator Features (2/4). Simulation optimization Memory optimization Speed optimization Large Design Handling Compiling large designs
+
+[Slide 143] 8. Advanced Verilator Features (3/4). Incremental compilation Design partitioning Custom C++ Integration Integrating C++ libraries External interfaces
+
+[Slide 144] 8. Advanced Verilator Features (4/4). System integration SystemC Integration Basics SystemC support SystemC integration When to use SystemC
+
+[Slide 145] 9. Project Organization (1/11). Makefile Integration Basic Makefile structure Verilator compilation rules Test execution Clean targets
+
+[Slide 146] 9. Project Organization (2/11). CMake Integration CMake setup Verilator integration Build configuration Scripting for Automation
+
+[Slide 147] 9. Project Organization (3/11). Batch processing Test automation Result collection Batch Simulation Running multiple tests
+
+[Slide 148] 9. Project Organization (4/11). Parallel execution Result aggregation Regression Testing Setup Test suite organization Regression test structure
+
+[Slide 149] 9. Project Organization (5/11). Test result tracking Location: module0/examples/verilator_basics/and_gate_test.cpp Demonstrates: Basic C++ testbench structure, signal access Location: module2/examples/cpp_testbench/mux_4to1_test.cpp Demonstrates: Complete C++ testbench, signal access, test patterns
+
+[Slide 150] 9. Project Organization (6/11). Demonstrates: Clock generation, reset sequences, simulation loop Location: module2/examples/file_io/file_io_test.cpp Demonstrates: Reading test vectors from files, writing results Location: See compilation examples Demonstrates: Multi-file compilation, include paths
+
+[Slide 151] 9. Project Organization (7/11). Demonstrates: Class-based organization, comprehensive testing Compile Verilog designs with Verilator Write C++ testbenches for Verilator Use Verilator C++ API effectively Generate and analyze waveforms
+
+[Slide 152] 9. Project Organization (8/11). Organize projects using Verilator Optimize Verilator-based testbenches Use compilation examples Try different compilation options Understand compilation process
+
+[Slide 153] 9. Project Organization (9/11). Test all input combinations Verify correct operation Read test vectors from file Apply vectors to DUT Write results to file
+
+[Slide 154] 9. Project Organization (10/11). Generate VCD files with Verilator View waveforms in GTKWave Analyze signal timing Debug using waveforms Create Makefile for compilation
+
+[Slide 155] 9. Project Organization (11/11). Implement clean targets Organize project structure
+
+[Slide 156] Next section: Practice & assessment.
+
+[Slide 157] By now you should be able to explain the following. Compile Verilog designs with Verilator Write C++ testbenches for Verilator Use Verilator C++ API effectively Generate and analyze waveforms Debug Verilator compilation and simulation issues From MODULE2 Learning Outcomes.
+
+[Slide 158] By now you should be able to explain the following. Optimize Verilator-based testbenches Use compilation examples Try different compilation options Understand compilation process Complete C++ testbench for 4-to-1 multiplexer From MODULE2 Learning Outcomes.
+
+[Slide 159] By now you should be able to explain the following. Verify correct operation Read test vectors from file Apply vectors to DUT Write results to file Compare expected vs. actual From MODULE2 Learning Outcomes.
+
+[Slide 160] By now you should be able to explain the following. View waveforms in GTKWave Analyze signal timing Debug using waveforms Create Makefile for compilation Add test execution rules From MODULE2 Learning Outcomes.
+
+[Slide 161] By now you should be able to explain the following. Organize project structure Can compile Verilog designs with various Verilator options Can write complete C++ testbenches Can use Verilator C++ API effectively Can use file I/O in C++ testbenches From MODULE2 Learning Outcomes.
+
+[Slide 162] By now you should be able to explain the following. Can debug compilation and simulation errors Can organize projects with Makefiles Can optimize Verilator-based testbenches Prerequisites: Module 0: Installation and Setup and Module 1: iverilog Deep Dive Next Steps: Module 3: Testbench Fundamentals - Learn fundamental testbench concepts for both paradigms From MODULE2 Learning Outcomes.
+
+[Slide 163] By now you should be able to explain the following. Module 3: Testbench Fundamentals (Verilog and C++) - Learn fundamental testbench concepts for both paradigms Module 4: Basic Testbench Construction - Master structured testbench construction Verilator Documentation: https://verilator.org/ GTKWave Documentation: http://gtkwave.sourceforge.net/ IEEE 1364-2005 Standard: Verilog Hardware...
+
+[Slide 164] Assessment checklist. Can compile Verilog designs with various Verilator options Can write complete C++ testbenches Can use Verilator C++ API effectively Can use file I/O in C++ testbenches Can generate and view waveforms
+
+[Slide 165] In summary: Master Verilator for C++ testbench development Next up: Next module in course. Master Verilator for C++ testbench development Complete module2/CHECKLIST.md Review module2/EXAMPLES.md and run each lab Next: Next module in course

@@ -1,0 +1,467 @@
+1
+00:00:00,000 --> 00:00:14,232
+Welcome to module 3, Testbench Fundamentals (Verilog and C++). In this module you will understand testbench architecture and basic verification concepts for both verilog and c++ testbenches.
+
+2
+00:00:14,582 --> 00:00:24,782
+Here is what you will learn in this module. Understand testbench architecture and basic verification concepts for both Verilog and C++ testbenches
+
+3
+00:00:25,132 --> 00:00:31,180
+Before you start, make sure you have these prerequisites. See module README
+
+4
+00:00:31,530 --> 00:00:40,770
+Learning path. Understand testbench architecture and basic verification concepts for both Verilog and C++ testbenches
+
+5
+00:00:41,120 --> 00:00:53,696
+Overview. This module introduces the fundamental concepts of testbench design for both Verilog (iverilog) and C++ (Verilator) testbenches. You'll...
+
+6
+00:00:54,046 --> 00:00:57,286
+Next section: Design architecture.
+
+7
+00:00:57,636 --> 00:01:27,684
+1. Canonical testbench–DUT boundary. DUT: Device Under Test in module3/dut/ (gates, multiplexers, counters) TB wrapper: Encapsulates instantiation, clock/reset, and test program only Signals: Explicit wires/regs (Verilog) or model ports (C++) — no hidden coupling Lifecycle: Build → reset → run tests → report → $finish / return exit code Refer to the diagram on the right.
+
+8
+00:01:28,034 --> 00:01:57,458
+2. Dual-paradigm environment architecture. Verilog TB (examples/verilog_testbenches/): Event-driven initial/always C++ TB (examples/cpp_testbenches/): eval() loop with Verilator model Shared DUT: Same RTL verified two ways — highlights tool-specific TB idioms Comparison guide: examples/comparison/ documents mapping between styles Refer to the diagram on the right.
+
+9
+00:01:57,808 --> 00:02:23,080
+3. Verification component roles (UVM-aligned). Driver: Applies stimulus (assignments before eval or #delay) Monitor: Samples outputs; logs transactions or pin values Scoreboard: Compares actual vs expected; increments pass/fail Clock/reset agents: Reusable blocks generating periodic clock and reset sequences Refer to the diagram on the right.
+
+10
+00:02:23,430 --> 00:02:30,798
+RTL block diagram (reference). Module 3: DUT hierarchy and signal flow.
+
+11
+00:02:31,148 --> 00:02:39,620
+Verification / testbench diagram (reference). Module 3: stimulus, observation, and checking.
+
+12
+00:02:39,970 --> 00:02:55,354
+Verilog TB Makefile — counter_test. Review the code on screen and match it to files in the repository. iverilog links TB + counter_4bit.v; vvp runs event-driven simulation.
+
+13
+00:02:55,704 --> 00:03:09,240
+Verilog TB — clock and reset. Review the code on screen and match it to files in the repository. always #half clk=~clk; reset sequence in initial block.
+
+14
+00:03:09,590 --> 00:03:22,862
+Shared DUT — counter_4bit. Review the code on screen and match it to files in the repository. Same RTL verified by both Verilog and C++ testbench paradigms.
+
+15
+00:03:23,212 --> 00:03:27,244
+Next section: Execution & simulation flow.
+
+16
+00:03:27,594 --> 00:03:58,842
+How the example runs (toolchain). Match each bullet to files in the repository. Makefile: Verilator compiles RTL + SystemVerilog testbench into a C++ model sim_main.cpp: generates clk/rst_n, calls eval() until $finish Directed test (initial block or C++): drive stimulus, wait for DUT flags Self-check: compare outputs; print PASS/FAIL (see terminal demo slide) Repo path...
+
+17
+00:03:59,192 --> 00:04:15,728
+Follow these steps in order when working through this module. Both paradigms count errors locally same PASS criteria without manual waveform grading Instantiate DUT in Verilog TB iverilog compile vvp Follow this order when tracing waveforms or debugging.
+
+18
+00:04:16,078 --> 00:04:33,982
+Follow these steps in order when working through this module. repeat with C++ TB and Verilator review comparison/ mapping guide cd module3/examples/verilog_testbenches && make counter_test Follow this order when tracing waveforms or debugging.
+
+19
+00:04:34,332 --> 00:04:49,332
+C++ TB Makefile — Verilator build. Review the code on screen and match it to files in the repository. cd module3/examples/cpp_testbenches && make counter_test
+
+20
+00:04:49,682 --> 00:05:05,906
+C++ TB — DUT init and reset test. Review the code on screen and match it to files in the repository. new Vcounter_4bit; drive rst_n low; eval loop verifies count==0.
+
+21
+00:05:06,256 --> 00:05:10,360
+Next section: Verification & testing methods.
+
+22
+00:05:10,710 --> 00:05:34,734
+1. Structured test flow (build–connect–run). Build: Compile RTL + TB; elaborate hierarchy Connect: Port map DUT; tie off unused inputs Run: Execute directed cases (AND truth table, counter wrap, MUX exhaust) Cleanup: Close files, print summary, non-zero exit on failure Refer to the diagram on the right.
+
+23
+00:05:35,084 --> 00:05:54,932
+2. Directed and exhaustive patterns. Truth-table tests: All input combinations for small combinational DUTs Sequential tests: Known count sequences after reset deassert Assertions: assert (C++) or immediate checks (Verilog) on each vector Refer to the diagram on the right.
+
+24
+00:05:55,282 --> 00:06:19,018
+3. Cross-paradigm verification discipline. Same spec, two TBs: Document expected behavior once; implement in Verilog and C++ Self-checking: Both paradigms count errors locally — no manual waveform grading Orchestration: ./scripts/module3.sh --verilog-testbenches vs --cpp-testbenches Refer to the diagram on the right.
+
+25
+00:06:19,368 --> 00:06:31,656
+Paradigm comparison checklist. Review the code on screen and match it to files in the repository. Side-by-side: initial blocks vs eval loop; same pass criteria.
+
+26
+00:06:32,006 --> 00:06:35,270
+Next section: Syllabus topics.
+
+27
+00:06:35,620 --> 00:06:39,412
+Next section: Protocol & design details.
+
+28
+00:06:39,762 --> 00:06:53,274
+1. Verification Fundamentals (1/5). What is verification? Ensuring design correctness Finding bugs before production Verification vs. validation Testbench Purpose and Role
+
+29
+00:06:53,624 --> 00:07:06,272
+1. Verification Fundamentals (2/5). Response monitoring Result checking Testbench as verification environment Design Under Test (DUT) Concept What is DUT?
+
+30
+00:07:06,622 --> 00:07:20,806
+1. Verification Fundamentals (3/5). DUT interface DUT testing Verification vs. Validation Verification: Does it work correctly? Validation: Does it meet requirements?
+
+31
+00:07:21,156 --> 00:07:32,748
+1. Verification Fundamentals (4/5). Verification Flow and Methodology Test plan creation Testbench development Test execution Result analysis
+
+32
+00:07:33,098 --> 00:07:41,618
+1. Verification Fundamentals (5/5). Similarities Differences When to use each Performance considerations
+
+33
+00:07:41,968 --> 00:07:53,320
+2. Testbench Architecture (1/6). Verilog Testbench Module Structure Module declaration Signal declarations DUT instantiation Test sequence
+
+34
+00:07:53,670 --> 00:08:04,854
+2. Testbench Architecture (2/6). C++ Testbench Structure Main function Verilator initialization DUT instantiation Test sequence
+
+35
+00:08:05,204 --> 00:08:18,908
+2. Testbench Architecture (3/6). DUT Instantiation (Both Paradigms) Verilog: Module instantiation C++: Object creation Signal connectivity Port mapping
+
+36
+00:08:19,258 --> 00:08:28,978
+2. Testbench Architecture (4/6). Input signals Output signals Bidirectional signals Signal naming Testbench Hierarchy
+
+37
+00:08:29,328 --> 00:08:40,968
+2. Testbench Architecture (5/6). DUT hierarchy Testbench components Organization patterns Top-Level Testbench Organization Single testbench file
+
+38
+00:08:41,318 --> 00:09:00,062
+2. Testbench Architecture (6/6). Include files Library organization module3/examples/verilog_testbenches/ - Verilog testbench structure module3/examples/cpp_testbenches/ - C++ testbench structure
+
+39
+00:09:00,412 --> 00:09:16,444
+3. Basic Testbench Components (1/6). Clock Generation (Verilog and C++) Verilog: Always blocks for continuous clock C++: Simulation loop for clock toggling Clock period control Multiple clocks
+
+40
+00:09:16,794 --> 00:09:30,282
+3. Basic Testbench Components (2/6). Verilog: Initial blocks for reset sequences C++: Reset in C++ code Synchronous reset Asynchronous reset Reset timing
+
+41
+00:09:30,632 --> 00:09:42,392
+3. Basic Testbench Components (3/6). Test vector generation Pattern application Sequential stimulus Timing control Response Monitoring (Both Paradigms)
+
+42
+00:09:42,742 --> 00:09:55,030
+3. Basic Testbench Components (4/6). Real-time monitoring Post-processing Monitoring strategies Result Checking (Both Paradigms) Expected value calculation
+
+43
+00:09:55,380 --> 00:10:06,348
+3. Basic Testbench Components (5/6). Error detection Pass/fail reporting Simulation Control Starting simulation Stopping simulation
+
+44
+00:10:06,698 --> 00:10:18,530
+3. Basic Testbench Components (6/6). Control flow counter_test.v / counter_test.cpp - Clock and reset generation
+
+45
+00:10:18,880 --> 00:10:29,824
+4. Signal Access and Monitoring (1/5). Verilog: Signal Reading and Writing Direct signal access Signal assignment Signal reading Signal types
+
+46
+00:10:30,174 --> 00:10:46,038
+4. Signal Access and Monitoring (2/5). DUT object access Signal reading: dut->signal Signal writing: dut->signal = value Signal types Verilog: $display, $monitor, $strobe
+
+47
+00:10:46,388 --> 00:11:01,676
+4. Signal Access and Monitoring (3/5). $monitor: Continuous monitoring $strobe: End-of-time-step output Formatting options C++: std::cout, Logging Libraries std::cout for output
+
+48
+00:11:02,026 --> 00:11:15,658
+4. Signal Access and Monitoring (4/5). Logging libraries File output Formatting Output (Both Paradigms) Verilog: Format specifiers C++: Stream manipulators
+
+49
+00:11:16,008 --> 00:11:26,496
+4. Signal Access and Monitoring (5/5). Readable output Timing of Display Statements When output occurs Event scheduling Timing considerations
+
+50
+00:11:26,846 --> 00:11:39,134
+5. Simulation Control (1/5). Verilog: Time Management (# delays) Delay control: #10 Time advancement Event scheduling Timing accuracy
+
+51
+00:11:39,484 --> 00:11:49,420
+5. Simulation Control (2/5). Simulation loop Time tracking Clock cycle counting Time advancement Event Scheduling Concepts
+
+52
+00:11:49,770 --> 00:12:00,018
+5. Simulation Control (3/5). Event queue Scheduling order Timing relationships Simulation Termination Verilog: $finish
+
+53
+00:12:00,368 --> 00:12:11,528
+5. Simulation Control (4/5). Cleanup procedures Resource management Debugging Basics (Both Tools) Compilation debugging Runtime debugging
+
+54
+00:12:11,878 --> 00:12:23,158
+5. Simulation Control (5/5). Waveform analysis counter_test.v / counter_test.cpp - Time management
+
+55
+00:12:23,508 --> 00:12:35,916
+6. Simple Verification Patterns (1/5). Directed Testing (Both Paradigms) Specific test cases Known input/output pairs Exhaustive testing Corner case testing
+
+56
+00:12:36,266 --> 00:12:48,074
+6. Simple Verification Patterns (2/5). Test vector format Vector application Sequential application Batch testing Expected vs. Actual Comparison
+
+57
+00:12:48,424 --> 00:12:59,464
+6. Simple Verification Patterns (3/5). Actual value reading Comparison logic Error detection Pass/Fail Reporting Test result tracking
+
+58
+00:12:59,814 --> 00:13:10,278
+6. Simple Verification Patterns (4/5). Result reporting Summary generation Basic Error Detection Error detection methods Error reporting
+
+59
+00:13:10,628 --> 00:13:17,036
+6. Simple Verification Patterns (5/5). Debugging aids
+
+60
+00:13:17,386 --> 00:13:23,098
+7. Paradigm Comparison. Side-by-Side Comparison Table
+
+61
+00:13:23,448 --> 00:13:26,688
+Next section: Hands-on examples.
+
+62
+00:13:27,038 --> 00:13:34,094
+Module 3 self-check. Watch the terminal output and confirm you see the expected pass message.
+
+63
+00:13:34,444 --> 00:13:40,828
+Exercise scaffold. Review the code on screen and match it to files in the repository.
+
+64
+00:13:41,178 --> 00:13:48,978
+Demo: Verilog testbenches. Watch the terminal output and confirm you see the expected pass message.
+
+65
+00:13:49,328 --> 00:13:57,296
+Demo: C++ testbenches. Watch the terminal output and confirm you see the expected pass message.
+
+66
+00:13:57,646 --> 00:14:05,278
+Demo: Paradigm comparison. Watch the terminal output and confirm you see the expected pass message.
+
+67
+00:14:05,628 --> 00:14:08,748
+Next section: Key concepts.
+
+68
+00:14:09,098 --> 00:14:37,490
+1. Canonical testbench–DUT boundary. DUT: Device Under Test in module3/dut/ (gates, multiplexers, counters) TB wrapper: Encapsulates instantiation, clock/reset, and test program only Signals: Explicit wires/regs (Verilog) or model ports (C++) — no hidden coupling Lifecycle: Build → reset → run tests → report → $finish / return exit code
+
+69
+00:14:37,840 --> 00:15:05,752
+2. Dual-paradigm environment architecture. Verilog TB (examples/verilog_testbenches/): Event-driven initial/always C++ TB (examples/cpp_testbenches/): eval() loop with Verilator model Shared DUT: Same RTL verified two ways — highlights tool-specific TB idioms Comparison guide: examples/comparison/ documents mapping between styles
+
+70
+00:15:06,102 --> 00:15:29,862
+3. Verification component roles (UVM-aligned). Driver: Applies stimulus (assignments before eval or #delay) Monitor: Samples outputs; logs transactions or pin values Scoreboard: Compares actual vs expected; increments pass/fail Clock/reset agents: Reusable blocks generating periodic clock and reset sequences
+
+71
+00:15:30,212 --> 00:15:52,508
+1. Structured test flow (build–connect–run). Build: Compile RTL + TB; elaborate hierarchy Connect: Port map DUT; tie off unused inputs Run: Execute directed cases (AND truth table, counter wrap, MUX exhaust) Cleanup: Close files, print summary, non-zero exit on failure
+
+72
+00:15:52,858 --> 00:16:11,074
+2. Directed and exhaustive patterns. Truth-table tests: All input combinations for small combinational DUTs Sequential tests: Known count sequences after reset deassert Assertions: assert (C++) or immediate checks (Verilog) on each vector
+
+73
+00:16:11,424 --> 00:16:33,480
+3. Cross-paradigm verification discipline. Same spec, two TBs: Document expected behavior once; implement in Verilog and C++ Self-checking: Both paradigms count errors locally — no manual waveform grading Orchestration: ./scripts/module3.sh --verilog-testbenches vs --cpp-testbenches
+
+74
+00:16:33,830 --> 00:16:47,342
+1. Verification Fundamentals (1/5). What is verification? Ensuring design correctness Finding bugs before production Verification vs. validation Testbench Purpose and Role
+
+75
+00:16:47,692 --> 00:17:00,340
+1. Verification Fundamentals (2/5). Response monitoring Result checking Testbench as verification environment Design Under Test (DUT) Concept What is DUT?
+
+76
+00:17:00,690 --> 00:17:14,874
+1. Verification Fundamentals (3/5). DUT interface DUT testing Verification vs. Validation Verification: Does it work correctly? Validation: Does it meet requirements?
+
+77
+00:17:15,224 --> 00:17:26,816
+1. Verification Fundamentals (4/5). Verification Flow and Methodology Test plan creation Testbench development Test execution Result analysis
+
+78
+00:17:27,166 --> 00:17:35,686
+1. Verification Fundamentals (5/5). Similarities Differences When to use each Performance considerations
+
+79
+00:17:36,036 --> 00:17:47,388
+2. Testbench Architecture (1/6). Verilog Testbench Module Structure Module declaration Signal declarations DUT instantiation Test sequence
+
+80
+00:17:47,738 --> 00:17:58,922
+2. Testbench Architecture (2/6). C++ Testbench Structure Main function Verilator initialization DUT instantiation Test sequence
+
+81
+00:17:59,272 --> 00:18:12,976
+2. Testbench Architecture (3/6). DUT Instantiation (Both Paradigms) Verilog: Module instantiation C++: Object creation Signal connectivity Port mapping
+
+82
+00:18:13,326 --> 00:18:23,046
+2. Testbench Architecture (4/6). Input signals Output signals Bidirectional signals Signal naming Testbench Hierarchy
+
+83
+00:18:23,396 --> 00:18:35,036
+2. Testbench Architecture (5/6). DUT hierarchy Testbench components Organization patterns Top-Level Testbench Organization Single testbench file
+
+84
+00:18:35,386 --> 00:18:54,130
+2. Testbench Architecture (6/6). Include files Library organization module3/examples/verilog_testbenches/ - Verilog testbench structure module3/examples/cpp_testbenches/ - C++ testbench structure
+
+85
+00:18:54,480 --> 00:19:10,512
+3. Basic Testbench Components (1/6). Clock Generation (Verilog and C++) Verilog: Always blocks for continuous clock C++: Simulation loop for clock toggling Clock period control Multiple clocks
+
+86
+00:19:10,862 --> 00:19:24,350
+3. Basic Testbench Components (2/6). Verilog: Initial blocks for reset sequences C++: Reset in C++ code Synchronous reset Asynchronous reset Reset timing
+
+87
+00:19:24,700 --> 00:19:36,460
+3. Basic Testbench Components (3/6). Test vector generation Pattern application Sequential stimulus Timing control Response Monitoring (Both Paradigms)
+
+88
+00:19:36,810 --> 00:19:49,098
+3. Basic Testbench Components (4/6). Real-time monitoring Post-processing Monitoring strategies Result Checking (Both Paradigms) Expected value calculation
+
+89
+00:19:49,448 --> 00:20:00,416
+3. Basic Testbench Components (5/6). Error detection Pass/fail reporting Simulation Control Starting simulation Stopping simulation
+
+90
+00:20:00,766 --> 00:20:12,598
+3. Basic Testbench Components (6/6). Control flow counter_test.v / counter_test.cpp - Clock and reset generation
+
+91
+00:20:12,948 --> 00:20:23,892
+4. Signal Access and Monitoring (1/5). Verilog: Signal Reading and Writing Direct signal access Signal assignment Signal reading Signal types
+
+92
+00:20:24,242 --> 00:20:40,106
+4. Signal Access and Monitoring (2/5). DUT object access Signal reading: dut->signal Signal writing: dut->signal = value Signal types Verilog: $display, $monitor, $strobe
+
+93
+00:20:40,456 --> 00:20:55,744
+4. Signal Access and Monitoring (3/5). $monitor: Continuous monitoring $strobe: End-of-time-step output Formatting options C++: std::cout, Logging Libraries std::cout for output
+
+94
+00:20:56,094 --> 00:21:09,726
+4. Signal Access and Monitoring (4/5). Logging libraries File output Formatting Output (Both Paradigms) Verilog: Format specifiers C++: Stream manipulators
+
+95
+00:21:10,076 --> 00:21:20,564
+4. Signal Access and Monitoring (5/5). Readable output Timing of Display Statements When output occurs Event scheduling Timing considerations
+
+96
+00:21:20,914 --> 00:21:33,202
+5. Simulation Control (1/5). Verilog: Time Management (# delays) Delay control: #10 Time advancement Event scheduling Timing accuracy
+
+97
+00:21:33,552 --> 00:21:43,488
+5. Simulation Control (2/5). Simulation loop Time tracking Clock cycle counting Time advancement Event Scheduling Concepts
+
+98
+00:21:43,838 --> 00:21:54,086
+5. Simulation Control (3/5). Event queue Scheduling order Timing relationships Simulation Termination Verilog: $finish
+
+99
+00:21:54,436 --> 00:22:05,596
+5. Simulation Control (4/5). Cleanup procedures Resource management Debugging Basics (Both Tools) Compilation debugging Runtime debugging
+
+100
+00:22:05,946 --> 00:22:17,226
+5. Simulation Control (5/5). Waveform analysis counter_test.v / counter_test.cpp - Time management
+
+101
+00:22:17,576 --> 00:22:29,984
+6. Simple Verification Patterns (1/5). Directed Testing (Both Paradigms) Specific test cases Known input/output pairs Exhaustive testing Corner case testing
+
+102
+00:22:30,334 --> 00:22:42,142
+6. Simple Verification Patterns (2/5). Test vector format Vector application Sequential application Batch testing Expected vs. Actual Comparison
+
+103
+00:22:42,492 --> 00:22:53,532
+6. Simple Verification Patterns (3/5). Actual value reading Comparison logic Error detection Pass/Fail Reporting Test result tracking
+
+104
+00:22:53,882 --> 00:23:04,346
+6. Simple Verification Patterns (4/5). Result reporting Summary generation Basic Error Detection Error detection methods Error reporting
+
+105
+00:23:04,696 --> 00:23:11,104
+6. Simple Verification Patterns (5/5). Debugging aids
+
+106
+00:23:11,454 --> 00:23:17,598
+7. Paradigm Comparison. See docs/MODULE3.md
+
+107
+00:23:17,948 --> 00:23:21,332
+Next section: Practice & assessment.
+
+108
+00:23:21,682 --> 00:23:40,234
+By now you should be able to explain the following. Understand testbench purpose and structure Create basic Verilog testbench modules Create basic C++ testbenches Generate clocks and resets in both paradigms Apply stimulus to DUT (both paradigms) From MODULE3 Learning Outcomes.
+
+109
+00:23:40,584 --> 00:23:56,904
+By now you should be able to explain the following. Perform basic result checking Control simulation execution Choose appropriate testbench paradigm Use and_gate_test.v as reference Test all input combinations From MODULE3 Learning Outcomes.
+
+110
+00:23:57,254 --> 00:24:12,806
+By now you should be able to explain the following. Use and_gate_test.cpp as reference Compare with Verilog version Understand differences Create Verilog testbench Create C++ testbench From MODULE3 Learning Outcomes.
+
+111
+00:24:13,156 --> 00:24:26,020
+By now you should be able to explain the following. Implement clock generation Implement reset sequences Compare timing approaches Review comparison guide Understand when to use each From MODULE3 Learning Outcomes.
+
+112
+00:24:26,370 --> 00:24:46,386
+By now you should be able to explain the following. Can explain testbench purpose and structure Can create basic Verilog testbench modules Can create basic C++ testbenches Can generate clocks and resets (both paradigms) Can apply stimulus to DUT (both paradigms) From MODULE3 Learning Outcomes.
+
+113
+00:24:46,736 --> 00:25:10,328
+By now you should be able to explain the following. Can perform basic result checking Can control simulation execution Can choose appropriate testbench paradigm Prerequisites: Module 1: iverilog Deep Dive and Module 2: Verilator Deep Dive Next Steps: Module 4: Basic Testbench Construction - Master structured testbench construction From MODULE3 Learning Outcomes.
+
+114
+00:25:10,678 --> 00:25:40,486
+By now you should be able to explain the following. UVM Connection: UVM Core Repository Module 4: Basic Testbench Construction - Master structured testbench construction Module 5: Procedural Testbench Writing - Learn procedural testbench patterns Icarus Verilog Documentation: http://iverilog.wikia.com/ Verilator Documentation: https://verilator.org/ From MODULE3 Learning Outcomes.
+
+115
+00:25:40,836 --> 00:25:52,452
+By now you should be able to explain the following. IEEE 1364-2005 Standard: Verilog Hardware Description Language From MODULE3 Learning Outcomes.
+
+116
+00:25:52,802 --> 00:26:09,698
+Assessment checklist. Can explain testbench purpose and structure Can create basic Verilog testbench modules Can create basic C++ testbenches Can generate clocks and resets (both paradigms) Can apply stimulus to DUT (both paradigms)
+
+117
+00:26:10,048 --> 00:26:36,280
+In summary: Understand testbench architecture and basic verification concepts for both Verilog and C++ testbenches Next up: Next module in course. Understand testbench architecture and basic verification concepts for both Verilog and C++ testbenches Complete module3/CHECKLIST.md Review module3/EXAMPLES.md and run each lab Next: Next module in course

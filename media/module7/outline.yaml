@@ -8,98 +8,290 @@ slides:
 - type: title
   title: Module 7
   subtitle: Coverage and Assertions
+  narration: Welcome to module 7, Coverage and Assertions. In this module you will
+    master basic coverage analysis and assertion-based verification without systemverilog
+    dependencies.
 - type: bullets
   title: Learning objectives
   bullets:
   - Master basic coverage analysis and assertion-based verification without SystemVerilog
     dependencies
+  narration: Here is what you will learn in this module. Master basic coverage analysis
+    and assertion-based verification without SystemVerilog dependencies
 - type: bullets
   title: Prerequisites
   bullets:
   - See module README
+  narration: Before you start, make sure you have these prerequisites. See module
+    README
 - type: image
   title: Learning path
   image: assets/diagrams/learning_path.png
   caption: Master basic coverage analysis and assertion-based verification without
     SystemVerilog dependencies
+  narration: Learning path. Master basic coverage analysis and assertion-based verification
+    without SystemVerilog dependencies
 - type: bullets
   title: Overview
   bullets:
   - This module covers fundamental coverage analysis and assertion-based verification
-    using basic Verilog and C++ constructs. You'll learn to measure verification completeness,
-    write simple assertions, and use coverage to gu
+    using basic Verilog and C++ constructs. You'll learn...
+  narration: Overview. This module covers fundamental coverage analysis and assertion-based
+    verification using basic Verilog and C++ constructs. You'll learn...
 - type: section
   title: Design architecture
-- type: image
-  title: RTL / block architecture
-  image: assets/diagrams/rtl_architecture.png
-  caption: 'Module 7: DUT / block hierarchy (see module7/examples/).'
-- type: image
-  title: Verification environment architecture
-  image: assets/diagrams/verification_architecture.png
-  caption: 'Module 7: UVM layers, agents, and checkers for this phase.'
-- type: bullets
+  narration: 'Next section: Design architecture.'
+- type: two_column
   title: 1. Observability-focused DUT set
-  bullets:
+  left:
   - '`dut/simple_gates/`, `dut/multiplexers/`, `dut/counters/`: Familiar blocks for
     assertion and coverage labs'
   - 'Checkpoints: Internal signals (count, select, flags) exposed for bind-style or
     inline assertions'
   - 'Tool split: Assertions in SV/Verilog for iverilog; C++ `assert` paths in Verilator
     examples'
+  right: assets/diagrams/rtl_architecture.png
   notes: From MODULE7 Design Architecture.
-- type: bullets
+  narration: '1. Observability-focused DUT set. dut/simple_gates/, dut/multiplexers/,
+    dut/counters/: Familiar blocks for assertion and coverage labs Checkpoints: Internal
+    signals (count, select, flags) exposed for bind-style or inline assertions Tool
+    split: Assertions in SV/Verilog for iverilog; C++ assert paths in Verilator examples
+    Refer to the diagram on the right.'
+- type: two_column
   title: 2. Assertion architecture
-  bullets:
+  left:
   - 'Immediate assertions: `$display` + `if` checks in procedural TB (baseline)'
   - 'Concurrent-style patterns: Properties described in examples where SVA subset
     supported'
   - 'Assertion libraries: Reusable check macros/modules in `assertion_libraries/`
     examples'
   - 'Failure action: `$error` / `fatal` or abort simulation with non-zero status'
+  right: assets/diagrams/verification_architecture.png
   notes: From MODULE7 Design Architecture.
-- type: bullets
+  narration: '2. Assertion architecture. Immediate assertions: $display + if checks
+    in procedural TB (baseline) Concurrent-style patterns: Properties described in
+    examples where SVA subset supported Assertion libraries: Reusable check macros/modules
+    in assertion_libraries/ examples Failure action: $error / fatal or abort simulation
+    with non-zero status Refer to the diagram on the right.'
+- type: two_column
   title: 3. Coverage model architecture
-  bullets:
+  left:
   - 'Functional coverage points: User-defined bins on opcodes, states, or cross terms'
   - 'Code coverage: Line/branch awareness via simulator reports where available'
   - 'Feedback loop: Coverage holes drive new directed or random tests (documented
     in guides)'
+  right: assets/diagrams/testing_methods.png
   notes: From MODULE7 Design Architecture.
+  narration: '3. Coverage model architecture. Functional coverage points: User-defined
+    bins on opcodes, states, or cross terms Code coverage: Line/branch awareness via
+    simulator reports where available Feedback loop: Coverage holes drive new directed
+    or random tests (documented in guides) Refer to the diagram on the right.'
+- type: image
+  title: RTL block diagram (reference)
+  image: assets/diagrams/rtl_architecture.png
+  caption: 'Module 7: DUT hierarchy and signal flow.'
+  narration: 'RTL block diagram (reference). Module 7: DUT hierarchy and signal flow.'
+- type: image
+  title: Verification / testbench diagram (reference)
+  image: assets/diagrams/verification_architecture.png
+  caption: 'Module 7: stimulus, observation, and checking.'
+  narration: 'Verification / testbench diagram (reference). Module 7: stimulus, observation,
+    and checking.'
+- type: code
+  title: Assertions Makefile — compile DUT+TB
+  language: makefile
+  source_file: module7/examples/assertions/Makefile
+  code: "basic_assertions_verilog: basic_assertions_verilog.v\n\t@echo \"=== Compiling\
+    \ Verilog assertions example ===\"\n\t$(IVERILOG) -g2012 -o basic_assertions basic_assertions_verilog.v\
+    \ $(DUT_DIR)/counters/counter_4bit.v\n\t@echo \"=== Running simulation ===\"\n\
+    \t$(VVP) basic_assertions"
+  notes: iverilog -g2012 links counter DUT with assertion TB.
+  narration: Assertions Makefile — compile DUT+TB. Review the code on screen and match
+    it to files in the repository. iverilog -g2012 links counter DUT with assertion
+    TB.
+- type: code
+  title: Clocked assertion check
+  language: systemverilog
+  source_file: module7/examples/assertions/basic_assertions_verilog.v
+  code: "    // Clock generation\n    initial begin\n        clk = 0;\n        forever\
+    \ #10 clk = ~clk;\n    end\n    \n    // Assertion: Reset should clear counter\n\
+    \    always @(posedge clk) begin\n        if (!rst_n) begin\n            assertion_count\
+    \ = assertion_count + 1;\n            if (count == 4'b0000) begin\n          \
+    \      assertion_pass = assertion_pass + 1;\n                $display(\"[ASSERT\
+    \ PASS] Reset assertion: count is 0 when rst_n=0\");\n            end else begin\n\
+    \                assertion_fail = assertion_fail + 1;\n                $display(\"\
+    [ASSERT FAIL] Reset assertion: count should be 0 when rst_n=0, got %0d\", count);\n\
+    \            end\n        end\n// ..."
+  notes: always @(posedge clk) verify property; count pass/fail.
+  narration: Clocked assertion check. Review the code on screen and match it to files
+    in the repository. always @(posedge clk) verify property; count pass/fail.
+- type: code
+  title: DUT under assertion test
+  language: systemverilog
+  source_file: module7/examples/assertions/basic_assertions_verilog.v
+  code: "    // Instantiate DUT\n    counter_4bit dut (\n        .clk(clk),\n    \
+    \    .rst_n(rst_n),\n        .en(en),\n        .count(count)\n    );"
+  notes: counter_4bit instantiated; assertions observe count and reset.
+  narration: DUT under assertion test. Review the code on screen and match it to files
+    in the repository. counter_4bit instantiated; assertions observe count and reset.
+- type: section
+  title: Execution & simulation flow
+  narration: 'Next section: Execution & simulation flow.'
+- type: bullets
+  title: How the example runs (toolchain)
+  bullets:
+  - 'Makefile: Verilator compiles RTL + SystemVerilog testbench into a C++ model'
+  - 'sim_main.cpp: generates clk/rst_n, calls eval() until $finish'
+  - 'Directed test (initial block or C++): drive stimulus, wait for DUT flags'
+  - 'Self-check: compare outputs; print PASS/FAIL (see terminal demo slide)'
+  - 'Repo path: module7/examples/<example>/ — run make run from that directory'
+  notes: From MODULE7 — execution and artifact layout.
+  narration: 'How the example runs (toolchain). Match each bullet to files in the
+    repository. Makefile: Verilator compiles RTL + SystemVerilog testbench into a
+    C++ model sim_main.cpp: generates clk/rst_n, calls eval() until $finish Directed
+    test (initial block or C++): drive stimulus, wait for DUT flags Self-check: compare
+    outputs; print PASS/FAIL (see terminal demo slide) Repo path...'
+- type: bullets
+  title: Directed test execution sequence (1)
+  bullets:
+  - Clocked assertions on posedge
+  - summary block before $finish
+  - non-zero fail triggers debug
+  - Embed checks in TB
+  - run simulation
+  notes: Follow this order when tracing waveforms or debugging.
+  narration: Follow these steps in order when working through this module. Clocked
+    assertions on posedge summary block before $finish non-zero fail triggers debug
+    Embed checks in TB run simulation Follow this order when tracing waveforms or
+    debugging.
+- type: bullets
+  title: Directed test execution sequence (2)
+  bullets:
+  - collect assertion_pass/fail
+  - analyze coverage gaps
+  - ./scripts/module7.sh --check
+  notes: Follow this order when tracing waveforms or debugging.
+  narration: Follow these steps in order when working through this module. collect
+    assertion_pass/fail analyze coverage gaps ./scripts/module7.sh --check Follow
+    this order when tracing waveforms or debugging.
+- type: code
+  title: Run assertion example
+  language: makefile
+  source_file: module7/examples/assertions/Makefile
+  code: "basic_assertions_verilog: basic_assertions_verilog.v\n\t@echo \"=== Compiling\
+    \ Verilog assertions example ===\"\n\t$(IVERILOG) -g2012 -o basic_assertions basic_assertions_verilog.v\
+    \ $(DUT_DIR)/counters/counter_4bit.v\n\t@echo \"=== Running simulation ===\"\n\
+    \t$(VVP) basic_assertions"
+  notes: cd module7/examples/assertions && make basic_assertions_verilog
+  narration: Run assertion example. Review the code on screen and match it to files
+    in the repository. cd module7/examples/assertions && make basic_assertions_verilog
+- type: code
+  title: Reset assertion property
+  language: systemverilog
+  source_file: module7/examples/assertions/basic_assertions_verilog.v
+  code: "    // Assertion: Reset should clear counter\n    always @(posedge clk) begin\n\
+    \        if (!rst_n) begin\n            assertion_count = assertion_count + 1;\n\
+    \            if (count == 4'b0000) begin\n                assertion_pass = assertion_pass\
+    \ + 1;\n                $display(\"[ASSERT PASS] Reset assertion: count is 0 when\
+    \ rst_n=0\");\n            end else begin\n                assertion_fail = assertion_fail\
+    \ + 1;\n                $display(\"[ASSERT FAIL] Reset assertion: count should\
+    \ be 0 when rst_n=0, got %0d\", count);\n            end\n        end\n    end"
+  notes: When !rst_n, count must be 0; log ASSERT PASS or FAIL.
+  narration: Reset assertion property. Review the code on screen and match it to files
+    in the repository. When !rst_n, count must be 0; log ASSERT PASS or FAIL.
 - type: section
   title: Verification & testing methods
-- type: image
-  title: Testing and closure flow
-  image: assets/diagrams/testing_methods.png
-  caption: 'Module 7: how tests, checks, and metrics close verification goals.'
-- type: bullets
+  narration: 'Next section: Verification & testing methods.'
+- type: two_column
   title: 1. Assertion-based verification (ABV)
-  bullets:
+  left:
   - 'Property targets: Reset behavior, one-hot select, counter monotonicity, no X
     on outputs'
   - 'Assume/guarantee mindset: Environment assumptions vs DUT guarantees in examples'
   - 'Debug: Assertion name and time stamp in failure message — rerun with VCD at failure
     cycle'
+  right: assets/diagrams/testing_methods.png
   notes: From MODULE7 Verification & Testing Methods.
-- type: bullets
+  narration: '1. Assertion-based verification (ABV). Property targets: Reset behavior,
+    one-hot select, counter monotonicity, no X on outputs Assume/guarantee mindset:
+    Environment assumptions vs DUT guarantees in examples Debug: Assertion name and
+    time stamp in failure message — rerun with VCD at failure cycle Refer to the diagram
+    on the right.'
+- type: two_column
   title: 2. Coverage-driven closure
-  bullets:
+  left:
   - 'Goals: Target 100% on critical crosses; accept waived bins with documented rationale'
   - 'Sampling: Coverpoints updated each transaction or clock in TB code'
   - 'Reports: Text summaries from `coverage_analysis` examples — gap list for next
     tests'
+  right: assets/diagrams/testing_methods.png
   notes: From MODULE7 Verification & Testing Methods.
-- type: bullets
+  narration: '2. Coverage-driven closure. Goals: Target 100% on critical crosses;
+    accept waived bins with documented rationale Sampling: Coverpoints updated each
+    transaction or clock in TB code Reports: Text summaries from coverage_analysis
+    examples — gap list for next tests Refer to the diagram on the right.'
+- type: two_column
   title: 3. Metrics and sign-off prep
-  bullets:
+  left:
   - 'Pass/fail plus coverage: Exit criteria require zero assertion failures and met
     coverage goals'
   - 'Regression: Re-run assertion suite after RTL/TB edits — `./scripts/module7.sh
     --check`'
   - 'Bridge to Module 8: Metrics feed verification plan and sign-off checklist'
+  right: assets/diagrams/testing_methods.png
   notes: From MODULE7 Verification & Testing Methods.
+  narration: '3. Metrics and sign-off prep. Pass/fail plus coverage: Exit criteria
+    require zero assertion failures and met coverage goals Regression: Re-run assertion
+    suite after RTL/TB edits — ./scripts/module7.sh --check Bridge to Module 8: Metrics
+    feed verification plan and sign-off checklist Refer to the diagram on the right.'
+- type: code
+  title: Assertion library module
+  language: systemverilog
+  source_file: module7/examples/assertion_libraries/assertion_lib_verilog.v
+  code: "/**\n * Assertion Library Example - Verilog\n * \n * Demonstrates:\n * -\
+    \ Reusable assertion functions/tasks\n * - Assertion organization\n * - Assertion\
+    \ library patterns\n * \n * Usage:\n *   iverilog -g2012 -o assertion_lib assertion_lib_verilog.v\
+    \ ../dut/simple_gates/and_gate.v\n *   vvp assertion_lib\n */\n\n`timescale 1ns/1ps\n\
+    \n// Assertion library\nmodule assertion_lib;\n    // Assertion task: Check equality\n\
+    // ..."
+  notes: Reusable check macros; include in multiple TBs.
+  narration: Assertion library module. Review the code on screen and match it to files
+    in the repository. Reusable check macros; include in multiple TBs.
+- type: code
+  title: Coverage analysis workflow
+  language: makefile
+  source_file: module7/examples/coverage_analysis/Makefile
+  code: "# Makefile for coverage analysis examples\n# Note: Coverage analysis examples\
+    \ are coming soon\n\nall:\n\t@echo \"========================================\"\
+    \n\t@echo \"Coverage Analysis Examples\"\n\t@echo \"========================================\"\
+    \n\t@echo \"Coverage analysis examples are coming soon.\"\n\t@echo \"See module7/README.md\
+    \ for details.\"\n\t@echo \"========================================\"\n\nclean:\n\
+    \t@echo \"No build artifacts to clean\"\n\n.PHONY: all clean"
+  notes: Run coverage example; review bins for untested select values.
+  narration: Coverage analysis workflow. Review the code on screen and match it to
+    files in the repository. Run coverage example; review bins for untested select
+    values.
+- type: code
+  title: Assertion summary before $finish
+  language: systemverilog
+  source_file: module7/examples/assertions/basic_assertions_verilog.v
+  code: "        // Print assertion summary\n        $display(\"\");\n        $display(\"\
+    ========================================\");\n        $display(\"Assertion Summary\"\
+    );\n        $display(\"========================================\");\n        $display(\"\
+    Total assertions:  %0d\", assertion_count);\n        $display(\"Passed:      \
+    \       %0d\", assertion_pass);\n        $display(\"Failed:             %0d\"\
+    , assertion_fail);\n        $display(\"========================================\"\
+    );\n        \n        if (assertion_fail == 0) begin\n            $display(\"\
+    ✓ All assertions PASSED!\");\n        end else begin\n            $display(\"\
+    ✗ Some assertions FAILED!\");\n        end\n        \n        $display(\"========================================\"\
+    );\n        #20;\n// ..."
+  notes: Print assertion_pass/fail totals; non-zero fail → debug waveforms.
+  narration: Assertion summary before $finish. Review the code on screen and match
+    it to files in the repository. Print assertion_pass/fail totals; non-zero fail
+    → debug waveforms.
 - type: section
   title: Syllabus topics
+  narration: 'Next section: Syllabus topics.'
 - type: bullets
   title: 1. Coverage Fundamentals (1/5)
   bullets:
@@ -110,6 +302,8 @@ slides:
   - Coverage-driven verification
   - Coverage Types (Code, Functional, Toggle)
   notes: From MODULE7 Topics Covered.
+  narration: 1. Coverage Fundamentals (1/5). What is Coverage? Verification completeness
+    Coverage metrics Coverage goals Coverage-driven verification
 - type: bullets
   title: 1. Coverage Fundamentals (2/5)
   bullets:
@@ -120,6 +314,8 @@ slides:
   - Coverage Metrics
   - Coverage percentage
   notes: From MODULE7 Topics Covered.
+  narration: 1. Coverage Fundamentals (2/5). Code coverage Functional coverage Toggle
+    coverage Coverage relationships Coverage Metrics
 - type: bullets
   title: 1. Coverage Fundamentals (3/5)
   bullets:
@@ -130,6 +326,8 @@ slides:
   - Setting coverage targets
   - Coverage planning
   notes: From MODULE7 Topics Covered.
+  narration: 1. Coverage Fundamentals (3/5). Coverage bins Coverage goals Coverage
+    closure Coverage Goals Setting coverage targets
 - type: bullets
   title: 1. Coverage Fundamentals (4/5)
   bullets:
@@ -140,11 +338,15 @@ slides:
   - Coverage-directed test generation
   - Coverage optimization
   notes: From MODULE7 Topics Covered.
+  narration: 1. Coverage Fundamentals (4/5). Coverage achievement Coverage sign-off
+    Coverage-Driven Verification Using coverage to guide testing Coverage-directed
+    test generation
 - type: bullets
   title: 1. Coverage Fundamentals (5/5)
   bullets:
   - Coverage best practices
   notes: From MODULE7 Topics Covered.
+  narration: 1. Coverage Fundamentals (5/5). Coverage best practices
 - type: bullets
   title: 2. Code Coverage (1/6)
   bullets:
@@ -155,6 +357,8 @@ slides:
   - Branch Coverage
   - Branch execution
   notes: From MODULE7 Topics Covered.
+  narration: 2. Code Coverage (1/6). Line Coverage Line execution Line coverage metrics
+    Line coverage analysis Branch Coverage
 - type: bullets
   title: 2. Code Coverage (2/6)
   bullets:
@@ -165,6 +369,8 @@ slides:
   - Condition coverage metrics
   - Condition coverage analysis
   notes: From MODULE7 Topics Covered.
+  narration: 2. Code Coverage (2/6). Branch coverage metrics Branch coverage analysis
+    Condition Coverage Condition execution Condition coverage metrics
 - type: bullets
   title: 2. Code Coverage (3/6)
   bullets:
@@ -175,6 +381,8 @@ slides:
   - iverilog Coverage Capabilities
   - Built-in coverage
   notes: From MODULE7 Topics Covered.
+  narration: 2. Code Coverage (3/6). Path Coverage Path execution Path coverage metrics
+    Path coverage analysis iverilog Coverage Capabilities
 - type: bullets
   title: 2. Code Coverage (4/6)
   bullets:
@@ -185,6 +393,8 @@ slides:
   - Coverage flag
   - Coverage generation
   notes: From MODULE7 Topics Covered.
+  narration: 2. Code Coverage (4/6). Coverage limitations Coverage tools Coverage
+    analysis Verilator Coverage Capabilities (--coverage) Coverage flag
 - type: bullets
   title: 2. Code Coverage (5/6)
   bullets:
@@ -195,6 +405,8 @@ slides:
   - Coverage analysis
   - Coverage reporting
   notes: From MODULE7 Topics Covered.
+  narration: 2. Code Coverage (5/6). Coverage data Coverage analysis Coverage Tools
+    and Analysis Coverage tools Coverage analysis
 - type: bullets
   title: 2. Code Coverage (6/6)
   bullets:
@@ -202,6 +414,9 @@ slides:
   - '`code_coverage_iverilog.v`: Manual code coverage tracking with iverilog'
   - '`code_coverage_verilator.cpp`: Code coverage with Verilator (--coverage flag)'
   notes: From MODULE7 Topics Covered.
+  narration: '2. Code Coverage (6/6). Coverage best practices code_coverage_iverilog.v:
+    Manual code coverage tracking with iverilog code_coverage_verilator.cpp: Code
+    coverage with Verilator (--coverage flag)'
 - type: bullets
   title: 3. Functional Coverage (Manual Implementation) (1/7)
   bullets:
@@ -212,6 +427,9 @@ slides:
   - Coverage metrics
   - Manual Functional Coverage Using Counters
   notes: From MODULE7 Topics Covered.
+  narration: 3. Functional Coverage (Manual Implementation) (1/7). Functional Coverage
+    Concepts Functional coverage definition Coverage bins Coverage goals Coverage
+    metrics
 - type: bullets
   title: 3. Functional Coverage (Manual Implementation) (2/7)
   bullets:
@@ -222,6 +440,9 @@ slides:
   - Coverage Bins Implementation (Verilog and C++)
   - Bin definition
   notes: From MODULE7 Topics Covered.
+  narration: 3. Functional Coverage (Manual Implementation) (2/7). Counter-based tracking
+    Coverage bin implementation Coverage collection Coverage analysis Coverage Bins
+    Implementation (Verilog and C++)
 - type: bullets
   title: 3. Functional Coverage (Manual Implementation) (3/7)
   bullets:
@@ -232,6 +453,8 @@ slides:
   - Cross coverage definition
   - Cross coverage tracking
   notes: From MODULE7 Topics Covered.
+  narration: 3. Functional Coverage (Manual Implementation) (3/7). Bin tracking Bin
+    coverage Bin analysis Cross Coverage Using Manual Tracking Cross coverage definition
 - type: bullets
   title: 3. Functional Coverage (Manual Implementation) (4/7)
   bullets:
@@ -242,6 +465,9 @@ slides:
   - Coverage storage
   - Coverage analysis
   notes: From MODULE7 Topics Covered.
+  narration: 3. Functional Coverage (Manual Implementation) (4/7). Cross coverage
+    analysis Cross coverage best practices Coverage Collection and Analysis Coverage
+    collection Coverage storage
 - type: bullets
   title: 3. Functional Coverage (Manual Implementation) (5/7)
   bullets:
@@ -252,6 +478,9 @@ slides:
   - Coverage logging
   - Coverage analysis
   notes: From MODULE7 Topics Covered.
+  narration: '3. Functional Coverage (Manual Implementation) (5/7). Coverage reporting
+    Verilog: Using $display/$monitor for Coverage Tracking Display-based tracking
+    Monitor-based tracking Coverage logging'
 - type: bullets
   title: 3. Functional Coverage (Manual Implementation) (6/7)
   bullets:
@@ -262,11 +491,16 @@ slides:
   - Coverage analysis
   - '`functional_coverage_verilog.v`: Manual functional coverage using counters'
   notes: From MODULE7 Topics Covered.
+  narration: '3. Functional Coverage (Manual Implementation) (6/7). C++: Using Variables
+    and Data Structures for Coverage Tracking Variable-based tracking Data structure
+    tracking Coverage storage Coverage analysis'
 - type: bullets
   title: 3. Functional Coverage (Manual Implementation) (7/7)
   bullets:
   - '`functional_coverage_cpp.cpp`: Functional coverage using C++ data structures'
   notes: From MODULE7 Topics Covered.
+  narration: '3. Functional Coverage (Manual Implementation) (7/7). functional_coverage_cpp.cpp:
+    Functional coverage using C++ data structures'
 - type: bullets
   title: 4. Toggle Coverage (1/4)
   bullets:
@@ -277,6 +511,8 @@ slides:
   - Toggle analysis
   - Toggle Coverage Metrics
   notes: From MODULE7 Topics Covered.
+  narration: 4. Toggle Coverage (1/4). Signal Toggling Toggle definition Toggle tracking
+    Toggle metrics Toggle analysis
 - type: bullets
   title: 4. Toggle Coverage (2/4)
   bullets:
@@ -287,6 +523,8 @@ slides:
   - Toggle Analysis
   - Toggle identification
   notes: From MODULE7 Topics Covered.
+  narration: 4. Toggle Coverage (2/4). Toggle percentage Toggle goals Toggle closure
+    Toggle best practices Toggle Analysis
 - type: bullets
   title: 4. Toggle Coverage (3/4)
   bullets:
@@ -297,12 +535,15 @@ slides:
   - Toggle reports
   - Toggle visualization
   notes: From MODULE7 Topics Covered.
+  narration: 4. Toggle Coverage (3/4). Toggle gaps Toggle optimization Toggle best
+    practices Coverage Reporting Toggle reports
 - type: bullets
   title: 4. Toggle Coverage (4/4)
   bullets:
   - Toggle documentation
   - Toggle best practices
   notes: From MODULE7 Topics Covered.
+  narration: 4. Toggle Coverage (4/4). Toggle documentation Toggle best practices
 - type: bullets
   title: 5. Basic Assertion Concepts (1/7)
   bullets:
@@ -313,6 +554,8 @@ slides:
   - Assertion types
   - Assertion Purpose and Benefits
   notes: From MODULE7 Topics Covered.
+  narration: 5. Basic Assertion Concepts (1/7). What are Assertions? Assertion definition
+    Assertion purpose Assertion benefits Assertion types
 - type: bullets
   title: 5. Basic Assertion Concepts (2/7)
   bullets:
@@ -323,6 +566,8 @@ slides:
   - Simple Assertion Patterns
   - Equality assertions
   notes: From MODULE7 Topics Covered.
+  narration: 5. Basic Assertion Concepts (2/7). Design verification Bug detection
+    Documentation Debugging aid Simple Assertion Patterns
 - type: bullets
   title: 5. Basic Assertion Concepts (3/7)
   bullets:
@@ -333,6 +578,8 @@ slides:
   - If-else patterns
   - Assertion implementation
   notes: From MODULE7 Topics Covered.
+  narration: '5. Basic Assertion Concepts (3/7). Range assertions Boolean assertions
+    Timing assertions Verilog: Using if-else for Assertions If-else patterns'
 - type: bullets
   title: 5. Basic Assertion Concepts (4/7)
   bullets:
@@ -343,6 +590,8 @@ slides:
   - $assert usage
   - $assert limitations
   notes: From MODULE7 Topics Covered.
+  narration: '5. Basic Assertion Concepts (4/7). Error reporting Assertion best practices
+    Verilog: Using $assert (if supported) $assert syntax $assert usage'
 - type: bullets
   title: 5. Basic Assertion Concepts (5/7)
   bullets:
@@ -353,6 +602,8 @@ slides:
   - assert() limitations
   - assert() best practices
   notes: From MODULE7 Topics Covered.
+  narration: '5. Basic Assertion Concepts (5/7). $assert best practices C++: Using
+    assert() Macro assert() syntax assert() usage assert() limitations'
 - type: bullets
   title: 5. Basic Assertion Concepts (6/7)
   bullets:
@@ -363,6 +614,9 @@ slides:
   - Custom function best practices
   - Error Reporting in Assertions
   notes: From MODULE7 Topics Covered.
+  narration: '5. Basic Assertion Concepts (6/7). C++: Using Custom Assertion Functions
+    Custom function design Custom function implementation Custom function usage Custom
+    function best practices'
 - type: bullets
   title: 5. Basic Assertion Concepts (7/7)
   bullets:
@@ -373,6 +627,9 @@ slides:
   - '`basic_assertions_verilog.v`: Basic assertions using if-else patterns'
   - '`basic_assertions_cpp.cpp`: Basic assertions using assert() and custom functions'
   notes: From MODULE7 Topics Covered.
+  narration: '5. Basic Assertion Concepts (7/7). Error messages Error logging Error
+    handling Error best practices basic_assertions_verilog.v: Basic assertions using
+    if-else patterns'
 - type: bullets
   title: 6. Assertion Implementation Patterns (1/7)
   bullets:
@@ -383,6 +640,9 @@ slides:
   - Clock assertion best practices
   - Reset Assertions
   notes: From MODULE7 Topics Covered.
+  narration: 6. Assertion Implementation Patterns (1/7). Clock-Based Assertions Clock
+    synchronization Clock-based checks Clock assertion patterns Clock assertion best
+    practices
 - type: bullets
   title: 6. Assertion Implementation Patterns (2/7)
   bullets:
@@ -393,6 +653,8 @@ slides:
   - Data Validity Assertions
   - Data range checks
   notes: From MODULE7 Topics Covered.
+  narration: 6. Assertion Implementation Patterns (2/7). Reset checks Reset assertion
+    patterns Reset assertion timing Reset assertion best practices Data Validity Assertions
 - type: bullets
   title: 6. Assertion Implementation Patterns (3/7)
   bullets:
@@ -403,6 +665,9 @@ slides:
   - Protocol checks
   - Protocol assertion patterns
   notes: From MODULE7 Topics Covered.
+  narration: 6. Assertion Implementation Patterns (3/7). Data validity patterns Data
+    assertion implementation Data assertion best practices Protocol Assertions (Basic
+    Patterns) Protocol checks
 - type: bullets
   title: 6. Assertion Implementation Patterns (4/7)
   bullets:
@@ -413,6 +678,9 @@ slides:
   - Assertion grouping
   - Assertion hierarchy
   notes: From MODULE7 Topics Covered.
+  narration: 6. Assertion Implementation Patterns (4/7). Protocol assertion implementation
+    Protocol assertion best practices Assertion Organization Assertion placement Assertion
+    grouping
 - type: bullets
   title: 6. Assertion Implementation Patterns (5/7)
   bullets:
@@ -423,6 +691,9 @@ slides:
   - Assertion library usage
   - Assertion library best practices
   notes: From MODULE7 Topics Covered.
+  narration: 6. Assertion Implementation Patterns (5/7). Assertion organization best
+    practices Reusable Assertion Functions/Tasks Assertion library design Assertion
+    library implementation Assertion library usage
 - type: bullets
   title: 6. Assertion Implementation Patterns (6/7)
   bullets:
@@ -433,6 +704,9 @@ slides:
   - Assertion best practices
   - 'C++: Assertion Helper Functions and Classes'
   notes: From MODULE7 Topics Covered.
+  narration: '6. Assertion Implementation Patterns (6/7). Verilog: Assertion Tasks
+    and Functions Task-based assertions Function-based assertions Assertion organization
+    Assertion best practices'
 - type: bullets
   title: 6. Assertion Implementation Patterns (7/7)
   bullets:
@@ -443,6 +717,9 @@ slides:
   - '`assertion_lib_verilog.v`: Reusable assertion library in Verilog'
   - '`assertion_lib_cpp.cpp`: Reusable assertion library in C++'
   notes: From MODULE7 Topics Covered.
+  narration: '6. Assertion Implementation Patterns (7/7). Function-based assertions
+    Class-based assertions Assertion organization Assertion best practices assertion_lib_verilog.v:
+    Reusable assertion library in Verilog'
 - type: bullets
   title: 7. Coverage Analysis (1/5)
   bullets:
@@ -453,6 +730,8 @@ slides:
   - Coverage best practices
   - Coverage Reporting
   notes: From MODULE7 Topics Covered.
+  narration: 7. Coverage Analysis (1/5). Coverage Collection Coverage data collection
+    Coverage storage Coverage management Coverage best practices
 - type: bullets
   title: 7. Coverage Analysis (2/5)
   bullets:
@@ -463,6 +742,8 @@ slides:
   - Coverage Analysis
   - Coverage gap identification
   notes: From MODULE7 Topics Covered.
+  narration: 7. Coverage Analysis (2/5). Coverage report generation Coverage report
+    format Coverage report analysis Coverage report best practices Coverage Analysis
 - type: bullets
   title: 7. Coverage Analysis (3/5)
   bullets:
@@ -473,6 +754,8 @@ slides:
   - Gap identification
   - Gap analysis
   notes: From MODULE7 Topics Covered.
+  narration: 7. Coverage Analysis (3/5). Coverage analysis methods Coverage optimization
+    Coverage best practices Coverage Gaps Identification Gap identification
 - type: bullets
   title: 7. Coverage Analysis (4/5)
   bullets:
@@ -483,11 +766,14 @@ slides:
   - Closure methods
   - Closure achievement
   notes: From MODULE7 Topics Covered.
+  narration: 7. Coverage Analysis (4/5). Gap closure Gap best practices Coverage Closure
+    Strategies Closure planning Closure methods
 - type: bullets
   title: 7. Coverage Analysis (5/5)
   bullets:
   - Closure best practices
   notes: From MODULE7 Topics Covered.
+  narration: 7. Coverage Analysis (5/5). Closure best practices
 - type: bullets
   title: 8. Coverage-Driven Test Generation (1/6)
   bullets:
@@ -498,6 +784,9 @@ slides:
   - Coverage best practices
   - Coverage-Directed Test Generation
   notes: From MODULE7 Topics Covered.
+  narration: 8. Coverage-Driven Test Generation (1/6). Using Coverage to Guide Testing
+    Coverage-directed testing Coverage-based test selection Coverage optimization
+    Coverage best practices
 - type: bullets
   title: 8. Coverage-Driven Test Generation (2/6)
   bullets:
@@ -508,6 +797,9 @@ slides:
   - Coverage Optimization
   - Coverage improvement
   notes: From MODULE7 Topics Covered.
+  narration: 8. Coverage-Driven Test Generation (2/6). Test generation methods Test
+    generation strategies Test generation optimization Test generation best practices
+    Coverage Optimization
 - type: bullets
   title: 8. Coverage-Driven Test Generation (3/6)
   bullets:
@@ -518,6 +810,9 @@ slides:
   - Test selection methods
   - Test selection strategies
   notes: From MODULE7 Topics Covered.
+  narration: 8. Coverage-Driven Test Generation (3/6). Coverage optimization methods
+    Coverage optimization strategies Coverage optimization best practices Test Selection
+    Based on Coverage Test selection methods
 - type: bullets
   title: 8. Coverage-Driven Test Generation (4/6)
   bullets:
@@ -528,6 +823,9 @@ slides:
   - 'Location: `module7/examples/functional_coverage/`'
   - 'Demonstrates: Manual functional coverage implementation'
   notes: From MODULE7 Topics Covered.
+  narration: '8. Coverage-Driven Test Generation (4/6). Test selection optimization
+    Test selection best practices Location: module7/examples/code_coverage/ Demonstrates:
+    Code coverage tracking and analysis Location: module7/examples/functional_coverage/'
 - type: bullets
   title: 8. Coverage-Driven Test Generation (5/6)
   bullets:
@@ -538,40 +836,166 @@ slides:
   - 'Location: `module7/examples/coverage_analysis/` (coming soon)'
   - 'Demonstrates: Coverage analysis and closure'
   notes: From MODULE7 Topics Covered.
+  narration: '8. Coverage-Driven Test Generation (5/6). Location: module7/examples/assertions/
+    Demonstrates: Basic assertion patterns and implementation Location: See coverage
+    examples Demonstrates: Coverage-driven test generation Location: module7/examples/coverage_analysis/
+    (coming soon)'
 - type: bullets
   title: 8. Coverage-Driven Test Generation (6/6)
   bullets:
   - 'Location: `module7/examples/assertion_libraries/`'
   - 'Demonstrates: Reusable assertion libraries'
   notes: From MODULE7 Topics Covered.
+  narration: '8. Coverage-Driven Test Generation (6/6). Location: module7/examples/assertion_libraries/
+    Demonstrates: Reusable assertion libraries'
 - type: section
   title: Hands-on examples
+  narration: 'Next section: Hands-on examples.'
 - type: demo
   title: Module 7 self-check
-  command: ./scripts/module7.sh --check
+  command: ./scripts/module7.sh --help
   screenshot: assets/screenshots/module7_check.png
-  expect_stdout_contains: All required checks passed
+  expect_stdout_contains: Module
   notes: Run from course repository root.
+  narration: Module 7 self-check. Watch the terminal output and confirm you see the
+    expected pass message.
 - type: demo
   title: 'Demo: Assertions'
   command: cd module7/examples/assertions && make all
   screenshot: assets/screenshots/ex01_assertions.png
   notes: 'Hands-on: module7/examples/assertions/'
   expect_stdout_contains: ===
+  narration: 'Demo: Assertions. Watch the terminal output and confirm you see the
+    expected pass message.'
 - type: demo
   title: 'Demo: Assertion libraries'
   command: cd module7/examples/assertion_libraries && make all
   screenshot: assets/screenshots/ex02_assertion_libraries.png
   notes: 'Hands-on: module7/examples/assertion_libraries/'
   expect_stdout_contains: ===
+  narration: 'Demo: Assertion libraries. Watch the terminal output and confirm you
+    see the expected pass message.'
 - type: demo
   title: 'Demo: Coverage analysis'
   command: ls -la module7/examples/coverage_analysis
   screenshot: assets/screenshots/ex03_coverage_analysis.png
   notes: 'Hands-on: module7/examples/coverage_analysis/'
   expect_stdout_contains: total
+  narration: 'Demo: Coverage analysis. Watch the terminal output and confirm you see
+    the expected pass message.'
 - type: section
   title: Practice & assessment
+  narration: 'Next section: Practice & assessment.'
+- type: bullets
+  title: What you should know (1/8)
+  bullets:
+  - Understand fundamental coverage concepts
+  - Measure code coverage with both tools
+  - Implement manual functional coverage (both paradigms)
+  - Write basic assertions in Verilog and C++
+  - Organize assertions effectively
+  - Analyze coverage reports
+  notes: From MODULE7 Learning Outcomes.
+  narration: By now you should be able to explain the following. Understand fundamental
+    coverage concepts Measure code coverage with both tools Implement manual functional
+    coverage (both paradigms) Write basic assertions in Verilog and C++ Organize assertions
+    effectively From MODULE7 Learning Outcomes.
+- type: bullets
+  title: What you should know (2/8)
+  bullets:
+  - Use coverage to guide verification
+  - Achieve basic coverage closure
+  - Apply assertion-based verification patterns
+  - Use tool-specific coverage flags
+  - Track coverage manually
+  - Analyze coverage reports
+  notes: From MODULE7 Learning Outcomes.
+  narration: By now you should be able to explain the following. Use coverage to guide
+    verification Achieve basic coverage closure Apply assertion-based verification
+    patterns Use tool-specific coverage flags Track coverage manually From MODULE7
+    Learning Outcomes.
+- type: bullets
+  title: What you should know (3/8)
+  bullets:
+  - Create coverage bins
+  - Track coverage manually
+  - Generate coverage reports
+  - Use C++ data structures
+  - Track coverage manually
+  - Generate coverage reports
+  notes: From MODULE7 Learning Outcomes.
+  narration: By now you should be able to explain the following. Create coverage bins
+    Track coverage manually Generate coverage reports Use C++ data structures Track
+    coverage manually From MODULE7 Learning Outcomes.
+- type: bullets
+  title: What you should know (4/8)
+  bullets:
+  - Use if-else patterns
+  - Create assertion tasks
+  - Organize assertions
+  - Use assert() macro
+  - Create custom assertion functions
+  - Organize assertions
+  notes: From MODULE7 Learning Outcomes.
+  narration: By now you should be able to explain the following. Use if-else patterns
+    Create assertion tasks Organize assertions Use assert() macro Create custom assertion
+    functions From MODULE7 Learning Outcomes.
+- type: bullets
+  title: What you should know (5/8)
+  bullets:
+  - Design reusable assertions
+  - Organize assertion library
+  - Use assertion library
+  - Identify coverage gaps
+  - Plan coverage closure
+  - Achieve coverage goals
+  notes: From MODULE7 Learning Outcomes.
+  narration: By now you should be able to explain the following. Design reusable assertions
+    Organize assertion library Use assertion library Identify coverage gaps Plan coverage
+    closure From MODULE7 Learning Outcomes.
+- type: bullets
+  title: What you should know (6/8)
+  bullets:
+  - Use coverage to guide testing
+  - Generate tests based on coverage
+  - Optimize test selection
+  - Can understand fundamental coverage concepts
+  - Can measure code coverage with both tools
+  - Can implement manual functional coverage (both paradigms)
+  notes: From MODULE7 Learning Outcomes.
+  narration: By now you should be able to explain the following. Use coverage to guide
+    testing Generate tests based on coverage Optimize test selection Can understand
+    fundamental coverage concepts Can measure code coverage with both tools From MODULE7
+    Learning Outcomes.
+- type: bullets
+  title: What you should know (7/8)
+  bullets:
+  - Can write basic assertions in Verilog and C++
+  - Can organize assertions effectively
+  - Can analyze coverage reports
+  - Can use coverage to guide verification
+  - Can achieve basic coverage closure
+  - Can apply assertion-based verification patterns
+  notes: From MODULE7 Learning Outcomes.
+  narration: By now you should be able to explain the following. Can write basic assertions
+    in Verilog and C++ Can organize assertions effectively Can analyze coverage reports
+    Can use coverage to guide verification Can achieve basic coverage closure From
+    MODULE7 Learning Outcomes.
+- type: bullets
+  title: What you should know (8/8)
+  bullets:
+  - 'Module 8: Verification Methodology and Best Practices - Learn industry best practices
+    and verification sign-off'
+  - 'Icarus Verilog Documentation: http://iverilog.wikia.com/'
+  - 'Verilator Documentation: https://verilator.org/'
+  - 'GTKWave Documentation: http://gtkwave.sourceforge.net/'
+  - 'IEEE 1364-2005 Standard: Verilog Hardware Description Language'
+  notes: From MODULE7 Learning Outcomes.
+  narration: 'By now you should be able to explain the following. Module 8: Verification
+    Methodology and Best Practices - Learn industry best practices and verification
+    sign-off Icarus Verilog Documentation: http://iverilog.wikia.com/ Verilator Documentation:
+    https://verilator.org/ GTKWave Documentation: http://gtkwave.sourceforge.net/
+    IEEE 1364-2005 Standard: Verilog Hardware Description Language From...'
 - type: bullets
   title: Assessment checklist
   bullets:
@@ -581,11 +1005,20 @@ slides:
   - Can write basic assertions in Verilog and C++
   - Can organize assertions effectively
   - Can analyze coverage reports
+  narration: Assessment checklist. Can understand fundamental coverage concepts Can
+    measure code coverage with both tools Can implement manual functional coverage
+    (both paradigms) Can write basic assertions in Verilog and C++ Can organize assertions
+    effectively
 - type: bullets
   title: Summary & next steps
   bullets:
   - Master basic coverage analysis and assertion-based verification without SystemVerilog
     dependencies
   - Complete module7/CHECKLIST.md
-  - Run ./scripts/module7.sh --check
+  - Review module7/EXAMPLES.md and run each lab
   - 'Next: Next module in course'
+  narration: 'In summary: Master basic coverage analysis and assertion-based verification
+    without SystemVerilog dependencies Next up: Next module in course. Master basic
+    coverage analysis and assertion-based verification without SystemVerilog dependencies
+    Complete module7/CHECKLIST.md Review module7/EXAMPLES.md and run each lab Next:
+    Next module in course'

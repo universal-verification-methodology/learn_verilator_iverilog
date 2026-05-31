@@ -1,19 +1,118 @@
         # Narration script — Module 1: iverilog Deep Dive
 
-        **Target length:** ~38 minutes (auto-generated; edit per slide as needed)
+        **Target length:** ~50 minutes (95 slides; auto-generated — edit per slide as needed)
 
         ## Timing table
 
         | Slide | Section | Duration | Narration |
 |-------|---------|----------|-----------|
-| 1 | Title | 0:25 | Welcome to this module. |
-| 2 | Objectives | 0:50 | What you will learn. |
-| 4 | Learning path | 0:45 | Master iverilog for Verilog/SystemVerilog testbench development |
-| 6–74 | Architecture, topics, commands, demos | 34:00 | Design architecture, testing methods, syllabus, and EXAMPLES.md demos. |
-| 77 | Summary | 0:50 | Next: Next module in course |
+| 1 | Module 1 | 0:25 | Welcome to module 1, iverilog Deep Dive. In this module you will master iverilog for verilog/systemverilog testbench development. |
+| 2 | Learning objectives | 0:16 | Here is what you will learn in this module. Master iverilog for Verilog/SystemVerilog testbench development |
+| 3 | Prerequisites | 0:16 | Before you start, make sure you have these prerequisites. See module README |
+| 4 | Learning path | 0:22 | Learning path. Master iverilog for Verilog/SystemVerilog testbench development |
+| 5 | Overview | 0:16 | Overview. This module provides comprehensive coverage of Icarus Verilog (iverilog), an open-source Verilog simulator. You'll learn its compilation... |
+| 6 | Design architecture | 0:08 | Next section: Design architecture. |
+| 7 | 1. iverilog compile-and-run architecture | 0:38 | 1. iverilog compile-and-run architecture. Sources: RTL under module1/dut/ plus testbench under examples/ or tests/ Compile: iverilog elaborates modules, produces a VVP bytecode executable Simulate: vvp drives the event scheduler; $dumpvars can emit VCD Artifacts: simv (or custom name), *.vcd, compile logs in example directories Refer to the diagram on the right. |
+| 8 | 2. Module 1 DUT catalog | 0:38 | 2. Module 1 DUT catalog. dut/multiplexers/: mux_2to1, mux_4to1 — select lines, combinational outputs dut/counters/: counter_4bit — clock, reset, enable, parallel load Interface pattern: Clock + reset on sequential blocks; data ports on combinational paths Reuse: Same DUTs exercised across compilation, simulation, and testbench examples Refer to the diagram on the right. |
+| 9 | 3. Verilog testbench structure (iverilog) | 0:38 | 3. Verilog testbench structure (iverilog). Top: module tb; instantiates DUT, declares wires/regs for connectivity Stimulus: initial blocks and tasks drive inputs over simulation time Observation: $display, $monitor, and VCD for passive debug Closure: $finish after pass/fail counts or explicit timeout Refer to the diagram on the right. |
+| 10 | RTL block diagram (reference) | 0:22 | RTL block diagram (reference). Module 1: DUT hierarchy and signal flow. |
+| 11 | Compilation Makefile — iverilog targets | 0:28 | Compilation Makefile — iverilog targets. Review the code on screen and match it to files in the repository. iverilog elaborates RTL+TB into VVP bytecode; vvp runs the event scheduler. |
+| 12 | Verilog TB — DUT instantiation | 0:28 | Verilog TB — DUT instantiation. Review the code on screen and match it to files in the repository. Top module wires regs to DUT ports; initial blocks drive stimulus. |
+| 13 | VVP simulation Makefile | 0:28 | VVP simulation Makefile. Review the code on screen and match it to files in the repository. Compile to named binary, then vvp executes the bytecode simulator. |
+| 14 | DUT — mux_4to1 select logic | 0:28 | DUT — mux_4to1 select logic. Review the code on screen and match it to files in the repository. Combinational case(sel) drives out; exercised by directed vectors. |
+| 15 | Execution & simulation flow | 0:08 | Next section: Execution & simulation flow. |
+| 16 | How the example runs (toolchain) | 0:32 | How the example runs (toolchain). Match each bullet to files in the repository. Makefile: Verilator compiles RTL + SystemVerilog testbench into a C++ model sim_main.cpp: generates clk/rst_n, calls eval() until $finish Directed test (initial block or C++): drive stimulus, wait for DUT flags Self-check: compare outputs; print PASS/FAIL (see terminal demo slide) Repo path... |
+| 17 | Directed test execution sequence (1) | 0:32 | Follow these steps in order when working through this module. TB compares expected vs actual error count on stdout $finish with summary Gather RTL from module1/dut/ iverilog -o sim tb.v dut.v Follow this order when tracing waveforms or debugging. |
+| 18 | Directed test execution sequence (2) | 0:24 | Follow these steps in order when working through this module. vvp sim read $display self-check $dumpvars VCD Follow this order when tracing waveforms or debugging. |
+| 19 | Run compilation example | 0:28 | Run compilation example. Review the code on screen and match it to files in the repository. cd module1/examples/compilation && make basic_compilation |
+| 20 | VVP runtime invocation | 0:28 | VVP runtime invocation. Review the code on screen and match it to files in the repository. vvp drives time; use -v for verbose scheduler output when debugging. |
+| 21 | Self-checking stimulus loop | 0:28 | Self-checking stimulus loop. Review the code on screen and match it to files in the repository. Apply sel/in patterns, compare out, increment error count, $finish. |
+| 22 | Verification & testing methods | 0:08 | Next section: Verification & testing methods. |
+| 23 | 1. Directed functional testing | 0:34 | 1. Directed functional testing. Vector tables: Apply known (sel, d0..d3) or (en, load) patterns; compare y or count Corner cases: Reset during operation, enable deasserted, all MUX select values Self-check: Inline if (expected !== actual) with error count and final summary Refer to the diagram on the right. |
+| 24 | 2. File-based and batch testing | 0:34 | 2. File-based and batch testing. Test vectors: Read stimulus from files (file_io examples) for regression-style reruns Golden logs: Compare simulator output to expected transcripts where provided Orchestration: ./scripts/module1.sh runs example matrix; --check for CI-style gate Refer to the diagram on the right. |
+| 25 | 3. Waveform and debug methodology | 0:34 | 3. Waveform and debug methodology. VCD generation: Enable $dumpfile / $dumpvars in TB or via plusargs where shown GTKWave: Align clock edges, verify reset release, step through MUX transitions Debug flow: Re-run single example with make clean && make and narrowed stimulus Refer to the diagram on the right. |
+| 26 | Self-check — expected vs actual | 0:28 | Self-check — expected vs actual. Review the code on screen and match it to files in the repository. Inline if (expected !== actual); final summary before $finish. |
+| 27 | Syllabus topics | 0:08 | Next section: Syllabus topics. |
+| 28 | 1. iverilog Overview (1/5) | 0:36 | 1. iverilog Overview (1/5). What is iverilog? Open-source Verilog/SystemVerilog simulator Part of the Icarus Verilog project Cross-platform (Linux, macOS, Windows) Free and open-source |
+| 29 | 1. iverilog Overview (2/5) | 0:36 | 1. iverilog Overview (2/5). Verilog-2001 support SystemVerilog support (limited) VCD waveform generation PLI/VPI support Fast compilation and simulation |
+| 30 | 1. iverilog Overview (3/5) | 0:36 | 1. iverilog Overview (3/5). Most Verilog-2001 features Basic SystemVerilog features Interfaces (limited) Classes (limited) Assertions (limited) |
+| 31 | 1. iverilog Overview (4/5) | 0:36 | 1. iverilog Overview (4/5). Limited SystemVerilog support Some advanced features not supported Performance considerations for large designs Workarounds for unsupported features When to Use iverilog |
+| 32 | 1. iverilog Overview (5/5) | 0:28 | 1. iverilog Overview (5/5). Quick prototyping Simple to medium complexity designs When you prefer Verilog syntax Open-source projects |
+| 33 | 2. Compilation Process (1/6) | 0:36 | 2. Compilation Process (1/6). **Compilation Command (iverilog) Basic syntax: iverilog -o output input.v Output file specification Input file handling Command-Line Options and Flags |
+| 34 | 2. Compilation Process (2/6) | 0:36 | 2. Compilation Process (2/6). -I<directory>: Add include path -D<macro>=<value>: Define macro -g<spec>: Specify language generation -s <top>: Specify top-level module -t <target>: Specify target format |
+| 35 | 2. Compilation Process (3/6) | 0:36 | 2. Compilation Process (3/6). Adding include directories Multiple include paths Relative vs. absolute paths Best practices Define Macros (-D) |
+| 36 | 2. Compilation Process (4/6) | 0:36 | 2. Compilation Process (4/6). Macro definitions Default values Usage in testbenches Timescale Handling `timescale directive |
+| 37 | 2. Compilation Process (5/6) | 0:36 | 2. Compilation Process (5/6). Timescale conflicts Resolution Multi-File Compilation Compiling multiple files File ordering |
+| 38 | 2. Compilation Process (6/6) | 0:36 | 2. Compilation Process (6/6). Library files Library Management Library files Library paths Precompiled libraries |
+| 39 | 3. Simulation Execution (1/4) | 0:36 | This section covers installation, setup, and how to run the examples. VVP (Icarus Verilog Runtime) Usage What is VVP? Running simulations: vvp executable VVP vs. other simulators Simulation Command and Options |
+| 40 | 3. Simulation Execution (2/4) | 0:36 | This section covers installation, setup, and how to run the examples. Command-line options Runtime flags Runtime Flags -v: Verbose mode -n: No execution (syntax check) |
+| 41 | 3. Simulation Execution (3/4) | 0:36 | This section covers installation, setup, and how to run the examples. -m <module>: Load module Simulation Control Starting simulation Stopping simulation Simulation time |
+| 42 | 3. Simulation Execution (4/4) | 0:36 | This section covers installation, setup, and how to run the examples. Performance Considerations Simulation speed Memory usage Large design handling Optimization tips |
+| 43 | 4. Verilog Testbench Writing for iverilog (1/8) | 0:36 | 4. Verilog Testbench Writing for iverilog (1/8). Verilog Testbench Structure Module-based testbenches (foundation for all testbenches) Top-level testbench module (analogous to UVM test class) DUT instantiation (part of UVM environment) Signal declarations (evolve into UVM interfaces and virtual interfaces) |
+| 44 | 4. Verilog Testbench Writing for iverilog (2/8) | 0:36 | 4. Verilog Testbench Writing for iverilog (2/8). Testbench as a module (no ports needed, self-contained) Internal signal declarations (signals connect DUT to testbench) UVM Connection: In UVM, this structure evolves into environments with agents, drivers, monitors, and scoreboards Initial Blocks for Test Sequences Test sequence organization (foundation for UVM sequences) |
+| 45 | 4. Verilog Testbench Writing for iverilog (3/8) | 0:36 | 4. Verilog Testbench Writing for iverilog (3/8). Timing control (delay and synchronization) Multiple initial blocks (concurrent test processes) UVM Connection: Initial blocks with test sequences evolve into UVM sequences that generate transactions Always Blocks for Clock Generation Clock generation patterns (essential for sequential logic) |
+| 46 | 4. Verilog Testbench Writing for iverilog (4/8) | 0:36 | 4. Verilog Testbench Writing for iverilog (4/8). Gated clock (conditional clock) Multiple clocks (multi-clock domain designs) UVM Connection: Clock generation in UVM is handled by clocking blocks and virtual interfaces Signal Access and Monitoring Reading signals (observing DUT outputs) |
+| 47 | 4. Verilog Testbench Writing for iverilog (5/8) | 0:36 | 4. Verilog Testbench Writing for iverilog (5/8). Signal monitoring (continuous observation) Signal tracing (debugging) UVM Connection: Signal access evolves into UVM monitors that observe transactions and send them to scoreboards $display, $monitor, $strobe $display: Immediate output (prints when called) |
+| 48 | 4. Verilog Testbench Writing for iverilog (6/8) | 0:36 | 4. Verilog Testbench Writing for iverilog (6/8). $strobe: End-of-time-step output (prints after all assignments) Formatting options (similar to printf in C) When to use each (timing differences matter) UVM Connection: These system tasks are used in UVM for logging and debugging, but UVM also provides uvm_info, uvm_error, etc. for... File I/O ($readmemh, $readmemb, $fopen, $fwrite) |
+| 49 | 4. Verilog Testbench Writing for iverilog (7/8) | 0:36 | 4. Verilog Testbench Writing for iverilog (7/8). Opening files: $fopen (returns file handle) Writing files: $fwrite, $fdisplay (formatted output) Closing files: $fclose (cleanup) File-based testbenches (separate test data from code) UVM Connection: File-based test vectors evolve into transaction-based verification where sequences generate transactions (similar... |
+| 50 | 4. Verilog Testbench Writing for iverilog (8/8) | 0:24 | 4. Verilog Testbench Writing for iverilog (8/8). mux_4to1_test.v: Demonstrates basic testbench structure, stimulus generation, and checking counter_test.v: Demonstrates clock generation, reset sequences, and sequential logic testing module1/examples/file_io/: File I/O operations and file-based test patterns |
+| 51 | 5. Waveform Generation (1/4) | 0:36 | 5. Waveform Generation (1/4). VCD File Generation ($dumpfile, $dumpvars) $dumpfile: Specify VCD filename $dumpvars: Select signals to dump Dump levels (0, 1, 2, etc.) Signal selection |
+| 52 | 5. Waveform Generation (2/4) | 0:36 | 5. Waveform Generation (2/4). Dumping all signals Dumping specific signals Dumping hierarchy levels Selective dumping GTKWave Compatibility |
+| 53 | 5. Waveform Generation (3/4) | 0:36 | 5. Waveform Generation (3/4). GTKWave viewing Signal organization Save files (.gtkw) Waveform Analysis Viewing waveforms |
+| 54 | 5. Waveform Generation (4/4) | 0:24 | 5. Waveform Generation (4/4). Timing relationships Debugging with waveforms waveform_example.v: Comprehensive waveform generation with different dump levels |
+| 55 | 6. Debugging with iverilog (1/5) | 0:36 | 6. Debugging with iverilog (1/5). Compilation Error Debugging Understanding error messages Common compilation errors Syntax errors Missing files |
+| 56 | 6. Debugging with iverilog (2/5) | 0:36 | 6. Debugging with iverilog (2/5). Runtime Error Debugging Understanding runtime errors Simulation errors Signal value errors Timing errors |
+| 57 | 6. Debugging with iverilog (3/5) | 0:36 | 6. Debugging with iverilog (3/5). Using $display for tracing Using $monitor for continuous tracing VCD file analysis Signal value inspection Logging Strategies |
+| 58 | 6. Debugging with iverilog (4/5) | 0:36 | 6. Debugging with iverilog (4/5). Conditional logging File-based logging Log organization Common Pitfalls and Solutions Timescale issues |
+| 59 | 6. Debugging with iverilog (5/5) | 0:28 | 6. Debugging with iverilog (5/5). Race conditions Blocking vs. non-blocking Common mistakes debug_example.v: Debugging techniques, logging strategies, error handling |
+| 60 | 7. Advanced iverilog Features (1/5) | 0:36 | 7. Advanced iverilog Features (1/5). PLI/VPI Basics What is PLI/VPI? When to use PLI/VPI Basic PLI/VPI usage Limitations |
+| 61 | 7. Advanced iverilog Features (2/5) | 0:36 | 7. Advanced iverilog Features (2/5). Built-in system tasks Custom system tasks Task vs. function Usage examples User-Defined System Tasks |
+| 62 | 7. Advanced iverilog Features (3/5) | 0:36 | 7. Advanced iverilog Features (3/5). Task registration Task implementation Integration Performance Optimization Compilation optimization |
+| 63 | 7. Advanced iverilog Features (4/5) | 0:36 | 7. Advanced iverilog Features (4/5). Memory optimization Speed optimization Large Design Handling Compiling large designs Memory management |
+| 64 | 7. Advanced iverilog Features (5/5) | 0:16 | 7. Advanced iverilog Features (5/5). Design partitioning |
+| 65 | 8. Project Organization (1/11) | 0:36 | 8. Project Organization (1/11). Makefile Integration Basic Makefile structure Compilation rules Test execution Clean targets |
+| 66 | 8. Project Organization (2/11) | 0:36 | 8. Project Organization (2/11). Scripting for Automation Shell scripts for automation Batch processing Test automation Result collection |
+| 67 | 8. Project Organization (3/11) | 0:36 | 8. Project Organization (3/11). Running multiple tests Test selection Parallel execution Result aggregation Regression Testing Setup |
+| 68 | 8. Project Organization (4/11) | 0:36 | 8. Project Organization (4/11). Regression test structure Pass/fail reporting Test result tracking Location: module0/examples/iverilog_basics/and_gate_test.v Demonstrates: Basic testbench structure, signal driving, output monitoring |
+| 69 | 8. Project Organization (5/11) | 0:36 | 8. Project Organization (5/11). UVM Connection: Foundation for UVM environment and driver/monitor patterns Location: module1/examples/testbench_basics/mux_4to1_test.v Demonstrates: Module-based testbench structure System tasks: $display, $monitor, $strobe (timing differences) |
+| 70 | 8. Project Organization (6/11) | 0:36 | 8. Project Organization (6/11). Combinational logic testing patterns Key Concepts: Stimulus generation, response checking, signal monitoring UVM Connection: Patterns evolve into UVM sequences (stimulus) and scoreboards (checking) Location: module1/examples/testbench_basics/counter_test.v Demonstrates: |
+| 71 | 8. Project Organization (7/11) | 0:36 | 8. Project Organization (7/11). Reset sequences (synchronous reset patterns) Enable signal control (testing control signals) Sequential logic testing (state machine verification) Key Concepts: Clock generation, reset sequences, timing verification UVM Connection: Clock generation handled by UVM clocking blocks; reset sequences become UVM sequences |
+| 72 | 8. Project Organization (8/11) | 0:36 | 8. Project Organization (8/11). Demonstrates: Reading test vectors from files ($readmemh, $readmemb) Writing results to files ($fopen, $fwrite, $fclose) File-based testbench patterns (scalable testing) Key Concepts: Separating test data from code, automated test vector application |
+| 73 | 8. Project Organization (9/11) | 0:36 | 8. Project Organization (9/11). Location: See compilation examples (module1/examples/compilation/) Demonstrates: Multi-file compilation, include paths, library management Key Concepts: Project organization, dependency management UVM Connection: Multi-file organization is essential for UVM's component-based architecture Location: module1/tests/basic_tests/test_mux_4to1.v |
+| 74 | 8. Project Organization (10/11) | 0:36 | 8. Project Organization (10/11). Reusable test tasks (modular test organization) Comprehensive test coverage (multiple test patterns) Automatic pass/fail tracking (test statistics) Error reporting (detailed failure messages) Test result summary (overall test status) |
+| 75 | 8. Project Organization (11/11) | 0:16 | 8. Project Organization (11/11). UVM Connection: Tasks evolve into UVM sequences; test statistics become UVM test reporting |
+| 76 | Hands-on examples | 0:08 | Next section: Hands-on examples. |
+| 77 | Module 1 self-check | 0:45 | Module 1 self-check. Watch the terminal output and confirm you see the expected pass message. |
+| 78 | Exercise scaffold | 0:28 | Exercise scaffold. Review the code on screen and match it to files in the repository. |
+| 79 | Demo: Compilation | 0:45 | Demo: Compilation. Watch the terminal output and confirm you see the expected pass message. |
+| 80 | Demo: Simulation | 0:45 | Demo: Simulation. Watch the terminal output and confirm you see the expected pass message. |
+| 81 | Demo: Testbench basics | 0:45 | Demo: Testbench basics. Watch the terminal output and confirm you see the expected pass message. |
+| 82 | Demo: File I/O | 0:45 | Demo: File I/O. Watch the terminal output and confirm you see the expected pass message. |
+| 83 | Demo: Waveforms | 0:45 | Demo: Waveforms. Watch the terminal output and confirm you see the expected pass message. |
+| 84 | Demo: Debugging | 0:45 | Demo: Debugging. Watch the terminal output and confirm you see the expected pass message. |
+| 85 | Practice & assessment | 0:08 | Next section: Practice & assessment. |
+| 86 | What you should know (1/8) | 0:36 | By now you should be able to explain the following. Compile Verilog designs with iverilog Execute simulations with vvp Write Verilog testbenches compatible with iverilog Generate and analyze waveforms Debug iverilog compilation and simulation issues From MODULE1 Learning Outcomes. |
+| 87 | What you should know (2/8) | 0:36 | By now you should be able to explain the following. Automate verification flows with iverilog Use compilation examples Try different compilation options Understand compilation process Complete testbench for 4-to-1 multiplexer From MODULE1 Learning Outcomes. |
+| 88 | What you should know (3/8) | 0:36 | By now you should be able to explain the following. Verify correct operation Read test vectors from file Apply vectors to DUT Write results to file Compare expected vs. actual From MODULE1 Learning Outcomes. |
+| 89 | What you should know (4/8) | 0:36 | By now you should be able to explain the following. View waveforms in GTKWave Analyze signal timing Debug using waveforms Create Makefile for compilation Add test execution rules From MODULE1 Learning Outcomes. |
+| 90 | What you should know (5/8) | 0:36 | By now you should be able to explain the following. Organize project structure Can compile Verilog designs with various iverilog options Can execute simulations with vvp Can write complete Verilog testbenches Can use file I/O in testbenches From MODULE1 Learning Outcomes. |
+| 91 | What you should know (6/8) | 0:36 | By now you should be able to explain the following. Can debug compilation and simulation errors Can organize projects with Makefiles Can automate verification flows Prerequisites: Module 0: Installation and Setup Next Steps: Module 2: Verilator Deep Dive - Master Verilator for C++ testbench development From MODULE1 Learning Outcomes. |
+| 92 | What you should know (7/8) | 0:36 | By now you should be able to explain the following. UVM Connection: UVM Core Repository Module 2: Verilator Deep Dive - Master Verilator for C++ testbench development Module 3: Testbench Fundamentals (Verilog and C++) - Learn fundamental testbench concepts for both paradigms Icarus Verilog Documentation: http://iverilog.wikia.com/ GTKWave Documentation: http://gtkwave.sourceforge.net/ From... |
+| 93 | What you should know (8/8) | 0:16 | By now you should be able to explain the following. IEEE 1800-2017 Standard: SystemVerilog Language Reference Manual From MODULE1 Learning Outcomes. |
+| 94 | Assessment checklist | 0:36 | Assessment checklist. Can compile Verilog designs with various iverilog options Can execute simulations with vvp Can write complete Verilog testbenches Can use file I/O in testbenches Can generate and view waveforms |
+| 95 | Summary & next steps | 0:28 | In summary: Master iverilog for Verilog/SystemVerilog testbench development Next up: Next module in course. Master iverilog for Verilog/SystemVerilog testbench development Complete module1/CHECKLIST.md Review module1/EXAMPLES.md and run each lab Next: Next module in course |
+
+        ## Section narration (edit for TTS)
+
+        - **Design architecture (iverilog compile-and-run architecture, Module 1 DUT catalog, Verilog testbench structure (iverilog)):** Walk through the block diagram, then relate each block to files under module1/examples/.
+- **Execution:** Explain make run / UVM make steps, then walk the artifact table and directed-test sequence slide by slide.
+- **Verification (Directed functional testing, File-based and batch testing, Waveform and debug methodology):** Explain what stimulus is applied, what is checked, and what is intentionally out of scope.
+- **Syllabus:** Cover 8 topic section(s) — pause on protocol timing and signals.
+- **Before exercises:** Ask learners to recall the learning outcomes slide; they should explain each bullet in their own words.
+- **Hands-on:** Run module1/EXAMPLES.md labs; narrate expected PASS lines.
 
         ## Notes
 
-        - Slides from **Design Architecture**, **Verification & Testing Methods**, **Topics Covered**, and **EXAMPLES.md** demos.
-        - Full command reference remains in `docs/MODULE1.md`.
-        - Regenerate: `generate_outline_from_module.py <course_root> --module 1`
+        - Slides from **Before You Start**, **Design Architecture**, **Verification & Testing Methods**, **Topics Covered**, **EXAMPLES.md**, and **Learning Outcomes**.
+        - Full detail: `docs/MODULE1.md` and `module1/EXAMPLES.md`.
+        - Regenerate: `regenerate_course_outlines.sh <course_root> --module 1`

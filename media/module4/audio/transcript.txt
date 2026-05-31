@@ -1,0 +1,179 @@
+[Slide 1] Welcome to module 4, Basic Testbench Construction. In this module you will master construction of structured testbenches with proper organization.
+
+[Slide 2] Here is what you will learn in this module. Master construction of structured testbenches with proper organization
+
+[Slide 3] Before you start, make sure you have these prerequisites. See module README
+
+[Slide 4] Learning path. Master construction of structured testbenches with proper organization
+
+[Slide 5] Overview. This module focuses on building well-structured testbenches for both Verilog and C++ paradigms. You'll learn to organize testbenches...
+
+[Slide 6] Next section: Design architecture.
+
+[Slide 7] 1. Structured DUT portfolio (Module 4). dut/alus/simple_alu.v: Combinational ALU — op select, result, zero flag dut/fifos/simple_fifo.v: Queue storage with full/empty and pointer logic dut/registers/register_file.v: Multi-port register file — read/write ports, clocked updates Complexity step: Moves from gates/counters to datapath blocks needing organized TBs Refer to the diagram on the right.
+
+[Slide 8] 2. Modular testbench architecture. Separation: Stimulus generator, monitor, checker/scoreboard as distinct modules or classes Clock/reset generator: Dedicated block (clock_reset examples) — configurable period Hierarchy: Top TB instantiates agents + DUT; connects via named interfaces (wires) C++ mirror: Same roles as C++ classes with methods drive(), sample(), check() Refer to the diagram on...
+
+[Slide 9] 3. Reference model placement. Golden model: Software replica of ALU/FIFO/register behavior in TB Self-checking path: DUT output compared to reference each cycle or transaction Config: Parameters for width, depth, and clock period without editing DUT RTL Refer to the diagram on the right.
+
+[Slide 10] RTL block diagram (reference). Module 4: DUT hierarchy and signal flow.
+
+[Slide 11] Verification / testbench diagram (reference). Module 4: stimulus, observation, and checking.
+
+[Slide 12] Clock/reset Makefile target. Review the code on screen and match it to files in the repository. Parameterize period; compile and vvp in one make target.
+
+[Slide 13] Configurable clock generation. Review the code on screen and match it to files in the repository. forever #(PERIOD/2) clk=~clk; coordinated reset release.
+
+[Slide 14] Self-checking ALU ports. Review the code on screen and match it to files in the repository. simple_alu instantiated; wires for a, b, op, result, zero.
+
+[Slide 15] Next section: Execution & simulation flow.
+
+[Slide 16] How the example runs (toolchain). Match each bullet to files in the repository. Makefile: Verilator compiles RTL + SystemVerilog testbench into a C++ model sim_main.cpp: generates clk/rst_n, calls eval() until $finish Directed test (initial block or C++): drive stimulus, wait for DUT flags Self-check: compare outputs; print PASS/FAIL (see terminal demo slide) Repo path...
+
+[Slide 17] Follow these steps in order when working through this module. Reference model in TB compare each cycle aggregate pass/fail before $finish Build clk/rst generators connect DUT Follow this order when tracing waveforms or debugging.
+
+[Slide 18] Follow these steps in order when working through this module. drive ALU/FIFO vectors reference model compare wire agents at top Follow this order when tracing waveforms or debugging.
+
+[Slide 19] Self-checking example build. Review the code on screen and match it to files in the repository. cd module4/examples/self_checking && make
+
+[Slide 20] Reference model function. Review the code on screen and match it to files in the repository. calculate_expected(op,a,b) — golden model in TB.
+
+[Slide 21] Next section: Verification & testing methods.
+
+[Slide 22] 1. Component-level verification. Stimulus module: Encapsulates write sequences to FIFO or register ports Monitor module: Captures read data and status flags passively Checker: Flags protocol violations (overflow, X on outputs, wrong opcode result) Refer to the diagram on the right.
+
+[Slide 23] 2. Scenario-based testing. Scenarios: Reset + fill FIFO; ALU op sweep; register R/W hazard patterns Tasks/methods: Each scenario is a callable task — reusable across tests Aggregation: Single report summarizing scenarios run and failures Refer to the diagram on the right.
+
+[Slide 24] 3. Structured debug and closure. Modular debug: Isolate failing agent by disabling others in top TB Waveform on demand: Trigger dumps only when checker fires Regression: ./scripts/module4.sh --self-checking and --all-tests for batch sign-off Refer to the diagram on the right.
+
+[Slide 25] Modular TB — checker module. Review the code on screen and match it to files in the repository. Separate stimulus, monitor, and checker blocks wired at top.
+
+[Slide 26] Next section: Syllabus topics.
+
+[Slide 27] 1. Testbench Organization (1/7). Modular Testbench Structure (Verilog and C++) Separating concerns Component-based design Reusability principles Maintainability
+
+[Slide 28] 1. Testbench Organization (2/7). Stimulus generation module/class Response monitoring module/class Result checking module/class Component interaction Verilog: Module-Based Organization
+
+[Slide 29] 1. Testbench Organization (3/7). Module instantiation Signal connectivity Module reusability C++: Class-Based Organization Class hierarchy
+
+[Slide 30] 1. Testbench Organization (4/7). Method organization Class reusability Testbench Component Organization Component placement Signal routing
+
+[Slide 31] 1. Testbench Organization (5/7). Organization patterns Reusable Testbench Components Component design Parameterization Configuration
+
+[Slide 32] 1. Testbench Organization (6/7). Configuration and Parameters Parameter passing Configuration management Runtime configuration Build-time configuration
+
+[Slide 33] 1. Testbench Organization (7/7). register_file_test_cpp.cpp: Structured C++ testbench with separate classes
+
+[Slide 34] 2. Clock and Reset Generation (1/8). Verilog: Clock Generation Patterns (Always Blocks) Continuous clock generation Configurable periods Multiple clocks Clock gating
+
+[Slide 35] 2. Clock and Reset Generation (2/8). Clock toggling in loop Configurable periods Multiple clocks Clock coordination Configurable Clock Periods (Both Paradigms)
+
+[Slide 36] 2. Clock and Reset Generation (3/8). Runtime configuration Clock period calculation Frequency control Multiple Clock Domains Independent clocks
+
+[Slide 37] 2. Clock and Reset Generation (4/8). Domain crossing Synchronization Reset Generation (Synchronous, Asynchronous) Synchronous reset Asynchronous reset
+
+[Slide 38] 2. Clock and Reset Generation (5/8). Reset sequences Verilog: Reset in Initial Blocks Initial block reset Reset timing control Reset sequences
+
+[Slide 39] 2. Clock and Reset Generation (6/8). C++: Reset in C++ Code Reset in simulation loop Reset timing control Reset sequences Reset coordination
+
+[Slide 40] 2. Clock and Reset Generation (7/8). Reset assertion Reset deassertion Reset duration Reset timing Clock and Reset Coordination
+
+[Slide 41] 2. Clock and Reset Generation (8/8). Reset synchronization Timing coordination Best practices configurable_clock_reset_verilog.v: Configurable clock and reset in Verilog configurable_clock_reset_cpp.cpp: Configurable clock and reset in C++
+
+[Slide 42] 3. Stimulus Generation (1/5). Test Vector Generation Vector format Vector generation Vector storage Vector application
+
+[Slide 43] 3. Stimulus Generation (2/5). Pattern types Pattern generation Pattern application Pattern verification Sequential Stimulus Application
+
+[Slide 44] 3. Stimulus Generation (3/5). Timing control Application order Synchronization Stimulus Timing Control Timing accuracy
+
+[Slide 45] 3. Stimulus Generation (4/5). Timing control Timing verification Stimulus Verification Stimulus validation Stimulus checking
+
+[Slide 46] 3. Stimulus Generation (5/5). Verification strategies
+
+[Slide 47] 4. Response Monitoring (1/5). Output Monitoring Strategies Real-time monitoring Post-processing monitoring Event-driven monitoring Continuous monitoring
+
+[Slide 48] 4. Response Monitoring (2/5). Immediate monitoring Live updates Real-time analysis Performance considerations Post-Processing Monitoring
+
+[Slide 49] 4. Response Monitoring (3/5). Batch processing Data collection Analysis strategies Monitoring Timing When to monitor
+
+[Slide 50] 4. Response Monitoring (4/5). Timing relationships Timing control Event-Driven Monitoring Event triggers Event-based monitoring
+
+[Slide 51] 4. Response Monitoring (5/5). Event coordination
+
+[Slide 52] 5. Result Checking (1/5). Expected Value Calculation Expected value computation Reference models Calculation methods Accuracy
+
+[Slide 53] 5. Result Checking (2/5). Value comparison Comparison methods Comparison timing Comparison accuracy Error Detection and Reporting
+
+[Slide 54] 5. Result Checking (3/5). Error reporting Error handling Error analysis Assertion-Based Checking Assertion types
+
+[Slide 55] 5. Result Checking (4/5). Assertion organization Assertion best practices Self-Checking Testbenches Automatic checking Self-verification
+
+[Slide 56] 5. Result Checking (5/5). Pass/fail determination alu_self_checking_verilog.v: Self-checking ALU testbench in Verilog alu_self_checking_cpp.cpp: Self-checking ALU testbench in C++
+
+[Slide 57] 6. Test Scenarios (1/7). Test Case Organization Test case structure Test case organization Test case management Test case documentation
+
+[Slide 58] 6. Test Scenarios (2/7). Scenario definition Scenario organization Scenario selection Scenario execution Test Sequencing
+
+[Slide 59] 6. Test Scenarios (3/7). Test dependencies Test sequencing Test coordination Test Selection Mechanisms Test selection
+
+[Slide 60] 6. Test Scenarios (4/7). Test prioritization Test management Test Result Aggregation Result collection Result aggregation
+
+[Slide 61] 6. Test Scenarios (5/7). Result reporting Location: module4/examples/modular_testbenches/register_file_test_verilog.v Demonstrates: Modular structure, separate stimulus/monitor/checker modules Location: module4/examples/modular_testbenches/register_file_test_cpp.cpp Demonstrates: Class-based organization, separate stimulus/monitor/checker classes
+
+[Slide 62] 6. Test Scenarios (6/7). Demonstrates: Multiple test scenarios, test sequencing Location: (Coming soon) Demonstrates: Multiple test scenarios, test sequencing Location: module4/examples/self_checking/ Demonstrates: Self-checking testbenches, comprehensive testing
+
+[Slide 63] 6. Test Scenarios (7/7). Demonstrates: State machine testing, state coverage Location: module4/examples/clock_reset/ Demonstrates: Configurable clock/reset, parameterization
+
+[Slide 64] Next section: Hands-on examples.
+
+[Slide 65] Module 4 self-check. Watch the terminal output and confirm you see the expected pass message.
+
+[Slide 66] Exercise scaffold. Review the code on screen and match it to files in the repository.
+
+[Slide 67] Demo: Clock and reset. Watch the terminal output and confirm you see the expected pass message.
+
+[Slide 68] Demo: Self-checking. Watch the terminal output and confirm you see the expected pass message.
+
+[Slide 69] Demo: Stimulus and monitoring. Watch the terminal output and confirm you see the expected pass message.
+
+[Slide 70] Demo: Modular testbenches. Watch the terminal output and confirm you see the expected pass message.
+
+[Slide 71] Next section: Common pitfalls.
+
+[Slide 72] Mixing Concerns. Don't combine stimulus and checking in the same module/class Don't drive signals from monitor or checker components
+
+[Slide 73] Hardcoded Values. Use parameters/constants for timing and configuration Avoid magic numbers in code
+
+[Slide 74] Insufficient Checking. Don't rely on manual inspection of waveforms Always implement automatic checking
+
+[Slide 75] Poor Error Messages. Include enough context to debug failures Use consistent error message format
+
+[Slide 76] Inadequate Documentation. Document component purpose and interfaces Explain complex logic and timing relationships
+
+[Slide 77] Next section: Practice & assessment.
+
+[Slide 78] By now you should be able to explain the following. Organize testbenches modularly (both paradigms) Generate clocks and resets properly (Verilog and C++) Create structured stimulus (both paradigms) Implement monitoring strategies (both paradigms) Build self-checking testbenches (both paradigms) From MODULE4 Learning Outcomes.
+
+[Slide 79] By now you should be able to explain the following. Choose appropriate organization style Separate stimulus, monitor, and checker modules Organize components properly Verify functionality Use class-based organization From MODULE4 Learning Outcomes.
+
+[Slide 80] By now you should be able to explain the following. Compare with Verilog approach Make clock period configurable Implement reset sequences Test different configurations Organize test cases From MODULE4 Learning Outcomes.
+
+[Slide 81] By now you should be able to explain the following. Aggregate results Calculate expected values Compare automatically Report results Design reusable modules/classes From MODULE4 Learning Outcomes.
+
+[Slide 82] By now you should be able to explain the following. Test reusability Can organize testbenches modularly (both paradigms) Can generate configurable clocks and resets (Verilog and C++) Can create structured stimulus (both paradigms) Can implement monitoring strategies (both paradigms) From MODULE4 Learning Outcomes.
+
+[Slide 83] By now you should be able to explain the following. Can organize multiple test scenarios Can choose appropriate organization style Module 5: Procedural Testbench Writing - Master procedural testbench construction Module 6: SystemVerilog Testbench Features - Learn SystemVerilog enhancements Keep stimulus, monitoring, and checking separate From MODULE4 Learning Outcomes.
+
+[Slide 84] By now you should be able to explain the following. This makes testbenches easier to understand, maintain, and debug Design components to be reusable across multiple testbenches Use parameters/configuration for flexibility Create library components for common functionality (clocks, resets, etc.) Always implement automatic result checking From MODULE4 Learning Outcomes.
+
+[Slide 85] By now you should be able to explain the following. Report pass/fail status clearly Comment code thoroughly, especially complex logic Document component interfaces and responsibilities Include usage examples in comments Provide clear, informative error messages From MODULE4 Learning Outcomes.
+
+[Slide 86] By now you should be able to explain the following. Aggregate errors for summary reporting Don't combine stimulus and checking in the same module/class Don't drive signals from monitor or checker components Use parameters/constants for timing and configuration Avoid magic numbers in code From MODULE4 Learning Outcomes.
+
+[Slide 87] By now you should be able to explain the following. Always implement automatic checking Include enough context to debug failures Use consistent error message format Document component purpose and interfaces Explain complex logic and timing relationships From MODULE4 Learning Outcomes.
+
+[Slide 88] By now you should be able to explain the following. Verilator Documentation: https://verilator.org/ GTKWave Documentation: http://gtkwave.sourceforge.net/ UVM Core Repository: https://github.com/universal-verification-methodology/core UVM User's Guide: IEEE 1800.2-2020 Standard Verification Methodology: Best practices from industry verification teams From MODULE4 Learning Outcomes.
+
+[Slide 89] Assessment checklist. Can organize testbenches modularly (both paradigms) Can generate configurable clocks and resets (Verilog and C++) Can create structured stimulus (both paradigms) Can implement monitoring strategies (both paradigms) Can build self-checking testbenches (both paradigms)
+
+[Slide 90] In summary: Master construction of structured testbenches with proper organization Next up: Next module in course. Master construction of structured testbenches with proper organization Complete module4/CHECKLIST.md Review module4/EXAMPLES.md and run each lab Next: Next module in course

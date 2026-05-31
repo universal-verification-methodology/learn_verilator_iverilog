@@ -1,8 +1,11 @@
 flowchart LR
-  VER[verilator --cc] --> OBJ[obj_dir]
+  RTL[design.v] --> VER[verilator --cc --exe]
+  CPP[testbench.cpp] --> VER
+  VER --> GEN[obj_dir/ Vmodule + Makefile]
+  GEN --> LINK[g++ link]
+  LINK --> BIN[./obj_dir/Vdut]
   subgraph dut2["module2/dut"]
     M4[mux_4to1]
     CTR[counter_4bit]
   end
-  CPP[C++ testbench] --> OBJ
-  OBJ --> dut2
+  BIN --> dut2

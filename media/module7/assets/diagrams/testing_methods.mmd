@@ -1,3 +1,5 @@
 flowchart TD
-  A[assertions] --> B[coverage goals]
-  B --> C[exit criteria]
+  BASIC[basic_assertions] --> LIB[assertion_libraries]
+  LIB --> COV[coverage_analysis]
+  COV --> GAP[find coverage holes]
+  GAP --> REG[module7.sh --check]

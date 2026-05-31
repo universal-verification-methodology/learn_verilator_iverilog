@@ -1,4 +1,5 @@
 flowchart TD
-  A[Verilog TB] --> C{same spec?}
-  B[C++ TB] --> C
-  C --> D[pass both]
+  VRUN[verilog_testbenches make] --> CRUN[cpp_testbenches make]
+  CRUN --> DIFF[comparison side-by-side]
+  DIFF --> PICK[choose tool by need]
+  PICK --> REG[module3.sh --check]

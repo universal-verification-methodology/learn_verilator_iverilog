@@ -140,6 +140,12 @@ make all
 - **Optional OOP**: Advanced tests organize Driver/Monitor/Checker as C++ classes
 - **Build**: Generated `Vtop.mk` plus user `Makefile` link testbench and model
 
+**Simulation flow**: `cd module2/examples/cpp_testbench && make mux_4to1_test` → `./obj_dir/Vmux_4to1` prints PASS on stdout
+
+**Execution sequence**: `verilator --cc --exe --build rtl.v tb.cpp` → inspect `obj_dir/` → run `Vtop` → `eval()` each cycle → optional `--trace` VCD → `./scripts/module2.sh --check`
+
+**Self-check flow**: C++ assert or compare after each eval → final "All tests passed" message
+
 ## Verification & Testing Methods
 
 ### 1. Cycle-based C++ testing

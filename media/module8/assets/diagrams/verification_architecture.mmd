@@ -1,3 +1,6 @@
 flowchart LR
-  REG[regression] --> MET[metrics]
-  MET --> SIGN[sign-off checklist]
+  CFG[parameters + plusargs] --> AGENTS[reusable generators]
+  AGENTS --> DUT[mux / counter]
+  DUT --> MON[monitor module]
+  MON --> MET[pass fail coverage metrics]
+  MET --> RPT[regression summary]

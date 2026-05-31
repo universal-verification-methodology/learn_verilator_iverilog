@@ -1,3 +1,5 @@
 flowchart LR
-  SEQ[sequences] --> HAND[handshake checks]
-  HAND --> TIME[timing alignment]
+  SEQ[test sequences] --> ROUT[task_function routines]
+  ROUT --> DUT[drive + check]
+  DUT --> FILEIO[file-based regression]
+  FILEIO --> RPT[pass/fail log]

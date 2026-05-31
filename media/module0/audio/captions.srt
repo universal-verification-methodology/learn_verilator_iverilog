@@ -1,0 +1,411 @@
+1
+00:00:00,000 --> 00:00:09,120
+Welcome to module 0, Installation and Setup. In this module you will set up verification environment with iverilog and verilator.
+
+2
+00:00:09,470 --> 00:00:32,870
+Here is what you will learn in this module. Tool Installation: Automated and manual installation methods for all verification tools Environment Setup: Configure your development environment for efficient verification work First Testbenches: Create and run your first "Hello World" testbenches in both paradigms Waveform Analysis: Generate and view waveforms using GTKWave Project Structure...
+
+3
+00:00:33,220 --> 00:00:52,780
+Before you start, make sure you have these prerequisites. Have a Linux, macOS, or Windows (WSL2) system Have basic command-line knowledge Have Git installed (for cloning the repository) Have a C/C++ compiler available (GCC, Clang, or MSVC)
+
+4
+00:00:53,130 --> 00:00:59,250
+Learning path. Set up verification environment with iverilog and Verilator
+
+5
+00:00:59,600 --> 00:01:10,376
+Overview. This module covers the complete setup of your verification environment, including installation of iverilog, Verilator, GTKWave, and...
+
+6
+00:01:10,726 --> 00:01:13,966
+Next section: Design architecture.
+
+7
+00:01:14,316 --> 00:01:48,396
+1. Verification toolchain layout (1/2). Host environment: Linux, macOS, or WSL2 with GCC/Clang, Make, and Git Icarus path: iverilog compiles RTL + TB → simv (or named binary) executed by vvp Verilator path: verilator --cc emits C++ model under obj_dir/ linked with a C++ testbench Waveform path: Simulators write VCD/FST; GTKWave visualizes signal transitions Refer to the diagram on the right.
+
+8
+00:01:48,746 --> 00:02:07,562
+1. Verification toolchain layout (2/2). Match each bullet to files in the repository. Course layout: scripts/install_*.sh, module0/examples/, module0/dut/, module0/tests/
+
+9
+00:02:07,912 --> 00:02:42,424
+2. Reference DUT hierarchy (Module 0). module0/dut/simple_gates/: Combinational and_gate, or_gate — minimal port lists (a, b, y) module0/dut/counters/: simple_counter — clocked sequential logic with enable and reset Hierarchy depth: Flat RTL (no sub-modules) so install smoke tests stay fast TB attachment: Testbench modules instantiate DUT at top level; no bus fabric yet Refer to the diagram on...
+
+10
+00:02:42,774 --> 00:03:08,406
+3. First simulation artifact flow. iverilog: iverilog -o sim tb.v dut.v → vvp sim → optional $dumpfile VCD Verilator: verilator --cc --exe → make -C obj_dir → ./obj_dir/Vdut Build dirs: Per-example Makefile targets; artifacts under build/ or obj_dir/ (gitignored) Refer to the diagram on the right.
+
+11
+00:03:08,756 --> 00:03:16,148
+RTL block diagram (reference). Module 0: DUT hierarchy and signal flow.
+
+12
+00:03:16,498 --> 00:03:32,506
+iverilog — compile then simulate. Review the code on screen and match it to files in the repository. Step 1: iverilog -o hello_world hello_world.v. Step 2: vvp hello_world.
+
+13
+00:03:32,856 --> 00:03:49,008
+Verilator — C++ model and eval(). Review the code on screen and match it to files in the repository. verilator --cc --exe --build; run ./obj_dir/Vhello_world; dut->eval() each step.
+
+14
+00:03:49,358 --> 00:04:02,774
+Reference DUT — and_gate. Review the code on screen and match it to files in the repository. Flat combinational RTL; TB instantiates at top level for smoke tests.
+
+15
+00:04:03,124 --> 00:04:07,156
+Next section: Execution & simulation flow.
+
+16
+00:04:07,506 --> 00:04:38,754
+How the example runs (toolchain). Match each bullet to files in the repository. Makefile: Verilator compiles RTL + SystemVerilog testbench into a C++ model sim_main.cpp: generates clk/rst_n, calls eval() until $finish Directed test (initial block or C++): drive stimulus, wait for DUT flags Self-check: compare outputs; print PASS/FAIL (see terminal demo slide) Repo path...
+
+17
+00:04:39,104 --> 00:04:54,128
+Follow these steps in order when working through this module. make hello_world PASS console message optional GTKWave on .vcd Install tools iverilog -v / verilator --version Follow this order when tracing waveforms or debugging.
+
+18
+00:04:54,478 --> 00:05:06,334
+Follow these steps in order when working through this module. iverilog -o sim tb.v vvp sim optional $dumpfile VCD Follow this order when tracing waveforms or debugging.
+
+19
+00:05:06,684 --> 00:05:20,004
+Makefile — iverilog hello_world target. Review the code on screen and match it to files in the repository. make hello_world runs iverilog then vvp from the example directory.
+
+20
+00:05:20,354 --> 00:05:34,466
+Verilator Makefile — build and run. Review the code on screen and match it to files in the repository. VERILATOR_FLAGS --cc --exe --build; output binary under obj_dir/.
+
+21
+00:05:34,816 --> 00:05:48,352
+GTKWave example — VCD generation. Review the code on screen and match it to files in the repository. $dumpfile and $dumpvars create VCD; open with gtkwave for debug.
+
+22
+00:05:48,702 --> 00:05:52,806
+Next section: Verification & testing methods.
+
+23
+00:05:53,156 --> 00:06:15,404
+1. Install and environment verification. Version checks: iverilog -v, verilator --version, gtkwave --version PATH and compiler: Confirm g++/gcc available for Verilator link step Self-check: ./scripts/module0.sh --check validates examples and DUT compiles Refer to the diagram on the right.
+
+24
+00:06:15,754 --> 00:06:39,178
+2. Hello-world test methodology. Smoke test: Minimal compile-and-run per tool (no functional depth required) Pass criteria: Clean compile, simulation exits 0, expected $display or C++ printf Waveform spot-check: Open generated VCD in GTKWave to confirm clock/reset toggles Refer to the diagram on the right.
+
+25
+00:06:39,528 --> 00:07:02,136
+3. Debugging and regression basics. Log-first: Capture simulator stdout; use -g / --trace when examples enable it Compare tools: Run same DUT with iverilog vs Verilator to see flow differences Repeatability: Document working directory and Make target in commands_to_try.txt Refer to the diagram on the right.
+
+26
+00:07:02,486 --> 00:07:15,374
+Install verification — version checks. Review the code on screen and match it to files in the repository. Run install scripts once; verify with iverilog -v and verilator --version.
+
+27
+00:07:15,724 --> 00:07:18,988
+Next section: Syllabus topics.
+
+28
+00:07:19,338 --> 00:07:23,130
+Next section: Protocol & design details.
+
+29
+00:07:23,480 --> 00:07:42,248
+Protocol and design detail: iverilog Installation Issues (1). Cause: iverilog not installed or not in PATH Solution: Verify: iverilog -v should show version Cause: SystemVerilog syntax not supported by default From MODULE0 Topics Covered — protocol/design depth.
+
+30
+00:07:42,598 --> 00:08:03,478
+Protocol and design detail: iverilog Installation Issues (2). Solution: Use -g2012 flag for SystemVerilog support Note: Some SystemVerilog features may still be limited Cause: Missing include path Solution: Add include directory with -I flag From MODULE0 Topics Covered — protocol/design depth.
+
+31
+00:08:03,828 --> 00:08:21,828
+Protocol and design detail: Verilator Installation Issues (1). Cause: Verilator not installed or not in PATH Solution: Cause: Installed version is too old Solution: Install from source for latest version From MODULE0 Topics Covered — protocol/design depth.
+
+32
+00:08:22,178 --> 00:08:41,954
+Protocol and design detail: Verilator Installation Issues (2). Cause: C++ compiler not installed Solution: Install build essentials Cause: Verilator headers not found Solution: Check Verilator installation and include paths From MODULE0 Topics Covered — protocol/design depth.
+
+33
+00:08:42,304 --> 00:08:57,904
+Protocol and design detail: GTKWave Issues (1). Cause: GTKWave not installed Solution: Cause: File format issue or corrupted file Solution: From MODULE0 Topics Covered — protocol/design depth.
+
+34
+00:08:58,254 --> 00:09:16,110
+Protocol and design detail: GTKWave Issues (2). Verify VCD file was generated correctly Check file permissions Try regenerating: vvp executable (should create .vcd file) From MODULE0 Topics Covered — protocol/design depth.
+
+35
+00:09:16,460 --> 00:09:36,308
+Protocol and design detail: Platform-Specific Issues (1). Issue: Package manager version may be outdated Solution: Use installation scripts or build from source Issue: Homebrew version may be outdated Solution: Use --source flag to build from source From MODULE0 Topics Covered — protocol/design depth.
+
+36
+00:09:36,658 --> 00:09:52,306
+Protocol and design detail: Platform-Specific Issues (2). Issue: Some tools may not work in Windows directly Solution: Use WSL2 Ubuntu and install there From MODULE0 Topics Covered — protocol/design depth.
+
+37
+00:09:52,656 --> 00:10:14,064
+Protocol and design detail: Build System Issues. Issue: make: *** No targets specified and no makefile found Solution: Ensure you're in the correct directory with a Makefile Issue: Files not found during compilation Solution: Check relative paths and use -I flags correctly From MODULE0 Topics Covered — protocol/design depth.
+
+38
+00:10:14,414 --> 00:10:36,278
+Protocol and design detail: IDE Issues (1). VS Code: Install "SystemVerilog" extension by mshr-h Vim: Install vim-systemverilog plugin Verification: Open a .sv file and check for syntax highlighting Issue: IDE can't find included files From MODULE0 Topics Covered — protocol/design depth.
+
+39
+00:10:36,628 --> 00:10:54,460
+Protocol and design detail: IDE Issues (2). Solution: Configure include paths in IDE settings VS Code: Add to settings.json: Issue: Can't set breakpoints or debug Solution: From MODULE0 Topics Covered — protocol/design depth.
+
+40
+00:10:54,810 --> 00:11:02,610
+Verification flow (reference). Stimulus, DUT response, and check points for this module.
+
+41
+00:11:02,960 --> 00:11:20,312
+Before you start, make sure you have these prerequisites. Operating System Support Linux (Ubuntu/Debian, CentOS/RHEL, Fedora) macOS (Intel and Apple Silicon) Windows (WSL2 recommended) Hardware Requirements
+
+42
+00:11:20,662 --> 00:11:38,302
+Before you start, make sure you have these prerequisites. 5GB free disk space Multi-core processor recommended Software Prerequisites C/C++ compiler (GCC 7+, Clang 10+, or MSVC) Make or Ninja build system
+
+43
+00:11:38,652 --> 00:11:45,084
+Before you start, make sure you have these prerequisites. Perl (for some tools)
+
+44
+00:11:45,434 --> 00:12:01,946
+2. Icarus Verilog (iverilog) Installation (1/5). What is iverilog? Open-source Verilog/SystemVerilog simulator Good for learning and prototyping Supports most Verilog constructs Limited SystemVerilog support
+
+45
+00:12:02,296 --> 00:12:18,832
+2. Icarus Verilog (iverilog) Installation (2/5). Using the installation script: The script automatically: Checks for existing installations Installs system dependencies (build tools, libraries) Builds and installs iverilog
+
+46
+00:12:19,182 --> 00:12:38,598
+2. Icarus Verilog (iverilog) Installation (3/5). Manual Installation Methods Linux Installation Ubuntu/Debian: sudo apt-get install iverilog gtkwave CentOS/RHEL: sudo yum install iverilog gtkwave Fedora: sudo dnf install iverilog gtkwave
+
+47
+00:12:38,948 --> 00:12:58,124
+2. Icarus Verilog (iverilog) Installation (4/5). macOS Installation Homebrew installation: brew install icarus-verilog gtkwave Building from source Windows/WSL2 Installation Installing in WSL2 Ubuntu: sudo apt-get install iverilog gtkwave
+
+48
+00:12:58,474 --> 00:13:19,066
+2. Icarus Verilog (iverilog) Installation (5/5). Verification Steps Check iverilog version: iverilog -v Check vvp runtime: vvp -v Run simple test: echo 'module test; initial $display("Hello"); endmodule' — iverilog -o test - && vvp test
+
+49
+00:13:19,416 --> 00:13:35,208
+3. Verilator Installation (1/5). What is Verilator? Fast Verilog/SystemVerilog simulator Generates C++ code from Verilog Excellent performance Limited SystemVerilog support (some features)
+
+50
+00:13:35,558 --> 00:13:52,382
+3. Verilator Installation (2/5). Using the installation script: The script automatically: Checks for existing installations Installs system dependencies (build tools, libraries) Sets up git submodule in tools/verilator/
+
+51
+00:13:52,732 --> 00:14:08,236
+3. Verilator Installation (3/5). Verifies the installation Manual Installation Methods Linux Installation Ubuntu/Debian: sudo apt-get install verilator CentOS/RHEL: sudo yum install verilator
+
+52
+00:14:08,586 --> 00:14:23,010
+3. Verilator Installation (4/5). Building from source (latest features) macOS Installation Homebrew installation: brew install verilator Building from source Windows/WSL2 Installation
+
+53
+00:14:23,360 --> 00:14:38,552
+3. Verilator Installation (5/5). Building from source in WSL2 Verification Steps Check Verilator version: verilator --version Run simple test: Create a minimal Verilog file and compile with Verilator
+
+54
+00:14:38,902 --> 00:14:52,966
+4. GTKWave Installation (1/2). What is GTKWave? Waveform viewer for VCD and FST files Essential for debugging testbenches Open-source and cross-platform Installation
+
+55
+00:14:53,316 --> 00:15:12,804
+4. GTKWave Installation (2/2). Linux: sudo apt-get install gtkwave (or included with iverilog) macOS: brew install gtkwave (or included with icarus-verilog) Windows: Available as standalone installer Verification Steps Check GTKWave: gtkwave --version
+
+56
+00:15:13,154 --> 00:15:24,578
+5. Build System Configuration (1/4). Makefile Setup Basic Makefile for iverilog Basic Makefile for Verilator Compilation flags Include paths
+
+57
+00:15:24,928 --> 00:15:39,256
+5. Build System Configuration (2/4). iverilog Compilation Compilation command: iverilog -o output input.v Include paths: -I<directory> Define macros: -D<macro> Timescale handling
+
+58
+00:15:39,606 --> 00:16:00,654
+5. Build System Configuration (3/4). Verilator Compilation Compilation command: verilator --cc --exe design.v testbench.cpp SystemVerilog flags: -sv, --timing Include paths: -I<directory> Optimization flags: -O0, -O1, -O2, -O3
+
+59
+00:16:01,004 --> 00:16:09,188
+5. Build System Configuration (4/4). Waveform generation: --trace, --trace-fst
+
+60
+00:16:09,538 --> 00:16:25,570
+6. IDE Setup and Configuration (1/3). Recommended IDEs VS Code with Verilog/SystemVerilog extension Verible (SystemVerilog linter/formatter) Vim/Neovim with LSP Emacs with Verilog mode
+
+61
+00:16:25,920 --> 00:16:38,928
+6. IDE Setup and Configuration (2/3). SystemVerilog extension setup iverilog integration Verilator integration Debugging configuration Task runner setup for simulations
+
+62
+00:16:39,278 --> 00:16:52,958
+6. IDE Setup and Configuration (3/3). Editor Configuration SystemVerilog formatting (Verible) Linting (Verilator, Verible) Code formatting on save Syntax highlighting
+
+63
+00:16:53,308 --> 00:17:06,220
+7. Project Structure Setup (1/4). Directory Structure Source code organization Test directory structure DUT (Design Under Test) organization Configuration files
+
+64
+00:17:06,570 --> 00:17:37,194
+7. Project Structure Setup (2/4). Git Submodules Management Verilator is managed as a git submodule in tools/verilator/ Initialize submodules: ./scripts/init_submodules.sh or git submodule update --init --recursive Update submodules: ./scripts/update_submodules.sh or git submodule update --remote Add new submodule: ./scripts/add_submodule.sh <repo_url> <path>
+
+65
+00:17:37,544 --> 00:17:50,480
+7. Project Structure Setup (3/4). Makefile/Configuration Simple Makefile for running tests iverilog configuration Verilator configuration Environment variable management
+
+66
+00:17:50,830 --> 00:18:05,446
+7. Project Structure Setup (4/4). Git initialization .gitignore for Verilog and simulation (include build artifacts, waveforms) Initial commit structure Git submodules in .gitmodules file
+
+67
+00:18:05,796 --> 00:18:24,780
+8. First "Hello World" Verification Test (1/8). Prerequisites Ensure all tools are installed Verify tools are accessible: iverilog -v and verilator --version iverilog Hello World Location: module0/examples/iverilog_basics/hello_world.v
+
+68
+00:18:25,130 --> 00:18:42,146
+8. First "Hello World" Verification Test (2/8). Key Concepts: module declaration (testbench has no ports) initial block for procedural code execution $display system task for output $finish system task to end simulation
+
+69
+00:18:42,496 --> 00:19:07,000
+8. First "Hello World" Verification Test (3/8). Compilation: iverilog -o hello_world hello_world.v Simulation: vvp hello_world Understanding Output: Console messages confirm successful execution GTKWave Waveform Example Location: module0/examples/iverilog_basics/gtkwave_example.v
+
+70
+00:19:07,350 --> 00:19:27,150
+8. First "Hello World" Verification Test (4/8). Key Concepts: VCD (Value Change Dump) file generation with $dumpfile and $dumpvars Clock generation using forever loops Multiple signal types (clock, data, control signals) Signal transitions for timing analysis
+
+71
+00:19:27,500 --> 00:19:57,332
+8. First "Hello World" Verification Test (5/8). Compilation: iverilog -o gtkwave_example gtkwave_example.v ../../dut/simple_gates/and_gate.v Simulation: vvp gtkwave_example (generates gtkwave_example.vcd) Viewing: gtkwave gtkwave_example.vcd or make view_waveforms GTKWave Features Demonstrated: Signal hierarchy navigation
+
+72
+00:19:57,682 --> 00:20:20,986
+8. First "Hello World" Verification Test (6/8). Zoom and pan operations Save file creation for quick reload Verilator Hello World Location: module0/examples/verilator_basics/hello_world.cpp and hello_world.v Purpose: Simplest possible C++ testbench to verify Verilator installation
+
+73
+00:20:21,336 --> 00:20:40,776
+8. First "Hello World" Verification Test (7/8). Verilator compilation process (verilator --cc --exe --build) Generated C++ class structure (V<module_name>) DUT instantiation in C++ eval() method for simulation final() method for cleanup
+
+74
+00:20:41,126 --> 00:21:00,470
+8. First "Hello World" Verification Test (8/8). Compilation: verilator --cc --exe --build hello_world.v hello_world.cpp Running: ./obj_dir/Vhello_world Understanding Output: Console messages confirm successful execution
+
+75
+00:21:00,820 --> 00:21:13,204
+9. Tool Comparison and Selection Criteria (1/4). iverilog Characteristics Verilog/SystemVerilog testbenches Good for learning Easy to use Good waveform support
+
+76
+00:21:13,554 --> 00:21:26,442
+9. Tool Comparison and Selection Criteria (2/4). Verilator Characteristics C++ testbenches Excellent performance Good for large designs Requires C++ knowledge
+
+77
+00:21:26,792 --> 00:21:40,136
+9. Tool Comparison and Selection Criteria (3/4). When to Use Each Use iverilog for: Learning Verilog testbench concepts Quick prototyping Simple to medium complexity designs
+
+78
+00:21:40,486 --> 00:21:55,174
+9. Tool Comparison and Selection Criteria (4/4). Use Verilator for: High-performance simulation Large designs Integration with C++ libraries Complex testbenches with advanced data structures
+
+79
+00:21:55,524 --> 00:22:09,012
+Watch out for these common mistakes. Pitfall 1: Installation Script Permissions Pitfall 2: Missing Build Dependencies Pitfall 3: Verilator Version Too Old Pitfall 4: PATH Not Updated
+
+80
+00:22:09,362 --> 00:22:27,386
+11. Troubleshooting Common Issues (1/8). Cause: iverilog not installed or not in PATH Solution: Verify: iverilog -v should show version Cause: SystemVerilog syntax not supported by default Solution: Use -g2012 flag for SystemVerilog support
+
+81
+00:22:27,736 --> 00:22:48,976
+11. Troubleshooting Common Issues (2/8). Cause: Missing include path Solution: Add include directory with -I flag Cause: VVP runtime not installed or not in PATH Solution: VVP is usually installed with iverilog. Reinstall if missing: Cause: Verilator not installed or not in PATH
+
+82
+00:22:49,326 --> 00:23:06,150
+11. Troubleshooting Common Issues (3/8). Cause: Installed version is too old Solution: Install from source for latest version Cause: C++ compiler not installed Solution: Install build essentials Cause: Verilator headers not found
+
+83
+00:23:06,500 --> 00:23:23,156
+11. Troubleshooting Common Issues (4/8). Cause: Missing Verilator library linking Solution: Ensure Makefile includes Verilator libraries Cause: GTKWave not installed Solution: Cause: File format issue or corrupted file
+
+84
+00:23:23,506 --> 00:23:43,210
+11. Troubleshooting Common Issues (5/8). Verify VCD file was generated correctly Check file permissions Try regenerating: vvp executable (should create .vcd file) Issue: Package manager version may be outdated Solution: Use installation scripts or build from source
+
+85
+00:23:43,560 --> 00:24:04,488
+11. Troubleshooting Common Issues (6/8). Solution: Use --source flag to build from source Issue: Some tools may not work in Windows directly Solution: Use WSL2 Ubuntu and install there Issue: make: *** No targets specified and no makefile found Solution: Ensure you're in the correct directory with a Makefile
+
+86
+00:24:04,838 --> 00:24:26,726
+11. Troubleshooting Common Issues (7/8). Solution: Check relative paths and use -I flags correctly VS Code: Install "SystemVerilog" extension by mshr-h Vim: Install vim-systemverilog plugin Verification: Open a .sv file and check for syntax highlighting Issue: IDE can't find included files
+
+87
+00:24:27,076 --> 00:24:44,332
+11. Troubleshooting Common Issues (8/8). VS Code: Add to settings.json: Issue: Can't set breakpoints or debug Solution: For Verilator: Use GDB with compiled executable For iverilog: Use VCD waveforms for debugging
+
+88
+00:24:44,682 --> 00:25:02,850
+12. Verification Checklist (1/3). C/C++ compiler installed and working iverilog installed and verified Using script: ./scripts/install_iverilog.sh Verify: iverilog -v and vvp -v Verilator installed and verified
+
+89
+00:25:03,200 --> 00:25:16,808
+12. Verification Checklist (2/3). Verify: verilator --version GTKWave installed and verified Verify: gtkwave --version All tools verified together IDE configured and working
+
+90
+00:25:17,158 --> 00:25:29,806
+12. Verification Checklist (3/3). Can create and run simple testbench Understand basic project structure Know how to get help when stuck Understand tool differences and when to use each
+
+91
+00:25:30,156 --> 00:25:33,396
+Next section: Hands-on examples.
+
+92
+00:25:33,746 --> 00:25:40,898
+Module 0 self-check. Watch the terminal output and confirm you see the expected pass message.
+
+93
+00:25:41,248 --> 00:25:47,632
+Exercise scaffold. Review the code on screen and match it to files in the repository.
+
+94
+00:25:47,982 --> 00:25:55,590
+Demo: iverilog basics. Watch the terminal output and confirm you see the expected pass message.
+
+95
+00:25:55,940 --> 00:26:03,524
+Demo: Verilator basics. Watch the terminal output and confirm you see the expected pass message.
+
+96
+00:26:03,874 --> 00:26:11,266
+Demo: Tool comparison. Watch the terminal output and confirm you see the expected pass message.
+
+97
+00:26:11,616 --> 00:26:15,000
+Next section: Practice & assessment.
+
+98
+00:26:15,350 --> 00:26:30,134
+By now you should be able to explain the following. Install and configure all required tools Set up iverilog Set up Verilator Install and verify GTKWave Configure your IDE for verification work From MODULE0 Learning Outcomes.
+
+99
+00:26:30,484 --> 00:26:44,140
+By now you should be able to explain the following. Run simple verification tests with both tools Understand tool differences and selection criteria Troubleshoot common installation issues From MODULE0 Learning Outcomes.
+
+100
+00:26:44,490 --> 00:26:52,842
+Exercises. Installation Verification Environment Setup First Tests IDE Configuration Project Structure
+
+101
+00:26:53,192 --> 00:26:57,176
+Exercises. Tool Comparison
+
+102
+00:26:57,526 --> 00:27:09,454
+Assessment checklist. Can install all required tools independently Can set up iverilog Can verify iverilog installation Can set up Verilator Can verify Verilator installation
+
+103
+00:27:09,804 --> 00:27:29,964
+In summary: Set up verification environment with iverilog and Verilator Next up: Next module in course. Set up verification environment with iverilog and Verilator Complete module0/CHECKLIST.md Review module0/EXAMPLES.md and run each lab Next: Next module in course

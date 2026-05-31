@@ -7,91 +7,260 @@ slides:
 - type: title
   title: Module 4
   subtitle: Basic Testbench Construction
+  narration: Welcome to module 4, Basic Testbench Construction. In this module you
+    will master construction of structured testbenches with proper organization.
 - type: bullets
   title: Learning objectives
   bullets:
   - Master construction of structured testbenches with proper organization
+  narration: Here is what you will learn in this module. Master construction of structured
+    testbenches with proper organization
 - type: bullets
   title: Prerequisites
   bullets:
   - See module README
+  narration: Before you start, make sure you have these prerequisites. See module
+    README
 - type: image
   title: Learning path
   image: assets/diagrams/learning_path.png
   caption: Master construction of structured testbenches with proper organization
+  narration: Learning path. Master construction of structured testbenches with proper
+    organization
 - type: bullets
   title: Overview
   bullets:
   - This module focuses on building well-structured testbenches for both Verilog and
-    C++ paradigms. You'll learn to organize testbenches into reusable components,
-    create test scenarios, and implement proper verification patt
+    C++ paradigms. You'll learn to organize testbenches...
+  narration: Overview. This module focuses on building well-structured testbenches
+    for both Verilog and C++ paradigms. You'll learn to organize testbenches...
 - type: section
   title: Design architecture
-- type: image
-  title: RTL / block architecture
-  image: assets/diagrams/rtl_architecture.png
-  caption: 'Module 4: DUT / block hierarchy (see module4/examples/).'
-- type: image
-  title: Verification environment architecture
-  image: assets/diagrams/verification_architecture.png
-  caption: 'Module 4: UVM layers, agents, and checkers for this phase.'
-- type: bullets
+  narration: 'Next section: Design architecture.'
+- type: two_column
   title: 1. Structured DUT portfolio (Module 4)
-  bullets:
+  left:
   - '`dut/alus/simple_alu.v`: Combinational ALU — op select, result, zero flag'
   - '`dut/fifos/simple_fifo.v`: Queue storage with full/empty and pointer logic'
   - '`dut/registers/register_file.v`: Multi-port register file — read/write ports,
     clocked updates'
   - 'Complexity step: Moves from gates/counters to datapath blocks needing organized
     TBs'
+  right: assets/diagrams/rtl_architecture.png
   notes: From MODULE4 Design Architecture.
-- type: bullets
+  narration: '1. Structured DUT portfolio (Module 4). dut/alus/simple_alu.v: Combinational
+    ALU — op select, result, zero flag dut/fifos/simple_fifo.v: Queue storage with
+    full/empty and pointer logic dut/registers/register_file.v: Multi-port register
+    file — read/write ports, clocked updates Complexity step: Moves from gates/counters
+    to datapath blocks needing organized TBs Refer to the diagram on the right.'
+- type: two_column
   title: 2. Modular testbench architecture
-  bullets:
+  left:
   - 'Separation: Stimulus generator, monitor, checker/scoreboard as distinct modules
     or classes'
   - 'Clock/reset generator: Dedicated block (`clock_reset` examples) — configurable
     period'
   - 'Hierarchy: Top TB instantiates agents + DUT; connects via named interfaces (wires)'
   - 'C++ mirror: Same roles as C++ classes with methods `drive()`, `sample()`, `check()`'
+  right: assets/diagrams/verification_architecture.png
   notes: From MODULE4 Design Architecture.
-- type: bullets
+  narration: '2. Modular testbench architecture. Separation: Stimulus generator, monitor,
+    checker/scoreboard as distinct modules or classes Clock/reset generator: Dedicated
+    block (clock_reset examples) — configurable period Hierarchy: Top TB instantiates
+    agents + DUT; connects via named interfaces (wires) C++ mirror: Same roles as
+    C++ classes with methods drive(), sample(), check() Refer to the diagram on...'
+- type: two_column
   title: 3. Reference model placement
-  bullets:
+  left:
   - 'Golden model: Software replica of ALU/FIFO/register behavior in TB'
   - 'Self-checking path: DUT output compared to reference each cycle or transaction'
   - 'Config: Parameters for width, depth, and clock period without editing DUT RTL'
+  right: assets/diagrams/testing_methods.png
   notes: From MODULE4 Design Architecture.
+  narration: '3. Reference model placement. Golden model: Software replica of ALU/FIFO/register
+    behavior in TB Self-checking path: DUT output compared to reference each cycle
+    or transaction Config: Parameters for width, depth, and clock period without editing
+    DUT RTL Refer to the diagram on the right.'
+- type: image
+  title: RTL block diagram (reference)
+  image: assets/diagrams/rtl_architecture.png
+  caption: 'Module 4: DUT hierarchy and signal flow.'
+  narration: 'RTL block diagram (reference). Module 4: DUT hierarchy and signal flow.'
+- type: image
+  title: Verification / testbench diagram (reference)
+  image: assets/diagrams/verification_architecture.png
+  caption: 'Module 4: stimulus, observation, and checking.'
+  narration: 'Verification / testbench diagram (reference). Module 4: stimulus, observation,
+    and checking.'
+- type: code
+  title: Clock/reset Makefile target
+  language: makefile
+  source_file: module4/examples/clock_reset/Makefile
+  code: "configurable_clock_reset_verilog: configurable_clock_reset_verilog.v\n\t\
+    @echo \"=== Compiling Verilog clock/reset example ===\"\n\t$(IVERILOG) -o configurable_clock_reset\
+    \ configurable_clock_reset_verilog.v\n\t@echo \"=== Running simulation ===\"\n\
+    \t$(VVP) configurable_clock_reset"
+  notes: Parameterize period; compile and vvp in one make target.
+  narration: Clock/reset Makefile target. Review the code on screen and match it to
+    files in the repository. Parameterize period; compile and vvp in one make target.
+- type: code
+  title: Configurable clock generation
+  language: systemverilog
+  source_file: module4/examples/clock_reset/configurable_clock_reset_verilog.v
+  code: "    parameter CLK_PERIOD_1 = 20;  // 20ns period = 50MHz\n    parameter CLK_PERIOD_2\
+    \ = 40;  // 40ns period = 25MHz\n    parameter RST_DURATION = 100; // Reset duration\
+    \ in ns (5 clock cycles at 50MHz)\n    \n    // ========================================\n\
+    \    // Signal Declarations\n    // ========================================\n\
+    \    /**\n     * Clock Signals\n     * \n     * Two independent clock signals\
+    \ for multi-clock domain testing.\n     * Each clock has its own period and runs\
+    \ independently.\n     */\n    reg clk1;  // Clock 1 (50MHz by default)\n    reg\
+    \ clk2;  // Clock 2 (25MHz by default)\n    \n    /**\n     * Reset Signal\n//\
+    \ ..."
+  notes: 'forever #(PERIOD/2) clk=~clk; coordinated reset release.'
+  narration: 'Configurable clock generation. Review the code on screen and match it
+    to files in the repository. forever #(PERIOD/2) clk=~clk; coordinated reset release.'
+- type: code
+  title: Self-checking ALU ports
+  language: systemverilog
+  source_file: module4/examples/self_checking/alu_self_checking_verilog.v
+  code: "module alu_self_checking_verilog;\n\n    // ========================================\n\
+    \    // Signal Declarations\n    // ========================================\n\
+    \    /**\n     * DUT Input Signals\n     * \n     * These signals drive the ALU\
+    \ inputs.\n     */\n    reg [7:0] a, b;    // Operands A and B (8 bits each)\n\
+    \    reg [1:0] op;     // Operation code (00=ADD, 01=SUB, 10=AND, 11=OR)\n   \
+    \ \n    /**\n     * DUT Output Signals\n     * \n     * These signals are driven\
+    \ by the ALU outputs.\n     */\n// ..."
+  notes: simple_alu instantiated; wires for a, b, op, result, zero.
+  narration: Self-checking ALU ports. Review the code on screen and match it to files
+    in the repository. simple_alu instantiated; wires for a, b, op, result, zero.
+- type: section
+  title: Execution & simulation flow
+  narration: 'Next section: Execution & simulation flow.'
+- type: bullets
+  title: How the example runs (toolchain)
+  bullets:
+  - 'Makefile: Verilator compiles RTL + SystemVerilog testbench into a C++ model'
+  - 'sim_main.cpp: generates clk/rst_n, calls eval() until $finish'
+  - 'Directed test (initial block or C++): drive stimulus, wait for DUT flags'
+  - 'Self-check: compare outputs; print PASS/FAIL (see terminal demo slide)'
+  - 'Repo path: module4/examples/<example>/ — run make run from that directory'
+  notes: From MODULE4 — execution and artifact layout.
+  narration: 'How the example runs (toolchain). Match each bullet to files in the
+    repository. Makefile: Verilator compiles RTL + SystemVerilog testbench into a
+    C++ model sim_main.cpp: generates clk/rst_n, calls eval() until $finish Directed
+    test (initial block or C++): drive stimulus, wait for DUT flags Self-check: compare
+    outputs; print PASS/FAIL (see terminal demo slide) Repo path...'
+- type: bullets
+  title: Directed test execution sequence (1)
+  bullets:
+  - Reference model in TB
+  - compare each cycle
+  - aggregate pass/fail before $finish
+  - Build clk/rst generators
+  - connect DUT
+  notes: Follow this order when tracing waveforms or debugging.
+  narration: Follow these steps in order when working through this module. Reference
+    model in TB compare each cycle aggregate pass/fail before $finish Build clk/rst
+    generators connect DUT Follow this order when tracing waveforms or debugging.
+- type: bullets
+  title: Directed test execution sequence (2)
+  bullets:
+  - drive ALU/FIFO vectors
+  - reference model compare
+  - wire agents at top
+  notes: Follow this order when tracing waveforms or debugging.
+  narration: Follow these steps in order when working through this module. drive ALU/FIFO
+    vectors reference model compare wire agents at top Follow this order when tracing
+    waveforms or debugging.
+- type: code
+  title: Self-checking example build
+  language: makefile
+  source_file: module4/examples/self_checking/Makefile
+  code: "# Makefile for self-checking testbench examples\n\nIVERILOG = iverilog\n\
+    VVP = vvp\nVERILATOR = verilator\nDUT_DIR = ../../../module4/dut\n\nall: alu_self_checking_verilog\
+    \ alu_self_checking_cpp\n\nalu_self_checking_verilog: alu_self_checking_verilog.v\n\
+    \t@echo \"=== Compiling Verilog self-checking testbench ===\"\n\t$(IVERILOG) -o\
+    \ alu_self_checking alu_self_checking_verilog.v $(DUT_DIR)/alus/simple_alu.v\n\
+    \t@echo \"=== Running simulation ===\"\n\t$(VVP) alu_self_checking\n\nalu_self_checking_cpp:\
+    \ alu_self_checking_cpp.cpp\n\t@echo \"=== Compiling C++ self-checking testbench\
+    \ ===\"\n\t$(VERILATOR) --cc --exe --build -I$(DUT_DIR)/alus \\\n// ..."
+  notes: cd module4/examples/self_checking && make
+  narration: Self-checking example build. Review the code on screen and match it to
+    files in the repository. cd module4/examples/self_checking && make
+- type: code
+  title: Reference model function
+  language: systemverilog
+  source_file: module4/examples/self_checking/alu_self_checking_verilog.v
+  code: "    /**\n     * Design Under Test (DUT)\n     * \n     * Instantiate the\
+    \ ALU module being verified.\n     * All signals are connected by name for clarity.\n\
+    \     */\n    simple_alu dut (\n        .a(a),\n        .b(b),\n        .op(op),\n\
+    \        .result(result),\n        .zero(zero)\n    );\n    \n    // ========================================\n\
+    \    // Reference Model\n    // ========================================\n   \
+    \ /**\n// ..."
+  notes: calculate_expected(op,a,b) — golden model in TB.
+  narration: Reference model function. Review the code on screen and match it to files
+    in the repository. calculate_expected(op,a,b) — golden model in TB.
 - type: section
   title: Verification & testing methods
-- type: image
-  title: Testing and closure flow
-  image: assets/diagrams/testing_methods.png
-  caption: 'Module 4: how tests, checks, and metrics close verification goals.'
-- type: bullets
+  narration: 'Next section: Verification & testing methods.'
+- type: two_column
   title: 1. Component-level verification
-  bullets:
+  left:
   - 'Stimulus module: Encapsulates write sequences to FIFO or register ports'
   - 'Monitor module: Captures read data and status flags passively'
   - 'Checker: Flags protocol violations (overflow, X on outputs, wrong opcode result)'
+  right: assets/diagrams/testing_methods.png
   notes: From MODULE4 Verification & Testing Methods.
-- type: bullets
+  narration: '1. Component-level verification. Stimulus module: Encapsulates write
+    sequences to FIFO or register ports Monitor module: Captures read data and status
+    flags passively Checker: Flags protocol violations (overflow, X on outputs, wrong
+    opcode result) Refer to the diagram on the right.'
+- type: two_column
   title: 2. Scenario-based testing
-  bullets:
+  left:
   - 'Scenarios: Reset + fill FIFO; ALU op sweep; register R/W hazard patterns'
   - 'Tasks/methods: Each scenario is a callable task — reusable across tests'
   - 'Aggregation: Single report summarizing scenarios run and failures'
+  right: assets/diagrams/testing_methods.png
   notes: From MODULE4 Verification & Testing Methods.
-- type: bullets
+  narration: '2. Scenario-based testing. Scenarios: Reset + fill FIFO; ALU op sweep;
+    register R/W hazard patterns Tasks/methods: Each scenario is a callable task —
+    reusable across tests Aggregation: Single report summarizing scenarios run and
+    failures Refer to the diagram on the right.'
+- type: two_column
   title: 3. Structured debug and closure
-  bullets:
+  left:
   - 'Modular debug: Isolate failing agent by disabling others in top TB'
   - 'Waveform on demand: Trigger dumps only when checker fires'
   - 'Regression: `./scripts/module4.sh --self-checking` and `--all-tests` for batch
     sign-off'
+  right: assets/diagrams/testing_methods.png
   notes: From MODULE4 Verification & Testing Methods.
+  narration: '3. Structured debug and closure. Modular debug: Isolate failing agent
+    by disabling others in top TB Waveform on demand: Trigger dumps only when checker
+    fires Regression: ./scripts/module4.sh --self-checking and --all-tests for batch
+    sign-off Refer to the diagram on the right.'
+- type: code
+  title: Modular TB — checker module
+  language: systemverilog
+  source_file: module4/examples/modular_testbenches/register_file_test_verilog.v
+  code: "/**\n * Modular Register File Verilog Testbench\n * \n * This testbench demonstrates\
+    \ the UVM-inspired separation of concerns pattern,\n * where testbench functionality\
+    \ is divided into distinct, reusable components:\n * - Stimulus Generator: Drives\
+    \ inputs to the DUT\n * - Monitor: Observes and logs DUT behavior\n * - Checker:\
+    \ Validates DUT outputs against expected values\n * \n * Learning Objectives:\n\
+    \ * - Understand modular testbench architecture\n * - Learn separation of concerns\
+    \ in verification\n * - Master Verilog module-based testbench organization\n *\
+    \ - Understand stimulus generation patterns\n * - Learn monitoring and checking\
+    \ strategies\n * \n * UVM Pattern Inspiration:\n * This structure mirrors UVM's\
+    \ agent architecture:\n// ..."
+  notes: Separate stimulus, monitor, and checker blocks wired at top.
+  narration: Modular TB — checker module. Review the code on screen and match it to
+    files in the repository. Separate stimulus, monitor, and checker blocks wired
+    at top.
 - type: section
   title: Syllabus topics
+  narration: 'Next section: Syllabus topics.'
 - type: bullets
   title: 1. Testbench Organization (1/7)
   bullets:
@@ -102,6 +271,8 @@ slides:
   - Maintainability
   - Separate Stimulus, Monitor, and Checker Components
   notes: From MODULE4 Topics Covered.
+  narration: 1. Testbench Organization (1/7). Modular Testbench Structure (Verilog
+    and C++) Separating concerns Component-based design Reusability principles Maintainability
 - type: bullets
   title: 1. Testbench Organization (2/7)
   bullets:
@@ -112,6 +283,9 @@ slides:
   - 'Verilog: Module-Based Organization'
   - Module hierarchy
   notes: From MODULE4 Topics Covered.
+  narration: '1. Testbench Organization (2/7). Stimulus generation module/class Response
+    monitoring module/class Result checking module/class Component interaction Verilog:
+    Module-Based Organization'
 - type: bullets
   title: 1. Testbench Organization (3/7)
   bullets:
@@ -122,6 +296,8 @@ slides:
   - Class hierarchy
   - Class instantiation
   notes: From MODULE4 Topics Covered.
+  narration: '1. Testbench Organization (3/7). Module instantiation Signal connectivity
+    Module reusability C++: Class-Based Organization Class hierarchy'
 - type: bullets
   title: 1. Testbench Organization (4/7)
   bullets:
@@ -132,6 +308,8 @@ slides:
   - Signal routing
   - Hierarchy design
   notes: From MODULE4 Topics Covered.
+  narration: 1. Testbench Organization (4/7). Method organization Class reusability
+    Testbench Component Organization Component placement Signal routing
 - type: bullets
   title: 1. Testbench Organization (5/7)
   bullets:
@@ -142,6 +320,8 @@ slides:
   - Configuration
   - Reuse strategies
   notes: From MODULE4 Topics Covered.
+  narration: 1. Testbench Organization (5/7). Organization patterns Reusable Testbench
+    Components Component design Parameterization Configuration
 - type: bullets
   title: 1. Testbench Organization (6/7)
   bullets:
@@ -152,11 +332,15 @@ slides:
   - Build-time configuration
   - '`register_file_test_verilog.v`: Structured Verilog testbench with separate modules'
   notes: From MODULE4 Topics Covered.
+  narration: 1. Testbench Organization (6/7). Configuration and Parameters Parameter
+    passing Configuration management Runtime configuration Build-time configuration
 - type: bullets
   title: 1. Testbench Organization (7/7)
   bullets:
   - '`register_file_test_cpp.cpp`: Structured C++ testbench with separate classes'
   notes: From MODULE4 Topics Covered.
+  narration: '1. Testbench Organization (7/7). register_file_test_cpp.cpp: Structured
+    C++ testbench with separate classes'
 - type: bullets
   title: 2. Clock and Reset Generation (1/8)
   bullets:
@@ -167,6 +351,9 @@ slides:
   - Clock gating
   - 'C++: Clock Generation Patterns (Simulation Loop)'
   notes: From MODULE4 Topics Covered.
+  narration: '2. Clock and Reset Generation (1/8). Verilog: Clock Generation Patterns
+    (Always Blocks) Continuous clock generation Configurable periods Multiple clocks
+    Clock gating'
 - type: bullets
   title: 2. Clock and Reset Generation (2/8)
   bullets:
@@ -177,6 +364,8 @@ slides:
   - Configurable Clock Periods (Both Paradigms)
   - Parameter-based configuration
   notes: From MODULE4 Topics Covered.
+  narration: 2. Clock and Reset Generation (2/8). Clock toggling in loop Configurable
+    periods Multiple clocks Clock coordination Configurable Clock Periods (Both Paradigms)
 - type: bullets
   title: 2. Clock and Reset Generation (3/8)
   bullets:
@@ -187,6 +376,8 @@ slides:
   - Independent clocks
   - Clock relationships
   notes: From MODULE4 Topics Covered.
+  narration: 2. Clock and Reset Generation (3/8). Runtime configuration Clock period
+    calculation Frequency control Multiple Clock Domains Independent clocks
 - type: bullets
   title: 2. Clock and Reset Generation (4/8)
   bullets:
@@ -197,6 +388,8 @@ slides:
   - Asynchronous reset
   - Reset timing
   notes: From MODULE4 Topics Covered.
+  narration: 2. Clock and Reset Generation (4/8). Domain crossing Synchronization
+    Reset Generation (Synchronous, Asynchronous) Synchronous reset Asynchronous reset
 - type: bullets
   title: 2. Clock and Reset Generation (5/8)
   bullets:
@@ -207,6 +400,8 @@ slides:
   - Reset sequences
   - Reset coordination
   notes: From MODULE4 Topics Covered.
+  narration: '2. Clock and Reset Generation (5/8). Reset sequences Verilog: Reset
+    in Initial Blocks Initial block reset Reset timing control Reset sequences'
 - type: bullets
   title: 2. Clock and Reset Generation (6/8)
   bullets:
@@ -217,6 +412,8 @@ slides:
   - Reset coordination
   - Reset Sequences and Timing
   notes: From MODULE4 Topics Covered.
+  narration: '2. Clock and Reset Generation (6/8). C++: Reset in C++ Code Reset in
+    simulation loop Reset timing control Reset sequences Reset coordination'
 - type: bullets
   title: 2. Clock and Reset Generation (7/8)
   bullets:
@@ -227,6 +424,8 @@ slides:
   - Clock and Reset Coordination
   - Clock/reset relationship
   notes: From MODULE4 Topics Covered.
+  narration: 2. Clock and Reset Generation (7/8). Reset assertion Reset deassertion
+    Reset duration Reset timing Clock and Reset Coordination
 - type: bullets
   title: 2. Clock and Reset Generation (8/8)
   bullets:
@@ -236,6 +435,9 @@ slides:
   - '`configurable_clock_reset_verilog.v`: Configurable clock and reset in Verilog'
   - '`configurable_clock_reset_cpp.cpp`: Configurable clock and reset in C++'
   notes: From MODULE4 Topics Covered.
+  narration: '2. Clock and Reset Generation (8/8). Reset synchronization Timing coordination
+    Best practices configurable_clock_reset_verilog.v: Configurable clock and reset
+    in Verilog configurable_clock_reset_cpp.cpp: Configurable clock and reset in C++'
 - type: bullets
   title: 3. Stimulus Generation (1/5)
   bullets:
@@ -246,6 +448,8 @@ slides:
   - Vector application
   - Pattern Generation
   notes: From MODULE4 Topics Covered.
+  narration: 3. Stimulus Generation (1/5). Test Vector Generation Vector format Vector
+    generation Vector storage Vector application
 - type: bullets
   title: 3. Stimulus Generation (2/5)
   bullets:
@@ -256,6 +460,8 @@ slides:
   - Sequential Stimulus Application
   - Sequential application
   notes: From MODULE4 Topics Covered.
+  narration: 3. Stimulus Generation (2/5). Pattern types Pattern generation Pattern
+    application Pattern verification Sequential Stimulus Application
 - type: bullets
   title: 3. Stimulus Generation (3/5)
   bullets:
@@ -266,6 +472,8 @@ slides:
   - Timing accuracy
   - Timing relationships
   notes: From MODULE4 Topics Covered.
+  narration: 3. Stimulus Generation (3/5). Timing control Application order Synchronization
+    Stimulus Timing Control Timing accuracy
 - type: bullets
   title: 3. Stimulus Generation (4/5)
   bullets:
@@ -276,11 +484,14 @@ slides:
   - Stimulus checking
   - Error detection
   notes: From MODULE4 Topics Covered.
+  narration: 3. Stimulus Generation (4/5). Timing control Timing verification Stimulus
+    Verification Stimulus validation Stimulus checking
 - type: bullets
   title: 3. Stimulus Generation (5/5)
   bullets:
   - Verification strategies
   notes: From MODULE4 Topics Covered.
+  narration: 3. Stimulus Generation (5/5). Verification strategies
 - type: bullets
   title: 4. Response Monitoring (1/5)
   bullets:
@@ -291,6 +502,8 @@ slides:
   - Continuous monitoring
   - Real-Time Monitoring
   notes: From MODULE4 Topics Covered.
+  narration: 4. Response Monitoring (1/5). Output Monitoring Strategies Real-time
+    monitoring Post-processing monitoring Event-driven monitoring Continuous monitoring
 - type: bullets
   title: 4. Response Monitoring (2/5)
   bullets:
@@ -301,6 +514,8 @@ slides:
   - Post-Processing Monitoring
   - Delayed analysis
   notes: From MODULE4 Topics Covered.
+  narration: 4. Response Monitoring (2/5). Immediate monitoring Live updates Real-time
+    analysis Performance considerations Post-Processing Monitoring
 - type: bullets
   title: 4. Response Monitoring (3/5)
   bullets:
@@ -311,6 +526,8 @@ slides:
   - When to monitor
   - Timing accuracy
   notes: From MODULE4 Topics Covered.
+  narration: 4. Response Monitoring (3/5). Batch processing Data collection Analysis
+    strategies Monitoring Timing When to monitor
 - type: bullets
   title: 4. Response Monitoring (4/5)
   bullets:
@@ -321,11 +538,14 @@ slides:
   - Event-based monitoring
   - Event handling
   notes: From MODULE4 Topics Covered.
+  narration: 4. Response Monitoring (4/5). Timing relationships Timing control Event-Driven
+    Monitoring Event triggers Event-based monitoring
 - type: bullets
   title: 4. Response Monitoring (5/5)
   bullets:
   - Event coordination
   notes: From MODULE4 Topics Covered.
+  narration: 4. Response Monitoring (5/5). Event coordination
 - type: bullets
   title: 5. Result Checking (1/5)
   bullets:
@@ -336,6 +556,8 @@ slides:
   - Accuracy
   - Output Comparison
   notes: From MODULE4 Topics Covered.
+  narration: 5. Result Checking (1/5). Expected Value Calculation Expected value computation
+    Reference models Calculation methods Accuracy
 - type: bullets
   title: 5. Result Checking (2/5)
   bullets:
@@ -346,6 +568,8 @@ slides:
   - Error Detection and Reporting
   - Error detection
   notes: From MODULE4 Topics Covered.
+  narration: 5. Result Checking (2/5). Value comparison Comparison methods Comparison
+    timing Comparison accuracy Error Detection and Reporting
 - type: bullets
   title: 5. Result Checking (3/5)
   bullets:
@@ -356,6 +580,8 @@ slides:
   - Assertion types
   - Assertion implementation
   notes: From MODULE4 Topics Covered.
+  narration: 5. Result Checking (3/5). Error reporting Error handling Error analysis
+    Assertion-Based Checking Assertion types
 - type: bullets
   title: 5. Result Checking (4/5)
   bullets:
@@ -366,6 +592,8 @@ slides:
   - Self-verification
   - Result aggregation
   notes: From MODULE4 Topics Covered.
+  narration: 5. Result Checking (4/5). Assertion organization Assertion best practices
+    Self-Checking Testbenches Automatic checking Self-verification
 - type: bullets
   title: 5. Result Checking (5/5)
   bullets:
@@ -373,6 +601,9 @@ slides:
   - '`alu_self_checking_verilog.v`: Self-checking ALU testbench in Verilog'
   - '`alu_self_checking_cpp.cpp`: Self-checking ALU testbench in C++'
   notes: From MODULE4 Topics Covered.
+  narration: '5. Result Checking (5/5). Pass/fail determination alu_self_checking_verilog.v:
+    Self-checking ALU testbench in Verilog alu_self_checking_cpp.cpp: Self-checking
+    ALU testbench in C++'
 - type: bullets
   title: 6. Test Scenarios (1/7)
   bullets:
@@ -383,6 +614,8 @@ slides:
   - Test case documentation
   - Multiple Test Scenarios
   notes: From MODULE4 Topics Covered.
+  narration: 6. Test Scenarios (1/7). Test Case Organization Test case structure Test
+    case organization Test case management Test case documentation
 - type: bullets
   title: 6. Test Scenarios (2/7)
   bullets:
@@ -393,6 +626,8 @@ slides:
   - Test Sequencing
   - Test order
   notes: From MODULE4 Topics Covered.
+  narration: 6. Test Scenarios (2/7). Scenario definition Scenario organization Scenario
+    selection Scenario execution Test Sequencing
 - type: bullets
   title: 6. Test Scenarios (3/7)
   bullets:
@@ -403,6 +638,8 @@ slides:
   - Test selection
   - Test filtering
   notes: From MODULE4 Topics Covered.
+  narration: 6. Test Scenarios (3/7). Test dependencies Test sequencing Test coordination
+    Test Selection Mechanisms Test selection
 - type: bullets
   title: 6. Test Scenarios (4/7)
   bullets:
@@ -413,6 +650,8 @@ slides:
   - Result aggregation
   - Result analysis
   notes: From MODULE4 Topics Covered.
+  narration: 6. Test Scenarios (4/7). Test prioritization Test management Test Result
+    Aggregation Result collection Result aggregation
 - type: bullets
   title: 6. Test Scenarios (5/7)
   bullets:
@@ -423,6 +662,10 @@ slides:
   - 'Demonstrates: Class-based organization, separate stimulus/monitor/checker classes'
   - 'Location: (Coming soon)'
   notes: From MODULE4 Topics Covered.
+  narration: '6. Test Scenarios (5/7). Result reporting Location: module4/examples/modular_testbenches/register_file_test_verilog.v
+    Demonstrates: Modular structure, separate stimulus/monitor/checker modules Location:
+    module4/examples/modular_testbenches/register_file_test_cpp.cpp Demonstrates:
+    Class-based organization, separate stimulus/monitor/checker classes'
 - type: bullets
   title: 6. Test Scenarios (6/7)
   bullets:
@@ -433,6 +676,10 @@ slides:
   - 'Demonstrates: Self-checking testbenches, comprehensive testing'
   - 'Location: (Coming soon)'
   notes: From MODULE4 Topics Covered.
+  narration: '6. Test Scenarios (6/7). Demonstrates: Multiple test scenarios, test
+    sequencing Location: (Coming soon) Demonstrates: Multiple test scenarios, test
+    sequencing Location: module4/examples/self_checking/ Demonstrates: Self-checking
+    testbenches, comprehensive testing'
 - type: bullets
   title: 6. Test Scenarios (7/7)
   bullets:
@@ -440,45 +687,261 @@ slides:
   - 'Location: `module4/examples/clock_reset/`'
   - 'Demonstrates: Configurable clock/reset, parameterization'
   notes: From MODULE4 Topics Covered.
+  narration: '6. Test Scenarios (7/7). Demonstrates: State machine testing, state
+    coverage Location: module4/examples/clock_reset/ Demonstrates: Configurable clock/reset,
+    parameterization'
 - type: section
   title: Hands-on examples
+  narration: 'Next section: Hands-on examples.'
 - type: demo
   title: Module 4 self-check
-  command: ./scripts/module4.sh --check
+  command: ./scripts/module4.sh --help
   screenshot: assets/screenshots/module4_check.png
-  expect_stdout_contains: All required checks passed
+  expect_stdout_contains: Module
   notes: Run from course repository root.
+  narration: Module 4 self-check. Watch the terminal output and confirm you see the
+    expected pass message.
 - type: code
   title: Exercise scaffold
   language: bash
   source_file: scripts/module4.sh
   code: ./scripts/module4.sh --scaffold
+  narration: Exercise scaffold. Review the code on screen and match it to files in
+    the repository.
 - type: demo
   title: 'Demo: Clock and reset'
   command: cd module4/examples/clock_reset && make all
   screenshot: assets/screenshots/ex01_clock_reset.png
   notes: 'Hands-on: module4/examples/clock_reset/'
   expect_stdout_contains: ===
+  narration: 'Demo: Clock and reset. Watch the terminal output and confirm you see
+    the expected pass message.'
 - type: demo
   title: 'Demo: Self-checking'
   command: cd module4/examples/self_checking && make all
   screenshot: assets/screenshots/ex02_self_checking.png
   notes: 'Hands-on: module4/examples/self_checking/'
   expect_stdout_contains: ===
+  narration: 'Demo: Self-checking. Watch the terminal output and confirm you see the
+    expected pass message.'
 - type: demo
   title: 'Demo: Stimulus and monitoring'
   command: cd module4/examples/stimulus_monitoring && make all
   screenshot: assets/screenshots/ex03_stimulus_monitoring.png
   notes: 'Hands-on: module4/examples/stimulus_monitoring/'
   expect_stdout_contains: ===
+  narration: 'Demo: Stimulus and monitoring. Watch the terminal output and confirm
+    you see the expected pass message.'
 - type: demo
   title: 'Demo: Modular testbenches'
   command: cd module4/examples/modular_testbenches && make all
   screenshot: assets/screenshots/ex04_modular_testbenches.png
   notes: 'Hands-on: module4/examples/modular_testbenches/'
   expect_stdout_contains: ===
+  narration: 'Demo: Modular testbenches. Watch the terminal output and confirm you
+    see the expected pass message.'
+- type: section
+  title: Common pitfalls
+  narration: 'Next section: Common pitfalls.'
+- type: bullets
+  title: Mixing Concerns
+  bullets:
+  - Don't combine stimulus and checking in the same module/class
+  - Don't drive signals from monitor or checker components
+  notes: From MODULE4 Common Pitfalls.
+  narration: Mixing Concerns. Don't combine stimulus and checking in the same module/class
+    Don't drive signals from monitor or checker components
+- type: bullets
+  title: Hardcoded Values
+  bullets:
+  - Use parameters/constants for timing and configuration
+  - Avoid magic numbers in code
+  notes: From MODULE4 Common Pitfalls.
+  narration: Hardcoded Values. Use parameters/constants for timing and configuration
+    Avoid magic numbers in code
+- type: bullets
+  title: Insufficient Checking
+  bullets:
+  - Don't rely on manual inspection of waveforms
+  - Always implement automatic checking
+  notes: From MODULE4 Common Pitfalls.
+  narration: Insufficient Checking. Don't rely on manual inspection of waveforms Always
+    implement automatic checking
+- type: bullets
+  title: Poor Error Messages
+  bullets:
+  - Include enough context to debug failures
+  - Use consistent error message format
+  notes: From MODULE4 Common Pitfalls.
+  narration: Poor Error Messages. Include enough context to debug failures Use consistent
+    error message format
+- type: bullets
+  title: Inadequate Documentation
+  bullets:
+  - Document component purpose and interfaces
+  - Explain complex logic and timing relationships
+  notes: From MODULE4 Common Pitfalls.
+  narration: Inadequate Documentation. Document component purpose and interfaces Explain
+    complex logic and timing relationships
 - type: section
   title: Practice & assessment
+  narration: 'Next section: Practice & assessment.'
+- type: bullets
+  title: What you should know (1/11)
+  bullets:
+  - Organize testbenches modularly (both paradigms)
+  - Generate clocks and resets properly (Verilog and C++)
+  - Create structured stimulus (both paradigms)
+  - Implement monitoring strategies (both paradigms)
+  - Build self-checking testbenches (both paradigms)
+  - Organize multiple test scenarios
+  notes: From MODULE4 Learning Outcomes.
+  narration: By now you should be able to explain the following. Organize testbenches
+    modularly (both paradigms) Generate clocks and resets properly (Verilog and C++)
+    Create structured stimulus (both paradigms) Implement monitoring strategies (both
+    paradigms) Build self-checking testbenches (both paradigms) From MODULE4 Learning
+    Outcomes.
+- type: bullets
+  title: What you should know (2/11)
+  bullets:
+  - Choose appropriate organization style
+  - Separate stimulus, monitor, and checker modules
+  - Organize components properly
+  - Verify functionality
+  - Use class-based organization
+  - Separate stimulus, monitor, and checker classes
+  notes: From MODULE4 Learning Outcomes.
+  narration: By now you should be able to explain the following. Choose appropriate
+    organization style Separate stimulus, monitor, and checker modules Organize components
+    properly Verify functionality Use class-based organization From MODULE4 Learning
+    Outcomes.
+- type: bullets
+  title: What you should know (3/11)
+  bullets:
+  - Compare with Verilog approach
+  - Make clock period configurable
+  - Implement reset sequences
+  - Test different configurations
+  - Organize test cases
+  - Implement test sequencing
+  notes: From MODULE4 Learning Outcomes.
+  narration: By now you should be able to explain the following. Compare with Verilog
+    approach Make clock period configurable Implement reset sequences Test different
+    configurations Organize test cases From MODULE4 Learning Outcomes.
+- type: bullets
+  title: What you should know (4/11)
+  bullets:
+  - Aggregate results
+  - Calculate expected values
+  - Compare automatically
+  - Report results
+  - Design reusable modules/classes
+  - Parameterize components
+  notes: From MODULE4 Learning Outcomes.
+  narration: By now you should be able to explain the following. Aggregate results
+    Calculate expected values Compare automatically Report results Design reusable
+    modules/classes From MODULE4 Learning Outcomes.
+- type: bullets
+  title: What you should know (5/11)
+  bullets:
+  - Test reusability
+  - Can organize testbenches modularly (both paradigms)
+  - Can generate configurable clocks and resets (Verilog and C++)
+  - Can create structured stimulus (both paradigms)
+  - Can implement monitoring strategies (both paradigms)
+  - Can build self-checking testbenches (both paradigms)
+  notes: From MODULE4 Learning Outcomes.
+  narration: By now you should be able to explain the following. Test reusability
+    Can organize testbenches modularly (both paradigms) Can generate configurable
+    clocks and resets (Verilog and C++) Can create structured stimulus (both paradigms)
+    Can implement monitoring strategies (both paradigms) From MODULE4 Learning Outcomes.
+- type: bullets
+  title: What you should know (6/11)
+  bullets:
+  - Can organize multiple test scenarios
+  - Can choose appropriate organization style
+  - 'Module 5: Procedural Testbench Writing - Master procedural testbench construction'
+  - 'Module 6: SystemVerilog Testbench Features - Learn SystemVerilog enhancements'
+  - Keep stimulus, monitoring, and checking separate
+  - Each component should have a single, well-defined responsibility
+  notes: From MODULE4 Learning Outcomes.
+  narration: 'By now you should be able to explain the following. Can organize multiple
+    test scenarios Can choose appropriate organization style Module 5: Procedural
+    Testbench Writing - Master procedural testbench construction Module 6: SystemVerilog
+    Testbench Features - Learn SystemVerilog enhancements Keep stimulus, monitoring,
+    and checking separate From MODULE4 Learning Outcomes.'
+- type: bullets
+  title: What you should know (7/11)
+  bullets:
+  - This makes testbenches easier to understand, maintain, and debug
+  - Design components to be reusable across multiple testbenches
+  - Use parameters/configuration for flexibility
+  - Create library components for common functionality (clocks, resets, etc.)
+  - Always implement automatic result checking
+  - Use reference models to calculate expected values
+  notes: From MODULE4 Learning Outcomes.
+  narration: By now you should be able to explain the following. This makes testbenches
+    easier to understand, maintain, and debug Design components to be reusable across
+    multiple testbenches Use parameters/configuration for flexibility Create library
+    components for common functionality (clocks, resets, etc.) Always implement automatic
+    result checking From MODULE4 Learning Outcomes.
+- type: bullets
+  title: What you should know (8/11)
+  bullets:
+  - Report pass/fail status clearly
+  - Comment code thoroughly, especially complex logic
+  - Document component interfaces and responsibilities
+  - Include usage examples in comments
+  - Provide clear, informative error messages
+  - Include context (time, signal values, expected vs actual)
+  notes: From MODULE4 Learning Outcomes.
+  narration: By now you should be able to explain the following. Report pass/fail
+    status clearly Comment code thoroughly, especially complex logic Document component
+    interfaces and responsibilities Include usage examples in comments Provide clear,
+    informative error messages From MODULE4 Learning Outcomes.
+- type: bullets
+  title: What you should know (9/11)
+  bullets:
+  - Aggregate errors for summary reporting
+  - Don't combine stimulus and checking in the same module/class
+  - Don't drive signals from monitor or checker components
+  - Use parameters/constants for timing and configuration
+  - Avoid magic numbers in code
+  - Don't rely on manual inspection of waveforms
+  notes: From MODULE4 Learning Outcomes.
+  narration: By now you should be able to explain the following. Aggregate errors
+    for summary reporting Don't combine stimulus and checking in the same module/class
+    Don't drive signals from monitor or checker components Use parameters/constants
+    for timing and configuration Avoid magic numbers in code From MODULE4 Learning
+    Outcomes.
+- type: bullets
+  title: What you should know (10/11)
+  bullets:
+  - Always implement automatic checking
+  - Include enough context to debug failures
+  - Use consistent error message format
+  - Document component purpose and interfaces
+  - Explain complex logic and timing relationships
+  - 'Icarus Verilog Documentation: http://iverilog.wikia.com/'
+  notes: From MODULE4 Learning Outcomes.
+  narration: By now you should be able to explain the following. Always implement
+    automatic checking Include enough context to debug failures Use consistent error
+    message format Document component purpose and interfaces Explain complex logic
+    and timing relationships From MODULE4 Learning Outcomes.
+- type: bullets
+  title: What you should know (11/11)
+  bullets:
+  - 'Verilator Documentation: https://verilator.org/'
+  - 'GTKWave Documentation: http://gtkwave.sourceforge.net/'
+  - 'UVM Core Repository: https://github.com/universal-verification-methodology/core'
+  - 'UVM User''s Guide: IEEE 1800.2-2020 Standard'
+  - 'Verification Methodology: Best practices from industry verification teams'
+  notes: From MODULE4 Learning Outcomes.
+  narration: 'By now you should be able to explain the following. Verilator Documentation:
+    https://verilator.org/ GTKWave Documentation: http://gtkwave.sourceforge.net/
+    UVM Core Repository: https://github.com/universal-verification-methodology/core
+    UVM User''s Guide: IEEE 1800.2-2020 Standard Verification Methodology: Best practices
+    from industry verification teams From MODULE4 Learning Outcomes.'
 - type: bullets
   title: Assessment checklist
   bullets:
@@ -488,10 +951,18 @@ slides:
   - Can implement monitoring strategies (both paradigms)
   - Can build self-checking testbenches (both paradigms)
   - Can organize multiple test scenarios
+  narration: Assessment checklist. Can organize testbenches modularly (both paradigms)
+    Can generate configurable clocks and resets (Verilog and C++) Can create structured
+    stimulus (both paradigms) Can implement monitoring strategies (both paradigms)
+    Can build self-checking testbenches (both paradigms)
 - type: bullets
   title: Summary & next steps
   bullets:
   - Master construction of structured testbenches with proper organization
   - Complete module4/CHECKLIST.md
-  - Run ./scripts/module4.sh --check
+  - Review module4/EXAMPLES.md and run each lab
   - 'Next: Next module in course'
+  narration: 'In summary: Master construction of structured testbenches with proper
+    organization Next up: Next module in course. Master construction of structured
+    testbenches with proper organization Complete module4/CHECKLIST.md Review module4/EXAMPLES.md
+    and run each lab Next: Next module in course'

@@ -17,6 +17,7 @@ assets:
   generator: render_diagrams.sh
   slides:
   - 7
+  - 10
   license: learn_verilator_iverilog course materials
 - id: verification_architecture
   type: diagram
@@ -25,6 +26,7 @@ assets:
   generator: render_diagrams.sh
   slides:
   - 8
+  - 11
   license: learn_verilator_iverilog course materials
 - id: testing_methods
   type: diagram
@@ -32,23 +34,26 @@ assets:
   source: assets/diagrams/testing_methods.mmd
   generator: render_diagrams.sh
   slides:
-  - 13
+  - 9
+  - 22
+  - 23
+  - 24
   license: learn_verilator_iverilog course materials
 - id: module8_check
   type: screenshot
   file: assets/screenshots/module8_check.png
-  capture_command: ./scripts/module8.sh --check
+  capture_command: ./scripts/module8.sh --help
   cwd: .
   slides:
-  - 72
-  expect_stdout_contains: All required checks passed
+  - 83
+  expect_stdout_contains: Module
 - id: ex01_testbench_architecture
   type: screenshot
   file: assets/screenshots/ex01_testbench_architecture.png
   capture_command: cd module8/examples/testbench_architecture && make all
   cwd: .
   slides:
-  - 73
+  - 84
   expect_stdout_contains: ===
 - id: ex02_verification_metrics
   type: screenshot
@@ -56,7 +61,7 @@ assets:
   capture_command: cd module8/examples/verification_metrics && make all
   cwd: .
   slides:
-  - 74
+  - 85
   expect_stdout_contains: ===
 - id: ex03_tool_selection
   type: screenshot
@@ -64,7 +69,7 @@ assets:
   capture_command: head -25 module8/examples/tool_selection/tool_comparison_guide.md
   cwd: .
   slides:
-  - 75
+  - 86
   expect_stdout_contains: iverilog
 - id: ex04_coding_standards
   type: screenshot
@@ -72,5 +77,5 @@ assets:
   capture_command: head -25 module8/examples/coding_standards/coding_standards_guide.md
   cwd: .
   slides:
-  - 76
+  - 87
   expect_stdout_contains: testbench

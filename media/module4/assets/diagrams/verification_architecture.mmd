@@ -1,4 +1,6 @@
 flowchart LR
-  SCEN[scenarios] --> AGENTS[agents]
-  AGENTS --> REF[reference model]
-  REF --> SELF[self-check]
+  CR[clock + reset] --> SEQ[test sequence]
+  SEQ --> DRV[drive inputs]
+  DRV --> DUT[register file / ALU]
+  DUT --> EXP[expected model]
+  EXP --> SB[self-check scoreboard]

@@ -1,0 +1,395 @@
+1
+00:00:00,000 --> 00:00:11,112
+Welcome to module 8, Verification Methodology and Best Practices. In this module you will master verification methodology and industry best practices.
+
+2
+00:00:11,462 --> 00:00:19,094
+Here is what you will learn in this module. Master verification methodology and industry best practices
+
+3
+00:00:19,444 --> 00:00:25,492
+Before you start, make sure you have these prerequisites. See module README
+
+4
+00:00:25,842 --> 00:00:32,490
+Learning path. Master verification methodology and industry best practices
+
+5
+00:00:32,840 --> 00:00:44,408
+Overview. This module focuses on verification methodology, best practices, and preparing for real-world verification projects. You'll learn about...
+
+6
+00:00:44,758 --> 00:00:47,998
+Next section: Design architecture.
+
+7
+00:00:48,348 --> 00:01:19,476
+1. End-to-end verification program architecture. DUT portfolio: Gates, counters, multiplexers — representative of prior modules TB styles: Modular Verilog TBs and C++ Verilator TBs under tests/ Knowledge base: Guides in examples/ (planning, metrics, sign-off, industry practices) Automation: ./scripts/module8.sh orchestrates methodology demos, not just RTL compiles Refer to the diagram on the...
+
+8
+00:01:19,826 --> 00:01:47,042
+2. Layered testbench architecture (production pattern). Test layer: Selects scenario, configures plusargs, sets pass criteria Environment layer: Agents, scoreboard, coverage collectors — reusable per project DUT layer: RTL with assertions and optional bind modules Tool layer: Simulator choice (iverilog vs Verilator) per block complexity and SV needs Refer to the diagram on the right.
+
+9
+00:01:47,392 --> 00:02:07,936
+3. Verification infrastructure. Regression shell: Scripts batch examples; logs archived for trend analysis Documentation: Test plans, coding standards, tool comparison guides in-repo Metrics store: Example formats for coverage/assertion summaries before sign-off Refer to the diagram on the right.
+
+10
+00:02:08,286 --> 00:02:15,510
+RTL block diagram (reference). Module 8: DUT hierarchy and signal flow.
+
+11
+00:02:15,860 --> 00:02:24,212
+Verification / testbench diagram (reference). Module 8: stimulus, observation, and checking.
+
+12
+00:02:24,562 --> 00:02:36,466
+Modular TB Makefile. Review the code on screen and match it to files in the repository. Compiles reusable generator modules + mux DUT + top TB.
+
+13
+00:02:36,816 --> 00:02:50,112
+Reusable clock/reset generators. Review the code on screen and match it to files in the repository. Separate clock_generator and reset_generator parameterized modules.
+
+14
+00:02:50,462 --> 00:03:06,518
+Top TB — wire agents to DUT. Review the code on screen and match it to files in the repository. clk_gen, rst_gen, stim_gen, dut, monitor, checker, scoreboard hierarchy.
+
+15
+00:03:06,868 --> 00:03:10,900
+Next section: Execution & simulation flow.
+
+16
+00:03:11,250 --> 00:03:42,498
+How the example runs (toolchain). Match each bullet to files in the repository. Makefile: Verilator compiles RTL + SystemVerilog testbench into a C++ model sim_main.cpp: generates clk/rst_n, calls eval() until $finish Directed test (initial block or C++): drive stimulus, wait for DUT flags Self-check: compare outputs; print PASS/FAIL (see terminal demo slide) Repo path...
+
+17
+00:03:42,848 --> 00:03:57,800
+Follow these steps in order when working through this module. scoreboard aggregates checker results metrics tracker reports pass rate and coverage bins Plan tests run modular environment track metrics Follow this order when tracing waveforms or debugging.
+
+18
+00:03:58,150 --> 00:04:18,142
+Follow these steps in order when working through this module. apply tool selection guide ./scripts/module8.sh --check for sign-off readiness cd module8/examples/testbench_architecture && make modular_testbench_verilog Follow this order when tracing waveforms or debugging.
+
+19
+00:04:18,492 --> 00:04:30,612
+Metrics tracker build. Review the code on screen and match it to files in the repository. cd module8/examples/verification_metrics && make
+
+20
+00:04:30,962 --> 00:04:43,250
+Checker module — expected vs actual. Review the code on screen and match it to files in the repository. checker samples on posedge clk; $error on mismatch.
+
+21
+00:04:43,600 --> 00:04:47,704
+Next section: Verification & testing methods.
+
+22
+00:04:48,054 --> 00:05:08,790
+1. Verification planning and strategy. Test plan: Features → test cases → priority → owner → status Strategy selection: Directed vs random vs assertion-heavy per risk area Entry/exit criteria: Definition of done per milestone (smoke, feature, full regression) Refer to the diagram on the right.
+
+23
+00:05:09,140 --> 00:05:34,628
+2. Metrics, regression, and debug methodology. Metrics: Functional coverage, assertion pass rate, test count, bug find rate Regression: Nightly ./scripts/module8.sh style runs; compare logs to golden Debug process: Reproduce → minimize → fix → add regression test (examples in debugging_methodology/) Refer to the diagram on the right.
+
+24
+00:05:34,978 --> 00:05:57,826
+3. Sign-off and industry practice. Sign-off checklist: Coverage goals met, zero outstanding sev-1 assertions, plan executed Tool selection: Decision matrix (iverilog vs Verilator) from tool_selection/ guide Maintainability: Coding standards and modular TB rules for team-scale projects Refer to the diagram on the right.
+
+25
+00:05:58,176 --> 00:06:12,120
+Metrics — test counters. Review the code on screen and match it to files in the repository. total_tests, passed_tests, failed_tests, coverage_bins tracking.
+
+26
+00:06:12,470 --> 00:06:24,254
+Tool selection criteria. Review the code on screen and match it to files in the repository. When iverilog vs Verilator; SV feature needs vs performance.
+
+27
+00:06:24,604 --> 00:06:35,932
+Sign-off metrics report. Review the code on screen and match it to files in the repository. Final $display of pass rate and coverage before regression sign-off.
+
+28
+00:06:36,282 --> 00:06:39,546
+Next section: Syllabus topics.
+
+29
+00:06:39,896 --> 00:06:49,952
+1. Verification Planning (1/5). Test Plan Development Test plan structure Test plan content Test plan review Test plan maintenance
+
+30
+00:06:50,302 --> 00:07:01,510
+1. Verification Planning (2/5). Strategy definition Strategy selection Strategy implementation Strategy evaluation Test Case Identification
+
+31
+00:07:01,860 --> 00:07:12,852
+1. Verification Planning (3/5). Test case identification Test case prioritization Test case documentation Coverage Planning Coverage goals
+
+32
+00:07:13,202 --> 00:07:22,802
+1. Verification Planning (4/5). Coverage tracking Coverage closure Resource Estimation Resource planning Resource allocation
+
+33
+00:07:23,152 --> 00:07:29,320
+1. Verification Planning (5/5). Resource optimization
+
+34
+00:07:29,670 --> 00:07:41,262
+2. Testbench Architecture Best Practices (1/5). Modular Design Principles Module separation Interface definition Module communication Module testing
+
+35
+00:07:41,612 --> 00:07:53,492
+2. Testbench Architecture Best Practices (2/5). Reusable components Component libraries Component configuration Component documentation Configurability
+
+36
+00:07:53,842 --> 00:08:05,722
+2. Testbench Architecture Best Practices (3/5). Configuration management Configuration testing Configuration documentation Maintainability Code organization
+
+37
+00:08:06,072 --> 00:08:16,680
+2. Testbench Architecture Best Practices (4/5). Code review Code refactoring Scalability Scalable architecture Performance optimization
+
+38
+00:08:17,030 --> 00:08:35,774
+2. Testbench Architecture Best Practices (5/5). Growth planning modular_testbench_verilog.v: Well-structured modular testbench in Verilog modular_testbench_cpp.cpp: Well-structured modular testbench in C++
+
+39
+00:08:36,124 --> 00:08:46,468
+3. Coding Standards for Testbenches (1/5). Naming Conventions Module naming Signal naming Parameter naming Function/task naming
+
+40
+00:08:46,818 --> 00:08:57,090
+3. Coding Standards for Testbenches (2/5). File structure Module organization Function organization Code layout Commenting Standards
+
+41
+00:08:57,440 --> 00:09:08,216
+3. Coding Standards for Testbenches (3/5). Inline comments Section comments Documentation comments Documentation Practices README files
+
+42
+00:09:08,566 --> 00:09:18,382
+3. Coding Standards for Testbenches (4/5). Test documentation User guides Style Guides Verilog style C++ style
+
+43
+00:09:18,732 --> 00:09:29,652
+3. Coding Standards for Testbenches (5/5). Tools coding_standards_guide.md: Comprehensive coding standards guide
+
+44
+00:09:30,002 --> 00:09:39,410
+4. Verification Metrics (1/5). Coverage Metrics Code coverage Functional coverage Toggle coverage Coverage analysis
+
+45
+00:09:39,760 --> 00:09:48,712
+4. Verification Metrics (2/5). Bug tracking Bug analysis Bug closure Bug reporting Test Metrics
+
+46
+00:09:49,062 --> 00:09:59,070
+4. Verification Metrics (3/5). Test pass rate Test execution time Test efficiency Progress Tracking Progress measurement
+
+47
+00:09:59,420 --> 00:10:09,692
+4. Verification Metrics (4/5). Progress analysis Progress optimization Quality Metrics Quality measurement Quality analysis
+
+48
+00:10:10,042 --> 00:10:26,026
+4. Verification Metrics (5/5). Quality reporting metrics_tracker_verilog.v: Metrics tracking in Verilog metrics_tracker_cpp.cpp: Metrics tracking in C++
+
+49
+00:10:26,376 --> 00:10:37,416
+5. Debugging Methodology (1/5). Systematic Debugging Approach Debugging process Debugging steps Debugging techniques Debugging best practices
+
+50
+00:10:37,766 --> 00:10:47,870
+5. Debugging Methodology (2/5). Waveform viewers Logging tools Debugging utilities Debugging scripts Logging Strategies
+
+51
+00:10:48,220 --> 00:10:57,436
+5. Debugging Methodology (3/5). Log format Log management Log analysis Error Reporting Error messages
+
+52
+00:10:57,786 --> 00:11:08,010
+5. Debugging Methodology (4/5). Error tracking Error analysis Root Cause Analysis Problem identification Cause analysis
+
+53
+00:11:08,360 --> 00:11:15,008
+5. Debugging Methodology (5/5). Solution verification
+
+54
+00:11:15,358 --> 00:11:26,374
+6. Regression Testing (1/5). Regression Test Suite Organization Test suite structure Test organization Test categorization Test maintenance
+
+55
+00:11:26,724 --> 00:11:36,708
+6. Regression Testing (2/5). Test selection methods Test prioritization Test optimization Test efficiency Automation
+
+56
+00:11:37,058 --> 00:11:46,658
+6. Regression Testing (3/5). Build automation Report automation Automation tools Continuous Integration CI setup
+
+57
+00:11:47,008 --> 00:11:57,208
+6. Regression Testing (4/5). CI best practices CI maintenance Regression Analysis Regression detection Regression analysis
+
+58
+00:11:57,558 --> 00:12:03,534
+6. Regression Testing (5/5). Regression closure
+
+59
+00:12:03,884 --> 00:12:14,876
+7. Verification Sign-Off (1/5). Sign-Off Criteria Criteria definition Criteria measurement Criteria achievement Criteria documentation
+
+60
+00:12:15,226 --> 00:12:25,066
+7. Verification Sign-Off (2/5). Coverage goals Coverage achievement Coverage verification Coverage documentation Bug Closure
+
+61
+00:12:25,416 --> 00:12:36,504
+7. Verification Sign-Off (3/5). Bug verification Bug documentation Bug closure process Documentation Requirements Documentation types
+
+62
+00:12:36,854 --> 00:12:47,222
+7. Verification Sign-Off (4/5). Documentation review Documentation maintenance Review Process Review preparation Review execution
+
+63
+00:12:47,572 --> 00:12:53,476
+7. Verification Sign-Off (5/5). Review closure
+
+64
+00:12:53,826 --> 00:13:03,018
+8. Tool Selection and Integration (1/6). When to Use iverilog Use cases Advantages Limitations Best practices
+
+65
+00:13:03,368 --> 00:13:13,184
+8. Tool Selection and Integration (2/6). Use cases Advantages Limitations Best practices Tool Comparison and Trade-offs
+
+66
+00:13:13,534 --> 00:13:24,646
+8. Tool Selection and Integration (3/6). Performance comparison Cost comparison Selection criteria Performance Considerations Simulation speed
+
+67
+00:13:24,996 --> 00:13:35,220
+8. Tool Selection and Integration (4/6). Compilation time Optimization Feature Comparison Verilog support SystemVerilog support
+
+68
+00:13:35,570 --> 00:13:45,554
+8. Tool Selection and Integration (5/6). Coverage support Hybrid Approaches Tool combination Workflow integration Best practices
+
+69
+00:13:45,904 --> 00:13:56,392
+8. Tool Selection and Integration (6/6). tool_comparison_guide.md: Tool selection and comparison guide
+
+70
+00:13:56,742 --> 00:14:07,014
+9. Project Management (1/5). Verification Project Planning Project planning Project structure Project execution Project closure
+
+71
+00:14:07,364 --> 00:14:17,132
+9. Project Management (2/5). Resource planning Resource allocation Resource tracking Resource optimization Schedule Management
+
+72
+00:14:17,482 --> 00:14:27,178
+9. Project Management (3/5). Schedule tracking Schedule optimization Schedule reporting Risk Management Risk identification
+
+73
+00:14:27,528 --> 00:14:37,512
+9. Project Management (4/5). Risk mitigation Risk monitoring Communication and Reporting Communication plan Reporting structure
+
+74
+00:14:37,862 --> 00:14:43,718
+9. Project Management (5/5). Reporting tools
+
+75
+00:14:44,068 --> 00:14:54,172
+10. Industry Practices (1/7). Open-Source Verification Tools Tool ecosystem Tool selection Tool integration Tool maintenance
+
+76
+00:14:54,522 --> 00:15:04,026
+10. Industry Practices (2/7). IEEE standards Industry practices Compliance Certification Tool Ecosystems
+
+77
+00:15:04,376 --> 00:15:13,784
+10. Industry Practices (3/7). Tool workflows Tool best practices Tool evolution Career Development Skill development
+
+78
+00:15:14,134 --> 00:15:24,334
+10. Industry Practices (4/7). Professional growth Continuing education Continuing Education Learning resources Training programs
+
+79
+00:15:24,684 --> 00:15:34,548
+10. Industry Practices (5/7). Professional development Transition to Commercial Tools Tool evaluation Tool migration Tool training
+
+80
+00:15:34,898 --> 00:15:58,682
+10. Industry Practices (6/7). Location: See testbench architecture examples Demonstrates: Complete verification environment following best practices Location: module8/examples/testbench_architecture/ Demonstrates: Modular, reusable, configurable testbench architecture Location: See coding standards and guides
+
+81
+00:15:59,032 --> 00:16:15,352
+10. Industry Practices (7/7). Location: See verification metrics examples Demonstrates: Metrics tracking and sign-off criteria Location: Various example directories Demonstrates: Best practices and methodologies
+
+82
+00:16:15,702 --> 00:16:18,942
+Next section: Hands-on examples.
+
+83
+00:16:19,292 --> 00:16:26,348
+Module 8 self-check. Watch the terminal output and confirm you see the expected pass message.
+
+84
+00:16:26,698 --> 00:16:34,402
+Demo: Testbench architecture. Watch the terminal output and confirm you see the expected pass message.
+
+85
+00:16:34,752 --> 00:16:42,504
+Demo: Verification metrics. Watch the terminal output and confirm you see the expected pass message.
+
+86
+00:16:42,854 --> 00:16:50,150
+Demo: Tool selection. Watch the terminal output and confirm you see the expected pass message.
+
+87
+00:16:50,500 --> 00:16:57,916
+Demo: Coding standards. Watch the terminal output and confirm you see the expected pass message.
+
+88
+00:16:58,266 --> 00:17:01,650
+Next section: Practice & assessment.
+
+89
+00:17:02,000 --> 00:17:15,104
+By now you should be able to explain the following. Plan verification projects Apply best practices Measure verification progress Debug systematically Manage regression testing From MODULE8 Learning Outcomes.
+
+90
+00:17:15,454 --> 00:17:27,358
+By now you should be able to explain the following. Apply industry methodologies Develop test plan Identify test cases Plan coverage Estimate resources From MODULE8 Learning Outcomes.
+
+91
+00:17:27,708 --> 00:17:39,876
+By now you should be able to explain the following. Follow coding standards Implement reusable components Document thoroughly Organize test suite Automate execution From MODULE8 Learning Outcomes.
+
+92
+00:17:40,226 --> 00:17:51,890
+By now you should be able to explain the following. Analyze regressions Document test plan Document testbenches Document results Create sign-off package From MODULE8 Learning Outcomes.
+
+93
+00:17:52,240 --> 00:18:04,624
+By now you should be able to explain the following. Close all bugs Complete documentation Review and sign-off Can plan verification projects Can apply best practices From MODULE8 Learning Outcomes.
+
+94
+00:18:04,974 --> 00:18:26,982
+By now you should be able to explain the following. Can debug systematically Can manage regression testing Can achieve verification sign-off Can apply industry methodologies UVM Methodology: Advanced verification with UVM (see learn_uvm2017_sv_verilator repository) From MODULE8 Learning Outcomes.
+
+95
+00:18:27,332 --> 00:18:56,012
+By now you should be able to explain the following. Advanced Topics: Power verification, performance verification Industry Projects: Apply skills to real-world projects Commercial Tools: Transition to VCS, QuestaSim, Xcelium Icarus Verilog Documentation: http://iverilog.wikia.com/ Verilator Documentation: https://verilator.org/ From MODULE8 Learning Outcomes.
+
+96
+00:18:56,362 --> 00:19:20,338
+By now you should be able to explain the following. IEEE 1364-2005 Standard: Verilog Hardware Description Language IEEE 1800-2017 Standard: SystemVerilog Language Reference Manual Write effective testbenches in Verilog and C++ Use both iverilog and Verilator Apply verification best practices From MODULE8 Learning Outcomes.
+
+97
+00:19:20,688 --> 00:19:28,368
+By now you should be able to explain the following. Achieve verification sign-off From MODULE8 Learning Outcomes.
+
+98
+00:19:28,718 --> 00:19:39,974
+Assessment checklist. Can plan verification projects Can apply best practices Can measure verification progress Can debug systematically Can manage regression testing
+
+99
+00:19:40,324 --> 00:20:00,916
+In summary: Master verification methodology and industry best practices Next up: Next module in course. Master verification methodology and industry best practices Complete module8/CHECKLIST.md Review module8/EXAMPLES.md and run each lab Next: Next module in course

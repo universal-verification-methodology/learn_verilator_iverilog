@@ -1,3 +1,5 @@
 flowchart TD
-  A[protocol sequence] --> B[timing check]
-  B --> C[file replay]
+  PROC[procedural_constructs] --> REUSE[reusable_routines]
+  REUSE --> FIO[file_io regression]
+  FIO --> TSEQ[test_sequences]
+  TSEQ --> REG[module5.sh --check]

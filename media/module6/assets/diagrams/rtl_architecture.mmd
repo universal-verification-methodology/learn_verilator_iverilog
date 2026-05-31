@@ -1,6 +1,6 @@
 flowchart TB
-  PKG[package] --> IF[interface]
-  IF --> CLS[SV classes]
-  CLS --> DRV[class driver]
-  DRV --> dut6["module6/dut gates/mux"]
-  RAND[randomize] --> CLS
+  PKG[packages] --> CLS[SV classes]
+  IFACE[interfaces + modports] --> TB[testbench top]
+  CLS --> TB
+  RAND[constraint randomize] --> TB
+  TB --> DUT[and_gate / mux]

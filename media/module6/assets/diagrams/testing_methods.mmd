@@ -1,3 +1,6 @@
 flowchart TD
-  A[randomize] --> B[cover legal space]
-  B --> C[SV vs C++ equiv]
+  CLASS[sv_classes -g2012] --> IFACE[interfaces lab]
+  IFACE --> RAND[randomization]
+  RAND --> PKG[packages]
+  PKG --> LIMIT[equivalent_cpp / Verilator limits]
+  LIMIT --> REG[module6.sh --check]

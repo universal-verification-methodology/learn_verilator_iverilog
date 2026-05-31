@@ -1,3 +1,6 @@
 flowchart LR
-  CR[constrained random] --> IF[interface drive]
-  IF --> CHK[class checker]
+  TXN[transaction class] --> SEQ[sequence / test class]
+  SEQ --> DRV[interface driver]
+  DRV --> DUT[DUT]
+  DUT --> MON[interface monitor]
+  MON --> CHK[post_randomize check]

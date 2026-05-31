@@ -141,6 +141,12 @@ make all
 - **Self-checking path**: DUT output compared to reference each cycle or transaction
 - **Config**: Parameters for width, depth, and clock period without editing DUT RTL
 
+**Simulation flow**: `cd module4/examples/clock_reset && make` → then `cd ../self_checking && make` → modular TB in `modular_testbenches/`
+
+**Execution sequence**: Build clk/rst generators → connect DUT → drive ALU/FIFO vectors → reference model compare → wire agents at top → `./scripts/module4.sh --check`
+
+**Self-check flow**: Reference model in TB → compare each cycle → aggregate pass/fail before `$finish`
+
 ## Verification & Testing Methods
 
 ### 1. Component-level verification

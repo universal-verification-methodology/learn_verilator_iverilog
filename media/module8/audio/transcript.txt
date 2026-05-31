@@ -1,0 +1,197 @@
+[Slide 1] Welcome to module 8, Verification Methodology and Best Practices. In this module you will master verification methodology and industry best practices.
+
+[Slide 2] Here is what you will learn in this module. Master verification methodology and industry best practices
+
+[Slide 3] Before you start, make sure you have these prerequisites. See module README
+
+[Slide 4] Learning path. Master verification methodology and industry best practices
+
+[Slide 5] Overview. This module focuses on verification methodology, best practices, and preparing for real-world verification projects. You'll learn about...
+
+[Slide 6] Next section: Design architecture.
+
+[Slide 7] 1. End-to-end verification program architecture. DUT portfolio: Gates, counters, multiplexers — representative of prior modules TB styles: Modular Verilog TBs and C++ Verilator TBs under tests/ Knowledge base: Guides in examples/ (planning, metrics, sign-off, industry practices) Automation: ./scripts/module8.sh orchestrates methodology demos, not just RTL compiles Refer to the diagram on the...
+
+[Slide 8] 2. Layered testbench architecture (production pattern). Test layer: Selects scenario, configures plusargs, sets pass criteria Environment layer: Agents, scoreboard, coverage collectors — reusable per project DUT layer: RTL with assertions and optional bind modules Tool layer: Simulator choice (iverilog vs Verilator) per block complexity and SV needs Refer to the diagram on the right.
+
+[Slide 9] 3. Verification infrastructure. Regression shell: Scripts batch examples; logs archived for trend analysis Documentation: Test plans, coding standards, tool comparison guides in-repo Metrics store: Example formats for coverage/assertion summaries before sign-off Refer to the diagram on the right.
+
+[Slide 10] RTL block diagram (reference). Module 8: DUT hierarchy and signal flow.
+
+[Slide 11] Verification / testbench diagram (reference). Module 8: stimulus, observation, and checking.
+
+[Slide 12] Modular TB Makefile. Review the code on screen and match it to files in the repository. Compiles reusable generator modules + mux DUT + top TB.
+
+[Slide 13] Reusable clock/reset generators. Review the code on screen and match it to files in the repository. Separate clock_generator and reset_generator parameterized modules.
+
+[Slide 14] Top TB — wire agents to DUT. Review the code on screen and match it to files in the repository. clk_gen, rst_gen, stim_gen, dut, monitor, checker, scoreboard hierarchy.
+
+[Slide 15] Next section: Execution & simulation flow.
+
+[Slide 16] How the example runs (toolchain). Match each bullet to files in the repository. Makefile: Verilator compiles RTL + SystemVerilog testbench into a C++ model sim_main.cpp: generates clk/rst_n, calls eval() until $finish Directed test (initial block or C++): drive stimulus, wait for DUT flags Self-check: compare outputs; print PASS/FAIL (see terminal demo slide) Repo path...
+
+[Slide 17] Follow these steps in order when working through this module. scoreboard aggregates checker results metrics tracker reports pass rate and coverage bins Plan tests run modular environment track metrics Follow this order when tracing waveforms or debugging.
+
+[Slide 18] Follow these steps in order when working through this module. apply tool selection guide ./scripts/module8.sh --check for sign-off readiness cd module8/examples/testbench_architecture && make modular_testbench_verilog Follow this order when tracing waveforms or debugging.
+
+[Slide 19] Metrics tracker build. Review the code on screen and match it to files in the repository. cd module8/examples/verification_metrics && make
+
+[Slide 20] Checker module — expected vs actual. Review the code on screen and match it to files in the repository. checker samples on posedge clk; $error on mismatch.
+
+[Slide 21] Next section: Verification & testing methods.
+
+[Slide 22] 1. Verification planning and strategy. Test plan: Features → test cases → priority → owner → status Strategy selection: Directed vs random vs assertion-heavy per risk area Entry/exit criteria: Definition of done per milestone (smoke, feature, full regression) Refer to the diagram on the right.
+
+[Slide 23] 2. Metrics, regression, and debug methodology. Metrics: Functional coverage, assertion pass rate, test count, bug find rate Regression: Nightly ./scripts/module8.sh style runs; compare logs to golden Debug process: Reproduce → minimize → fix → add regression test (examples in debugging_methodology/) Refer to the diagram on the right.
+
+[Slide 24] 3. Sign-off and industry practice. Sign-off checklist: Coverage goals met, zero outstanding sev-1 assertions, plan executed Tool selection: Decision matrix (iverilog vs Verilator) from tool_selection/ guide Maintainability: Coding standards and modular TB rules for team-scale projects Refer to the diagram on the right.
+
+[Slide 25] Metrics — test counters. Review the code on screen and match it to files in the repository. total_tests, passed_tests, failed_tests, coverage_bins tracking.
+
+[Slide 26] Tool selection criteria. Review the code on screen and match it to files in the repository. When iverilog vs Verilator; SV feature needs vs performance.
+
+[Slide 27] Sign-off metrics report. Review the code on screen and match it to files in the repository. Final $display of pass rate and coverage before regression sign-off.
+
+[Slide 28] Next section: Syllabus topics.
+
+[Slide 29] 1. Verification Planning (1/5). Test Plan Development Test plan structure Test plan content Test plan review Test plan maintenance
+
+[Slide 30] 1. Verification Planning (2/5). Strategy definition Strategy selection Strategy implementation Strategy evaluation Test Case Identification
+
+[Slide 31] 1. Verification Planning (3/5). Test case identification Test case prioritization Test case documentation Coverage Planning Coverage goals
+
+[Slide 32] 1. Verification Planning (4/5). Coverage tracking Coverage closure Resource Estimation Resource planning Resource allocation
+
+[Slide 33] 1. Verification Planning (5/5). Resource optimization
+
+[Slide 34] 2. Testbench Architecture Best Practices (1/5). Modular Design Principles Module separation Interface definition Module communication Module testing
+
+[Slide 35] 2. Testbench Architecture Best Practices (2/5). Reusable components Component libraries Component configuration Component documentation Configurability
+
+[Slide 36] 2. Testbench Architecture Best Practices (3/5). Configuration management Configuration testing Configuration documentation Maintainability Code organization
+
+[Slide 37] 2. Testbench Architecture Best Practices (4/5). Code review Code refactoring Scalability Scalable architecture Performance optimization
+
+[Slide 38] 2. Testbench Architecture Best Practices (5/5). Growth planning modular_testbench_verilog.v: Well-structured modular testbench in Verilog modular_testbench_cpp.cpp: Well-structured modular testbench in C++
+
+[Slide 39] 3. Coding Standards for Testbenches (1/5). Naming Conventions Module naming Signal naming Parameter naming Function/task naming
+
+[Slide 40] 3. Coding Standards for Testbenches (2/5). File structure Module organization Function organization Code layout Commenting Standards
+
+[Slide 41] 3. Coding Standards for Testbenches (3/5). Inline comments Section comments Documentation comments Documentation Practices README files
+
+[Slide 42] 3. Coding Standards for Testbenches (4/5). Test documentation User guides Style Guides Verilog style C++ style
+
+[Slide 43] 3. Coding Standards for Testbenches (5/5). Tools coding_standards_guide.md: Comprehensive coding standards guide
+
+[Slide 44] 4. Verification Metrics (1/5). Coverage Metrics Code coverage Functional coverage Toggle coverage Coverage analysis
+
+[Slide 45] 4. Verification Metrics (2/5). Bug tracking Bug analysis Bug closure Bug reporting Test Metrics
+
+[Slide 46] 4. Verification Metrics (3/5). Test pass rate Test execution time Test efficiency Progress Tracking Progress measurement
+
+[Slide 47] 4. Verification Metrics (4/5). Progress analysis Progress optimization Quality Metrics Quality measurement Quality analysis
+
+[Slide 48] 4. Verification Metrics (5/5). Quality reporting metrics_tracker_verilog.v: Metrics tracking in Verilog metrics_tracker_cpp.cpp: Metrics tracking in C++
+
+[Slide 49] 5. Debugging Methodology (1/5). Systematic Debugging Approach Debugging process Debugging steps Debugging techniques Debugging best practices
+
+[Slide 50] 5. Debugging Methodology (2/5). Waveform viewers Logging tools Debugging utilities Debugging scripts Logging Strategies
+
+[Slide 51] 5. Debugging Methodology (3/5). Log format Log management Log analysis Error Reporting Error messages
+
+[Slide 52] 5. Debugging Methodology (4/5). Error tracking Error analysis Root Cause Analysis Problem identification Cause analysis
+
+[Slide 53] 5. Debugging Methodology (5/5). Solution verification
+
+[Slide 54] 6. Regression Testing (1/5). Regression Test Suite Organization Test suite structure Test organization Test categorization Test maintenance
+
+[Slide 55] 6. Regression Testing (2/5). Test selection methods Test prioritization Test optimization Test efficiency Automation
+
+[Slide 56] 6. Regression Testing (3/5). Build automation Report automation Automation tools Continuous Integration CI setup
+
+[Slide 57] 6. Regression Testing (4/5). CI best practices CI maintenance Regression Analysis Regression detection Regression analysis
+
+[Slide 58] 6. Regression Testing (5/5). Regression closure
+
+[Slide 59] 7. Verification Sign-Off (1/5). Sign-Off Criteria Criteria definition Criteria measurement Criteria achievement Criteria documentation
+
+[Slide 60] 7. Verification Sign-Off (2/5). Coverage goals Coverage achievement Coverage verification Coverage documentation Bug Closure
+
+[Slide 61] 7. Verification Sign-Off (3/5). Bug verification Bug documentation Bug closure process Documentation Requirements Documentation types
+
+[Slide 62] 7. Verification Sign-Off (4/5). Documentation review Documentation maintenance Review Process Review preparation Review execution
+
+[Slide 63] 7. Verification Sign-Off (5/5). Review closure
+
+[Slide 64] 8. Tool Selection and Integration (1/6). When to Use iverilog Use cases Advantages Limitations Best practices
+
+[Slide 65] 8. Tool Selection and Integration (2/6). Use cases Advantages Limitations Best practices Tool Comparison and Trade-offs
+
+[Slide 66] 8. Tool Selection and Integration (3/6). Performance comparison Cost comparison Selection criteria Performance Considerations Simulation speed
+
+[Slide 67] 8. Tool Selection and Integration (4/6). Compilation time Optimization Feature Comparison Verilog support SystemVerilog support
+
+[Slide 68] 8. Tool Selection and Integration (5/6). Coverage support Hybrid Approaches Tool combination Workflow integration Best practices
+
+[Slide 69] 8. Tool Selection and Integration (6/6). tool_comparison_guide.md: Tool selection and comparison guide
+
+[Slide 70] 9. Project Management (1/5). Verification Project Planning Project planning Project structure Project execution Project closure
+
+[Slide 71] 9. Project Management (2/5). Resource planning Resource allocation Resource tracking Resource optimization Schedule Management
+
+[Slide 72] 9. Project Management (3/5). Schedule tracking Schedule optimization Schedule reporting Risk Management Risk identification
+
+[Slide 73] 9. Project Management (4/5). Risk mitigation Risk monitoring Communication and Reporting Communication plan Reporting structure
+
+[Slide 74] 9. Project Management (5/5). Reporting tools
+
+[Slide 75] 10. Industry Practices (1/7). Open-Source Verification Tools Tool ecosystem Tool selection Tool integration Tool maintenance
+
+[Slide 76] 10. Industry Practices (2/7). IEEE standards Industry practices Compliance Certification Tool Ecosystems
+
+[Slide 77] 10. Industry Practices (3/7). Tool workflows Tool best practices Tool evolution Career Development Skill development
+
+[Slide 78] 10. Industry Practices (4/7). Professional growth Continuing education Continuing Education Learning resources Training programs
+
+[Slide 79] 10. Industry Practices (5/7). Professional development Transition to Commercial Tools Tool evaluation Tool migration Tool training
+
+[Slide 80] 10. Industry Practices (6/7). Location: See testbench architecture examples Demonstrates: Complete verification environment following best practices Location: module8/examples/testbench_architecture/ Demonstrates: Modular, reusable, configurable testbench architecture Location: See coding standards and guides
+
+[Slide 81] 10. Industry Practices (7/7). Location: See verification metrics examples Demonstrates: Metrics tracking and sign-off criteria Location: Various example directories Demonstrates: Best practices and methodologies
+
+[Slide 82] Next section: Hands-on examples.
+
+[Slide 83] Module 8 self-check. Watch the terminal output and confirm you see the expected pass message.
+
+[Slide 84] Demo: Testbench architecture. Watch the terminal output and confirm you see the expected pass message.
+
+[Slide 85] Demo: Verification metrics. Watch the terminal output and confirm you see the expected pass message.
+
+[Slide 86] Demo: Tool selection. Watch the terminal output and confirm you see the expected pass message.
+
+[Slide 87] Demo: Coding standards. Watch the terminal output and confirm you see the expected pass message.
+
+[Slide 88] Next section: Practice & assessment.
+
+[Slide 89] By now you should be able to explain the following. Plan verification projects Apply best practices Measure verification progress Debug systematically Manage regression testing From MODULE8 Learning Outcomes.
+
+[Slide 90] By now you should be able to explain the following. Apply industry methodologies Develop test plan Identify test cases Plan coverage Estimate resources From MODULE8 Learning Outcomes.
+
+[Slide 91] By now you should be able to explain the following. Follow coding standards Implement reusable components Document thoroughly Organize test suite Automate execution From MODULE8 Learning Outcomes.
+
+[Slide 92] By now you should be able to explain the following. Analyze regressions Document test plan Document testbenches Document results Create sign-off package From MODULE8 Learning Outcomes.
+
+[Slide 93] By now you should be able to explain the following. Close all bugs Complete documentation Review and sign-off Can plan verification projects Can apply best practices From MODULE8 Learning Outcomes.
+
+[Slide 94] By now you should be able to explain the following. Can debug systematically Can manage regression testing Can achieve verification sign-off Can apply industry methodologies UVM Methodology: Advanced verification with UVM (see learn_uvm2017_sv_verilator repository) From MODULE8 Learning Outcomes.
+
+[Slide 95] By now you should be able to explain the following. Advanced Topics: Power verification, performance verification Industry Projects: Apply skills to real-world projects Commercial Tools: Transition to VCS, QuestaSim, Xcelium Icarus Verilog Documentation: http://iverilog.wikia.com/ Verilator Documentation: https://verilator.org/ From MODULE8 Learning Outcomes.
+
+[Slide 96] By now you should be able to explain the following. IEEE 1364-2005 Standard: Verilog Hardware Description Language IEEE 1800-2017 Standard: SystemVerilog Language Reference Manual Write effective testbenches in Verilog and C++ Use both iverilog and Verilator Apply verification best practices From MODULE8 Learning Outcomes.
+
+[Slide 97] By now you should be able to explain the following. Achieve verification sign-off From MODULE8 Learning Outcomes.
+
+[Slide 98] Assessment checklist. Can plan verification projects Can apply best practices Can measure verification progress Can debug systematically Can manage regression testing
+
+[Slide 99] In summary: Master verification methodology and industry best practices Next up: Next module in course. Master verification methodology and industry best practices Complete module8/CHECKLIST.md Review module8/EXAMPLES.md and run each lab Next: Next module in course

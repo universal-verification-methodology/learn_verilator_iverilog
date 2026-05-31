@@ -1,3 +1,6 @@
 flowchart TD
-  A[verify tools] --> B[smoke DUT]
-  B --> C[compare iverilog vs Verilator]
+  INSTALL[Install iverilog Verilator GTKWave] --> VER[Version checks]
+  VER --> SMOKE[hello_world compile and run]
+  SMOKE --> WAVE[Optional VCD spot-check]
+  WAVE --> REG[./scripts/module0.sh --check]
+  REG --> DONE[Environment ready]

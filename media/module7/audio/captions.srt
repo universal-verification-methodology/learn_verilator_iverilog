@@ -1,0 +1,363 @@
+1
+00:00:00,000 --> 00:00:11,496
+Welcome to module 7, Coverage and Assertions. In this module you will master basic coverage analysis and assertion-based verification without systemverilog dependencies.
+
+2
+00:00:11,846 --> 00:00:21,446
+Here is what you will learn in this module. Master basic coverage analysis and assertion-based verification without SystemVerilog dependencies
+
+3
+00:00:21,796 --> 00:00:27,844
+Before you start, make sure you have these prerequisites. See module README
+
+4
+00:00:28,194 --> 00:00:36,810
+Learning path. Master basic coverage analysis and assertion-based verification without SystemVerilog dependencies
+
+5
+00:00:37,160 --> 00:00:48,752
+Overview. This module covers fundamental coverage analysis and assertion-based verification using basic Verilog and C++ constructs. You'll learn...
+
+6
+00:00:49,102 --> 00:00:52,342
+Next section: Design architecture.
+
+7
+00:00:52,692 --> 00:01:20,796
+1. Observability-focused DUT set. dut/simple_gates/, dut/multiplexers/, dut/counters/: Familiar blocks for assertion and coverage labs Checkpoints: Internal signals (count, select, flags) exposed for bind-style or inline assertions Tool split: Assertions in SV/Verilog for iverilog; C++ assert paths in Verilator examples Refer to the diagram on the right.
+
+8
+00:01:21,146 --> 00:01:47,834
+2. Assertion architecture. Immediate assertions: $display + if checks in procedural TB (baseline) Concurrent-style patterns: Properties described in examples where SVA subset supported Assertion libraries: Reusable check macros/modules in assertion_libraries/ examples Failure action: $error / fatal or abort simulation with non-zero status Refer to the diagram on the right.
+
+9
+00:01:48,184 --> 00:02:08,896
+3. Coverage model architecture. Functional coverage points: User-defined bins on opcodes, states, or cross terms Code coverage: Line/branch awareness via simulator reports where available Feedback loop: Coverage holes drive new directed or random tests (documented in guides) Refer to the diagram on the right.
+
+10
+00:02:09,246 --> 00:02:16,542
+RTL block diagram (reference). Module 7: DUT hierarchy and signal flow.
+
+11
+00:02:16,892 --> 00:02:25,340
+Verification / testbench diagram (reference). Module 7: stimulus, observation, and checking.
+
+12
+00:02:25,690 --> 00:02:38,770
+Assertions Makefile — compile DUT+TB. Review the code on screen and match it to files in the repository. iverilog -g2012 links counter DUT with assertion TB.
+
+13
+00:02:39,120 --> 00:02:51,216
+Clocked assertion check. Review the code on screen and match it to files in the repository. always @(posedge clk) verify property; count pass/fail.
+
+14
+00:02:51,566 --> 00:03:03,782
+DUT under assertion test. Review the code on screen and match it to files in the repository. counter_4bit instantiated; assertions observe count and reset.
+
+15
+00:03:04,132 --> 00:03:08,164
+Next section: Execution & simulation flow.
+
+16
+00:03:08,514 --> 00:03:39,762
+How the example runs (toolchain). Match each bullet to files in the repository. Makefile: Verilator compiles RTL + SystemVerilog testbench into a C++ model sim_main.cpp: generates clk/rst_n, calls eval() until $finish Directed test (initial block or C++): drive stimulus, wait for DUT flags Self-check: compare outputs; print PASS/FAIL (see terminal demo slide) Repo path...
+
+17
+00:03:40,112 --> 00:03:54,632
+Follow these steps in order when working through this module. Clocked assertions on posedge summary block before $finish non-zero fail triggers debug Embed checks in TB run simulation Follow this order when tracing waveforms or debugging.
+
+18
+00:03:54,982 --> 00:04:08,782
+Follow these steps in order when working through this module. collect assertion_pass/fail analyze coverage gaps ./scripts/module7.sh --check Follow this order when tracing waveforms or debugging.
+
+19
+00:04:09,132 --> 00:04:22,620
+Run assertion example. Review the code on screen and match it to files in the repository. cd module7/examples/assertions && make basic_assertions_verilog
+
+20
+00:04:22,970 --> 00:04:35,258
+Reset assertion property. Review the code on screen and match it to files in the repository. When !rst_n, count must be 0; log ASSERT PASS or FAIL.
+
+21
+00:04:35,608 --> 00:04:39,712
+Next section: Verification & testing methods.
+
+22
+00:04:40,062 --> 00:05:03,678
+1. Assertion-based verification (ABV). Property targets: Reset behavior, one-hot select, counter monotonicity, no X on outputs Assume/guarantee mindset: Environment assumptions vs DUT guarantees in examples Debug: Assertion name and time stamp in failure message — rerun with VCD at failure cycle Refer to the diagram on the right.
+
+23
+00:05:04,028 --> 00:05:25,244
+2. Coverage-driven closure. Goals: Target 100% on critical crosses; accept waived bins with documented rationale Sampling: Coverpoints updated each transaction or clock in TB code Reports: Text summaries from coverage_analysis examples — gap list for next tests Refer to the diagram on the right.
+
+24
+00:05:25,594 --> 00:05:48,778
+3. Metrics and sign-off prep. Pass/fail plus coverage: Exit criteria require zero assertion failures and met coverage goals Regression: Re-run assertion suite after RTL/TB edits — ./scripts/module7.sh --check Bridge to Module 8: Metrics feed verification plan and sign-off checklist Refer to the diagram on the right.
+
+25
+00:05:49,128 --> 00:05:59,976
+Assertion library module. Review the code on screen and match it to files in the repository. Reusable check macros; include in multiple TBs.
+
+26
+00:06:00,326 --> 00:06:11,942
+Coverage analysis workflow. Review the code on screen and match it to files in the repository. Run coverage example; review bins for untested select values.
+
+27
+00:06:12,292 --> 00:06:25,276
+Assertion summary before $finish. Review the code on screen and match it to files in the repository. Print assertion_pass/fail totals; non-zero fail → debug waveforms.
+
+28
+00:06:25,626 --> 00:06:28,890
+Next section: Syllabus topics.
+
+29
+00:06:29,240 --> 00:06:40,472
+1. Coverage Fundamentals (1/5). What is Coverage? Verification completeness Coverage metrics Coverage goals Coverage-driven verification
+
+30
+00:06:40,822 --> 00:06:50,422
+1. Coverage Fundamentals (2/5). Code coverage Functional coverage Toggle coverage Coverage relationships Coverage Metrics
+
+31
+00:06:50,772 --> 00:06:59,892
+1. Coverage Fundamentals (3/5). Coverage bins Coverage goals Coverage closure Coverage Goals Setting coverage targets
+
+32
+00:07:00,242 --> 00:07:12,026
+1. Coverage Fundamentals (4/5). Coverage achievement Coverage sign-off Coverage-Driven Verification Using coverage to guide testing Coverage-directed test generation
+
+33
+00:07:12,376 --> 00:07:18,472
+1. Coverage Fundamentals (5/5). Coverage best practices
+
+34
+00:07:18,822 --> 00:07:28,254
+2. Code Coverage (1/6). Line Coverage Line execution Line coverage metrics Line coverage analysis Branch Coverage
+
+35
+00:07:28,604 --> 00:07:39,260
+2. Code Coverage (2/6). Branch coverage metrics Branch coverage analysis Condition Coverage Condition execution Condition coverage metrics
+
+36
+00:07:39,610 --> 00:07:50,266
+2. Code Coverage (3/6). Path Coverage Path execution Path coverage metrics Path coverage analysis iverilog Coverage Capabilities
+
+37
+00:07:50,616 --> 00:08:01,728
+2. Code Coverage (4/6). Coverage limitations Coverage tools Coverage analysis Verilator Coverage Capabilities (--coverage) Coverage flag
+
+38
+00:08:02,078 --> 00:08:11,822
+2. Code Coverage (5/6). Coverage data Coverage analysis Coverage Tools and Analysis Coverage tools Coverage analysis
+
+39
+00:08:12,172 --> 00:08:29,164
+2. Code Coverage (6/6). Coverage best practices code_coverage_iverilog.v: Manual code coverage tracking with iverilog code_coverage_verilator.cpp: Code coverage with Verilator (--coverage flag)
+
+40
+00:08:29,514 --> 00:08:41,322
+3. Functional Coverage (Manual Implementation) (1/7). Functional Coverage Concepts Functional coverage definition Coverage bins Coverage goals Coverage metrics
+
+41
+00:08:41,672 --> 00:08:55,952
+3. Functional Coverage (Manual Implementation) (2/7). Counter-based tracking Coverage bin implementation Coverage collection Coverage analysis Coverage Bins Implementation (Verilog and C++)
+
+42
+00:08:56,302 --> 00:09:07,966
+3. Functional Coverage (Manual Implementation) (3/7). Bin tracking Bin coverage Bin analysis Cross Coverage Using Manual Tracking Cross coverage definition
+
+43
+00:09:08,316 --> 00:09:21,396
+3. Functional Coverage (Manual Implementation) (4/7). Cross coverage analysis Cross coverage best practices Coverage Collection and Analysis Coverage collection Coverage storage
+
+44
+00:09:21,746 --> 00:09:36,074
+3. Functional Coverage (Manual Implementation) (5/7). Coverage reporting Verilog: Using $display/$monitor for Coverage Tracking Display-based tracking Monitor-based tracking Coverage logging
+
+45
+00:09:36,424 --> 00:09:51,064
+3. Functional Coverage (Manual Implementation) (6/7). C++: Using Variables and Data Structures for Coverage Tracking Variable-based tracking Data structure tracking Coverage storage Coverage analysis
+
+46
+00:09:51,414 --> 00:10:04,398
+3. Functional Coverage (Manual Implementation) (7/7). functional_coverage_cpp.cpp: Functional coverage using C++ data structures
+
+47
+00:10:04,748 --> 00:10:13,748
+4. Toggle Coverage (1/4). Signal Toggling Toggle definition Toggle tracking Toggle metrics Toggle analysis
+
+48
+00:10:14,098 --> 00:10:23,410
+4. Toggle Coverage (2/4). Toggle percentage Toggle goals Toggle closure Toggle best practices Toggle Analysis
+
+49
+00:10:23,760 --> 00:10:33,240
+4. Toggle Coverage (3/4). Toggle gaps Toggle optimization Toggle best practices Coverage Reporting Toggle reports
+
+50
+00:10:33,590 --> 00:10:40,862
+4. Toggle Coverage (4/4). Toggle documentation Toggle best practices
+
+51
+00:10:41,212 --> 00:10:51,988
+5. Basic Assertion Concepts (1/7). What are Assertions? Assertion definition Assertion purpose Assertion benefits Assertion types
+
+52
+00:10:52,338 --> 00:11:02,562
+5. Basic Assertion Concepts (2/7). Design verification Bug detection Documentation Debugging aid Simple Assertion Patterns
+
+53
+00:11:02,912 --> 00:11:14,120
+5. Basic Assertion Concepts (3/7). Range assertions Boolean assertions Timing assertions Verilog: Using if-else for Assertions If-else patterns
+
+54
+00:11:14,470 --> 00:11:27,070
+5. Basic Assertion Concepts (4/7). Error reporting Assertion best practices Verilog: Using $assert (if supported) $assert syntax $assert usage
+
+55
+00:11:27,420 --> 00:11:40,044
+5. Basic Assertion Concepts (5/7). $assert best practices C++: Using assert() Macro assert() syntax assert() usage assert() limitations
+
+56
+00:11:40,394 --> 00:11:54,458
+5. Basic Assertion Concepts (6/7). C++: Using Custom Assertion Functions Custom function design Custom function implementation Custom function usage Custom function best practices
+
+57
+00:11:54,808 --> 00:12:09,112
+5. Basic Assertion Concepts (7/7). Error messages Error logging Error handling Error best practices basic_assertions_verilog.v: Basic assertions using if-else patterns
+
+58
+00:12:09,462 --> 00:12:21,126
+6. Assertion Implementation Patterns (1/7). Clock-Based Assertions Clock synchronization Clock-based checks Clock assertion patterns Clock assertion best practices
+
+59
+00:12:21,476 --> 00:12:33,308
+6. Assertion Implementation Patterns (2/7). Reset checks Reset assertion patterns Reset assertion timing Reset assertion best practices Data Validity Assertions
+
+60
+00:12:33,658 --> 00:12:47,170
+6. Assertion Implementation Patterns (3/7). Data validity patterns Data assertion implementation Data assertion best practices Protocol Assertions (Basic Patterns) Protocol checks
+
+61
+00:12:47,520 --> 00:12:59,664
+6. Assertion Implementation Patterns (4/7). Protocol assertion implementation Protocol assertion best practices Assertion Organization Assertion placement Assertion grouping
+
+62
+00:13:00,014 --> 00:13:14,390
+6. Assertion Implementation Patterns (5/7). Assertion organization best practices Reusable Assertion Functions/Tasks Assertion library design Assertion library implementation Assertion library usage
+
+63
+00:13:14,740 --> 00:13:27,628
+6. Assertion Implementation Patterns (6/7). Verilog: Assertion Tasks and Functions Task-based assertions Function-based assertions Assertion organization Assertion best practices
+
+64
+00:13:27,978 --> 00:13:43,602
+6. Assertion Implementation Patterns (7/7). Function-based assertions Class-based assertions Assertion organization Assertion best practices assertion_lib_verilog.v: Reusable assertion library in Verilog
+
+65
+00:13:43,952 --> 00:13:54,176
+7. Coverage Analysis (1/5). Coverage Collection Coverage data collection Coverage storage Coverage management Coverage best practices
+
+66
+00:13:54,526 --> 00:14:06,214
+7. Coverage Analysis (2/5). Coverage report generation Coverage report format Coverage report analysis Coverage report best practices Coverage Analysis
+
+67
+00:14:06,564 --> 00:14:18,180
+7. Coverage Analysis (3/5). Coverage analysis methods Coverage optimization Coverage best practices Coverage Gaps Identification Gap identification
+
+68
+00:14:18,530 --> 00:14:28,394
+7. Coverage Analysis (4/5). Gap closure Gap best practices Coverage Closure Strategies Closure planning Closure methods
+
+69
+00:14:28,744 --> 00:14:34,864
+7. Coverage Analysis (5/5). Closure best practices
+
+70
+00:14:35,214 --> 00:14:47,694
+8. Coverage-Driven Test Generation (1/6). Using Coverage to Guide Testing Coverage-directed testing Coverage-based test selection Coverage optimization Coverage best practices
+
+71
+00:14:48,044 --> 00:15:01,220
+8. Coverage-Driven Test Generation (2/6). Test generation methods Test generation strategies Test generation optimization Test generation best practices Coverage Optimization
+
+72
+00:15:01,570 --> 00:15:15,394
+8. Coverage-Driven Test Generation (3/6). Coverage optimization methods Coverage optimization strategies Coverage optimization best practices Test Selection Based on Coverage Test selection methods
+
+73
+00:15:15,744 --> 00:15:36,648
+8. Coverage-Driven Test Generation (4/6). Test selection optimization Test selection best practices Location: module7/examples/code_coverage/ Demonstrates: Code coverage tracking and analysis Location: module7/examples/functional_coverage/
+
+74
+00:15:36,998 --> 00:16:00,038
+8. Coverage-Driven Test Generation (5/6). Location: module7/examples/assertions/ Demonstrates: Basic assertion patterns and implementation Location: See coverage examples Demonstrates: Coverage-driven test generation Location: module7/examples/coverage_analysis/ (coming soon)
+
+75
+00:16:00,388 --> 00:16:13,204
+8. Coverage-Driven Test Generation (6/6). Location: module7/examples/assertion_libraries/ Demonstrates: Reusable assertion libraries
+
+76
+00:16:13,554 --> 00:16:16,794
+Next section: Hands-on examples.
+
+77
+00:16:17,144 --> 00:16:24,272
+Module 7 self-check. Watch the terminal output and confirm you see the expected pass message.
+
+78
+00:16:24,622 --> 00:16:31,726
+Demo: Assertions. Watch the terminal output and confirm you see the expected pass message.
+
+79
+00:16:32,076 --> 00:16:39,564
+Demo: Assertion libraries. Watch the terminal output and confirm you see the expected pass message.
+
+80
+00:16:39,914 --> 00:16:47,498
+Demo: Coverage analysis. Watch the terminal output and confirm you see the expected pass message.
+
+81
+00:16:47,848 --> 00:16:51,232
+Next section: Practice & assessment.
+
+82
+00:16:51,582 --> 00:17:09,774
+By now you should be able to explain the following. Understand fundamental coverage concepts Measure code coverage with both tools Implement manual functional coverage (both paradigms) Write basic assertions in Verilog and C++ Organize assertions effectively From MODULE7 Learning Outcomes.
+
+83
+00:17:10,124 --> 00:17:25,292
+By now you should be able to explain the following. Use coverage to guide verification Achieve basic coverage closure Apply assertion-based verification patterns Use tool-specific coverage flags Track coverage manually From MODULE7 Learning Outcomes.
+
+84
+00:17:25,642 --> 00:17:38,458
+By now you should be able to explain the following. Create coverage bins Track coverage manually Generate coverage reports Use C++ data structures Track coverage manually From MODULE7 Learning Outcomes.
+
+85
+00:17:38,808 --> 00:17:51,432
+By now you should be able to explain the following. Use if-else patterns Create assertion tasks Organize assertions Use assert() macro Create custom assertion functions From MODULE7 Learning Outcomes.
+
+86
+00:17:51,782 --> 00:18:04,598
+By now you should be able to explain the following. Design reusable assertions Organize assertion library Use assertion library Identify coverage gaps Plan coverage closure From MODULE7 Learning Outcomes.
+
+87
+00:18:04,948 --> 00:18:20,260
+By now you should be able to explain the following. Use coverage to guide testing Generate tests based on coverage Optimize test selection Can understand fundamental coverage concepts Can measure code coverage with both tools From MODULE7 Learning Outcomes.
+
+88
+00:18:20,610 --> 00:18:37,026
+By now you should be able to explain the following. Can write basic assertions in Verilog and C++ Can organize assertions effectively Can analyze coverage reports Can use coverage to guide verification Can achieve basic coverage closure From MODULE7 Learning Outcomes.
+
+89
+00:18:37,376 --> 00:19:12,416
+By now you should be able to explain the following. Module 8: Verification Methodology and Best Practices - Learn industry best practices and verification sign-off Icarus Verilog Documentation: http://iverilog.wikia.com/ Verilator Documentation: https://verilator.org/ GTKWave Documentation: http://gtkwave.sourceforge.net/ IEEE 1364-2005 Standard: Verilog Hardware Description Language From...
+
+90
+00:19:12,766 --> 00:19:28,942
+Assessment checklist. Can understand fundamental coverage concepts Can measure code coverage with both tools Can implement manual functional coverage (both paradigms) Can write basic assertions in Verilog and C++ Can organize assertions effectively
+
+91
+00:19:29,292 --> 00:19:54,300
+In summary: Master basic coverage analysis and assertion-based verification without SystemVerilog dependencies Next up: Next module in course. Master basic coverage analysis and assertion-based verification without SystemVerilog dependencies Complete module7/CHECKLIST.md Review module7/EXAMPLES.md and run each lab Next: Next module in course

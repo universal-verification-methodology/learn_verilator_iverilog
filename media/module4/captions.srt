@@ -1,0 +1,359 @@
+1
+00:00:00,000 --> 00:00:10,176
+Welcome to module 4, Basic Testbench Construction. In this module you will master construction of structured testbenches with proper organization.
+
+2
+00:00:10,526 --> 00:00:18,158
+Here is what you will learn in this module. Master construction of structured testbenches with proper organization
+
+3
+00:00:18,508 --> 00:00:24,556
+Before you start, make sure you have these prerequisites. See module README
+
+4
+00:00:24,906 --> 00:00:31,554
+Learning path. Master construction of structured testbenches with proper organization
+
+5
+00:00:31,904 --> 00:00:42,968
+Overview. This module focuses on building well-structured testbenches for both Verilog and C++ paradigms. You'll learn to organize testbenches...
+
+6
+00:00:43,318 --> 00:00:46,558
+Next section: Design architecture.
+
+7
+00:00:46,908 --> 00:01:20,364
+1. Structured DUT portfolio (Module 4). dut/alus/simple_alu.v: Combinational ALU — op select, result, zero flag dut/fifos/simple_fifo.v: Queue storage with full/empty and pointer logic dut/registers/register_file.v: Multi-port register file — read/write ports, clocked updates Complexity step: Moves from gates/counters to datapath blocks needing organized TBs Refer to the diagram on the right.
+
+8
+00:01:20,714 --> 00:01:51,602
+2. Modular testbench architecture. Separation: Stimulus generator, monitor, checker/scoreboard as distinct modules or classes Clock/reset generator: Dedicated block (clock_reset examples) — configurable period Hierarchy: Top TB instantiates agents + DUT; connects via named interfaces (wires) C++ mirror: Same roles as C++ classes with methods drive(), sample(), check() Refer to the diagram on...
+
+9
+00:01:51,952 --> 00:02:13,360
+3. Reference model placement. Golden model: Software replica of ALU/FIFO/register behavior in TB Self-checking path: DUT output compared to reference each cycle or transaction Config: Parameters for width, depth, and clock period without editing DUT RTL Refer to the diagram on the right.
+
+10
+00:02:13,710 --> 00:02:21,150
+RTL block diagram (reference). Module 4: DUT hierarchy and signal flow.
+
+11
+00:02:21,500 --> 00:02:30,020
+Verification / testbench diagram (reference). Module 4: stimulus, observation, and checking.
+
+12
+00:02:30,370 --> 00:02:42,418
+Clock/reset Makefile target. Review the code on screen and match it to files in the repository. Parameterize period; compile and vvp in one make target.
+
+13
+00:02:42,768 --> 00:02:56,784
+Configurable clock generation. Review the code on screen and match it to files in the repository. forever #(PERIOD/2) clk=~clk; coordinated reset release.
+
+14
+00:02:57,134 --> 00:03:10,214
+Self-checking ALU ports. Review the code on screen and match it to files in the repository. simple_alu instantiated; wires for a, b, op, result, zero.
+
+15
+00:03:10,564 --> 00:03:14,596
+Next section: Execution & simulation flow.
+
+16
+00:03:14,946 --> 00:03:46,194
+How the example runs (toolchain). Match each bullet to files in the repository. Makefile: Verilator compiles RTL + SystemVerilog testbench into a C++ model sim_main.cpp: generates clk/rst_n, calls eval() until $finish Directed test (initial block or C++): drive stimulus, wait for DUT flags Self-check: compare outputs; print PASS/FAIL (see terminal demo slide) Repo path...
+
+17
+00:03:46,544 --> 00:04:02,456
+Follow these steps in order when working through this module. Reference model in TB compare each cycle aggregate pass/fail before $finish Build clk/rst generators connect DUT Follow this order when tracing waveforms or debugging.
+
+18
+00:04:02,806 --> 00:04:14,614
+Follow these steps in order when working through this module. drive ALU/FIFO vectors reference model compare wire agents at top Follow this order when tracing waveforms or debugging.
+
+19
+00:04:14,964 --> 00:04:26,916
+Self-checking example build. Review the code on screen and match it to files in the repository. cd module4/examples/self_checking && make
+
+20
+00:04:27,266 --> 00:04:38,786
+Reference model function. Review the code on screen and match it to files in the repository. calculate_expected(op,a,b) — golden model in TB.
+
+21
+00:04:39,136 --> 00:04:43,240
+Next section: Verification & testing methods.
+
+22
+00:04:43,590 --> 00:05:04,134
+1. Component-level verification. Stimulus module: Encapsulates write sequences to FIFO or register ports Monitor module: Captures read data and status flags passively Checker: Flags protocol violations (overflow, X on outputs, wrong opcode result) Refer to the diagram on the right.
+
+23
+00:05:04,484 --> 00:05:25,724
+2. Scenario-based testing. Scenarios: Reset + fill FIFO; ALU op sweep; register R/W hazard patterns Tasks/methods: Each scenario is a callable task — reusable across tests Aggregation: Single report summarizing scenarios run and failures Refer to the diagram on the right.
+
+24
+00:05:26,074 --> 00:05:45,322
+3. Structured debug and closure. Modular debug: Isolate failing agent by disabling others in top TB Waveform on demand: Trigger dumps only when checker fires Regression: ./scripts/module4.sh --self-checking and --all-tests for batch sign-off Refer to the diagram on the right.
+
+25
+00:05:45,672 --> 00:05:57,576
+Modular TB — checker module. Review the code on screen and match it to files in the repository. Separate stimulus, monitor, and checker blocks wired at top.
+
+26
+00:05:57,926 --> 00:06:01,190
+Next section: Syllabus topics.
+
+27
+00:06:01,540 --> 00:06:14,572
+1. Testbench Organization (1/7). Modular Testbench Structure (Verilog and C++) Separating concerns Component-based design Reusability principles Maintainability
+
+28
+00:06:14,922 --> 00:06:29,802
+1. Testbench Organization (2/7). Stimulus generation module/class Response monitoring module/class Result checking module/class Component interaction Verilog: Module-Based Organization
+
+29
+00:06:30,152 --> 00:06:42,008
+1. Testbench Organization (3/7). Module instantiation Signal connectivity Module reusability C++: Class-Based Organization Class hierarchy
+
+30
+00:06:42,358 --> 00:06:53,086
+1. Testbench Organization (4/7). Method organization Class reusability Testbench Component Organization Component placement Signal routing
+
+31
+00:06:53,436 --> 00:07:04,116
+1. Testbench Organization (5/7). Organization patterns Reusable Testbench Components Component design Parameterization Configuration
+
+32
+00:07:04,466 --> 00:07:15,722
+1. Testbench Organization (6/7). Configuration and Parameters Parameter passing Configuration management Runtime configuration Build-time configuration
+
+33
+00:07:16,072 --> 00:07:28,192
+1. Testbench Organization (7/7). register_file_test_cpp.cpp: Structured C++ testbench with separate classes
+
+34
+00:07:28,542 --> 00:07:41,718
+2. Clock and Reset Generation (1/8). Verilog: Clock Generation Patterns (Always Blocks) Continuous clock generation Configurable periods Multiple clocks Clock gating
+
+35
+00:07:42,068 --> 00:07:54,524
+2. Clock and Reset Generation (2/8). Clock toggling in loop Configurable periods Multiple clocks Clock coordination Configurable Clock Periods (Both Paradigms)
+
+36
+00:07:54,874 --> 00:08:05,938
+2. Clock and Reset Generation (3/8). Runtime configuration Clock period calculation Frequency control Multiple Clock Domains Independent clocks
+
+37
+00:08:06,288 --> 00:08:17,928
+2. Clock and Reset Generation (4/8). Domain crossing Synchronization Reset Generation (Synchronous, Asynchronous) Synchronous reset Asynchronous reset
+
+38
+00:08:18,278 --> 00:08:29,702
+2. Clock and Reset Generation (5/8). Reset sequences Verilog: Reset in Initial Blocks Initial block reset Reset timing control Reset sequences
+
+39
+00:08:30,052 --> 00:08:42,340
+2. Clock and Reset Generation (6/8). C++: Reset in C++ Code Reset in simulation loop Reset timing control Reset sequences Reset coordination
+
+40
+00:08:42,690 --> 00:08:52,842
+2. Clock and Reset Generation (7/8). Reset assertion Reset deassertion Reset duration Reset timing Clock and Reset Coordination
+
+41
+00:08:53,192 --> 00:09:15,080
+2. Clock and Reset Generation (8/8). Reset synchronization Timing coordination Best practices configurable_clock_reset_verilog.v: Configurable clock and reset in Verilog configurable_clock_reset_cpp.cpp: Configurable clock and reset in C++
+
+42
+00:09:15,430 --> 00:09:24,982
+3. Stimulus Generation (1/5). Test Vector Generation Vector format Vector generation Vector storage Vector application
+
+43
+00:09:25,332 --> 00:09:36,108
+3. Stimulus Generation (2/5). Pattern types Pattern generation Pattern application Pattern verification Sequential Stimulus Application
+
+44
+00:09:36,458 --> 00:09:46,250
+3. Stimulus Generation (3/5). Timing control Application order Synchronization Stimulus Timing Control Timing accuracy
+
+45
+00:09:46,600 --> 00:09:57,208
+3. Stimulus Generation (4/5). Timing control Timing verification Stimulus Verification Stimulus validation Stimulus checking
+
+46
+00:09:57,558 --> 00:10:03,774
+3. Stimulus Generation (5/5). Verification strategies
+
+47
+00:10:04,124 --> 00:10:15,380
+4. Response Monitoring (1/5). Output Monitoring Strategies Real-time monitoring Post-processing monitoring Event-driven monitoring Continuous monitoring
+
+48
+00:10:15,730 --> 00:10:26,194
+4. Response Monitoring (2/5). Immediate monitoring Live updates Real-time analysis Performance considerations Post-Processing Monitoring
+
+49
+00:10:26,544 --> 00:10:35,712
+4. Response Monitoring (3/5). Batch processing Data collection Analysis strategies Monitoring Timing When to monitor
+
+50
+00:10:36,062 --> 00:10:45,638
+4. Response Monitoring (4/5). Timing relationships Timing control Event-Driven Monitoring Event triggers Event-based monitoring
+
+51
+00:10:45,988 --> 00:10:51,676
+4. Response Monitoring (5/5). Event coordination
+
+52
+00:10:52,026 --> 00:11:02,946
+5. Result Checking (1/5). Expected Value Calculation Expected value computation Reference models Calculation methods Accuracy
+
+53
+00:11:03,296 --> 00:11:14,192
+5. Result Checking (2/5). Value comparison Comparison methods Comparison timing Comparison accuracy Error Detection and Reporting
+
+54
+00:11:14,542 --> 00:11:23,326
+5. Result Checking (3/5). Error reporting Error handling Error analysis Assertion-Based Checking Assertion types
+
+55
+00:11:23,676 --> 00:11:34,260
+5. Result Checking (4/5). Assertion organization Assertion best practices Self-Checking Testbenches Automatic checking Self-verification
+
+56
+00:11:34,610 --> 00:11:53,594
+5. Result Checking (5/5). Pass/fail determination alu_self_checking_verilog.v: Self-checking ALU testbench in Verilog alu_self_checking_cpp.cpp: Self-checking ALU testbench in C++
+
+57
+00:11:53,944 --> 00:12:05,008
+6. Test Scenarios (1/7). Test Case Organization Test case structure Test case organization Test case management Test case documentation
+
+58
+00:12:05,358 --> 00:12:15,702
+6. Test Scenarios (2/7). Scenario definition Scenario organization Scenario selection Scenario execution Test Sequencing
+
+59
+00:12:16,052 --> 00:12:26,060
+6. Test Scenarios (3/7). Test dependencies Test sequencing Test coordination Test Selection Mechanisms Test selection
+
+60
+00:12:26,410 --> 00:12:36,442
+6. Test Scenarios (4/7). Test prioritization Test management Test Result Aggregation Result collection Result aggregation
+
+61
+00:12:36,792 --> 00:13:10,368
+6. Test Scenarios (5/7). Result reporting Location: module4/examples/modular_testbenches/register_file_test_verilog.v Demonstrates: Modular structure, separate stimulus/monitor/checker modules Location: module4/examples/modular_testbenches/register_file_test_cpp.cpp Demonstrates: Class-based organization, separate stimulus/monitor/checker classes
+
+62
+00:13:10,718 --> 00:13:32,726
+6. Test Scenarios (6/7). Demonstrates: Multiple test scenarios, test sequencing Location: (Coming soon) Demonstrates: Multiple test scenarios, test sequencing Location: module4/examples/self_checking/ Demonstrates: Self-checking testbenches, comprehensive testing
+
+63
+00:13:33,076 --> 00:13:49,444
+6. Test Scenarios (7/7). Demonstrates: State machine testing, state coverage Location: module4/examples/clock_reset/ Demonstrates: Configurable clock/reset, parameterization
+
+64
+00:13:49,794 --> 00:13:53,034
+Next section: Hands-on examples.
+
+65
+00:13:53,384 --> 00:14:00,488
+Module 4 self-check. Watch the terminal output and confirm you see the expected pass message.
+
+66
+00:14:00,838 --> 00:14:07,222
+Exercise scaffold. Review the code on screen and match it to files in the repository.
+
+67
+00:14:07,572 --> 00:14:15,012
+Demo: Clock and reset. Watch the terminal output and confirm you see the expected pass message.
+
+68
+00:14:15,362 --> 00:14:22,514
+Demo: Self-checking. Watch the terminal output and confirm you see the expected pass message.
+
+69
+00:14:22,864 --> 00:14:30,544
+Demo: Stimulus and monitoring. Watch the terminal output and confirm you see the expected pass message.
+
+70
+00:14:30,894 --> 00:14:38,622
+Demo: Modular testbenches. Watch the terminal output and confirm you see the expected pass message.
+
+71
+00:14:38,972 --> 00:14:42,164
+Next section: Common pitfalls.
+
+72
+00:14:42,514 --> 00:14:51,850
+Mixing Concerns. Don't combine stimulus and checking in the same module/class Don't drive signals from monitor or checker components
+
+73
+00:14:52,200 --> 00:15:00,384
+Hardcoded Values. Use parameters/constants for timing and configuration Avoid magic numbers in code
+
+74
+00:15:00,734 --> 00:15:08,174
+Insufficient Checking. Don't rely on manual inspection of waveforms Always implement automatic checking
+
+75
+00:15:08,524 --> 00:15:16,060
+Poor Error Messages. Include enough context to debug failures Use consistent error message format
+
+76
+00:15:16,410 --> 00:15:25,098
+Inadequate Documentation. Document component purpose and interfaces Explain complex logic and timing relationships
+
+77
+00:15:25,448 --> 00:15:28,832
+Next section: Practice & assessment.
+
+78
+00:15:29,182 --> 00:15:51,910
+By now you should be able to explain the following. Organize testbenches modularly (both paradigms) Generate clocks and resets properly (Verilog and C++) Create structured stimulus (both paradigms) Implement monitoring strategies (both paradigms) Build self-checking testbenches (both paradigms) From MODULE4 Learning Outcomes.
+
+79
+00:15:52,260 --> 00:16:07,716
+By now you should be able to explain the following. Choose appropriate organization style Separate stimulus, monitor, and checker modules Organize components properly Verify functionality Use class-based organization From MODULE4 Learning Outcomes.
+
+80
+00:16:08,066 --> 00:16:21,818
+By now you should be able to explain the following. Compare with Verilog approach Make clock period configurable Implement reset sequences Test different configurations Organize test cases From MODULE4 Learning Outcomes.
+
+81
+00:16:22,168 --> 00:16:35,152
+By now you should be able to explain the following. Aggregate results Calculate expected values Compare automatically Report results Design reusable modules/classes From MODULE4 Learning Outcomes.
+
+82
+00:16:35,502 --> 00:16:57,366
+By now you should be able to explain the following. Test reusability Can organize testbenches modularly (both paradigms) Can generate configurable clocks and resets (Verilog and C++) Can create structured stimulus (both paradigms) Can implement monitoring strategies (both paradigms) From MODULE4 Learning Outcomes.
+
+83
+00:16:57,716 --> 00:17:20,516
+By now you should be able to explain the following. Can organize multiple test scenarios Can choose appropriate organization style Module 5: Procedural Testbench Writing - Master procedural testbench construction Module 6: SystemVerilog Testbench Features - Learn SystemVerilog enhancements Keep stimulus, monitoring, and checking separate From MODULE4 Learning Outcomes.
+
+84
+00:17:20,866 --> 00:17:45,658
+By now you should be able to explain the following. This makes testbenches easier to understand, maintain, and debug Design components to be reusable across multiple testbenches Use parameters/configuration for flexibility Create library components for common functionality (clocks, resets, etc.) Always implement automatic result checking From MODULE4 Learning Outcomes.
+
+85
+00:17:46,008 --> 00:18:04,608
+By now you should be able to explain the following. Report pass/fail status clearly Comment code thoroughly, especially complex logic Document component interfaces and responsibilities Include usage examples in comments Provide clear, informative error messages From MODULE4 Learning Outcomes.
+
+86
+00:18:04,958 --> 00:18:24,038
+By now you should be able to explain the following. Aggregate errors for summary reporting Don't combine stimulus and checking in the same module/class Don't drive signals from monitor or checker components Use parameters/constants for timing and configuration Avoid magic numbers in code From MODULE4 Learning Outcomes.
+
+87
+00:18:24,388 --> 00:18:41,644
+By now you should be able to explain the following. Always implement automatic checking Include enough context to debug failures Use consistent error message format Document component purpose and interfaces Explain complex logic and timing relationships From MODULE4 Learning Outcomes.
+
+88
+00:18:41,994 --> 00:19:17,610
+By now you should be able to explain the following. Verilator Documentation: https://verilator.org/ GTKWave Documentation: http://gtkwave.sourceforge.net/ UVM Core Repository: https://github.com/universal-verification-methodology/core UVM User's Guide: IEEE 1800.2-2020 Standard Verification Methodology: Best practices from industry verification teams From MODULE4 Learning Outcomes.
+
+89
+00:19:17,960 --> 00:19:38,864
+Assessment checklist. Can organize testbenches modularly (both paradigms) Can generate configurable clocks and resets (Verilog and C++) Can create structured stimulus (both paradigms) Can implement monitoring strategies (both paradigms) Can build self-checking testbenches (both paradigms)
+
+90
+00:19:39,214 --> 00:20:00,166
+In summary: Master construction of structured testbenches with proper organization Next up: Next module in course. Master construction of structured testbenches with proper organization Complete module4/CHECKLIST.md Review module4/EXAMPLES.md and run each lab Next: Next module in course

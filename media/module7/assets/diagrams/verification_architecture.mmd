@@ -1,3 +1,5 @@
 flowchart LR
-  PROP[properties] --> ABV[assertion failures]
-  COV[coverage] --> CLOSE[closure loop]
+  STIM[reset + enable tests] --> SIM[vvp / verilator run]
+  SIM --> AST[assert on posedge clk]
+  AST --> COV[coverage bins optional]
+  COV --> CLOSE[closure report]

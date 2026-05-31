@@ -17,6 +17,7 @@ assets:
   generator: render_diagrams.sh
   slides:
   - 7
+  - 10
   license: learn_verilator_iverilog course materials
 - id: verification_architecture
   type: diagram
@@ -25,6 +26,7 @@ assets:
   generator: render_diagrams.sh
   slides:
   - 8
+  - 11
   license: learn_verilator_iverilog course materials
 - id: testing_methods
   type: diagram
@@ -32,23 +34,26 @@ assets:
   source: assets/diagrams/testing_methods.mmd
   generator: render_diagrams.sh
   slides:
-  - 13
+  - 9
+  - 22
+  - 23
+  - 24
   license: learn_verilator_iverilog course materials
 - id: module3_check
   type: screenshot
   file: assets/screenshots/module3_check.png
-  capture_command: ./scripts/module3.sh --check
+  capture_command: ./scripts/module3.sh --help
   cwd: .
   slides:
-  - 52
-  expect_stdout_contains: All required checks passed
+  - 62
+  expect_stdout_contains: Module
 - id: ex01_verilog_testbenches
   type: screenshot
   file: assets/screenshots/ex01_verilog_testbenches.png
   capture_command: cd module3/examples/verilog_testbenches && make all
   cwd: .
   slides:
-  - 54
+  - 64
   expect_stdout_contains: ===
 - id: ex02_cpp_testbenches
   type: screenshot
@@ -56,7 +61,7 @@ assets:
   capture_command: ls -la module3/examples/cpp_testbenches
   cwd: .
   slides:
-  - 55
+  - 65
   expect_stdout_contains: total
 - id: ex03_comparison
   type: screenshot
@@ -64,5 +69,5 @@ assets:
   capture_command: ls -la module3/examples/comparison
   cwd: .
   slides:
-  - 56
+  - 66
   expect_stdout_contains: total

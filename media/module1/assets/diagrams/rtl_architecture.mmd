@@ -1,9 +1,11 @@
 flowchart LR
-  IV[iverilog compile] --> VVP[vvp sim]
+  SRC[RTL + TB .v files] --> IV[iverilog compile]
+  IV --> BYTE[VVP bytecode simv]
+  BYTE --> VVP[vvp execute]
   subgraph dut1["module1/dut"]
     M2[mux_2to1]
     M4[mux_4to1]
     CTR[counter_4bit]
   end
-  TB[Verilog TB] --> dut1
-  VVP --> TB
+  VVP --> dut1
+  VVP --> VCD[*.vcd waveform]

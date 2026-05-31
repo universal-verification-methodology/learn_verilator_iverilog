@@ -190,6 +190,12 @@ Understanding these fundamental patterns now will make learning UVM and other ad
 - **Scoreboard**: Compares actual vs expected; increments pass/fail
 - **Clock/reset agents**: Reusable blocks generating periodic clock and reset sequences
 
+**Simulation flow**: `cd module3/examples/verilog_testbenches && make counter_test` → then `cd ../cpp_testbenches && make counter_test` → compare both outputs
+
+**Execution sequence**: Instantiate DUT in Verilog TB → iverilog compile → vvp → repeat with C++ TB and Verilator → review `comparison/` mapping guide
+
+**Self-check flow**: Both paradigms count errors locally → same PASS criteria without manual waveform grading
+
 ## Verification & Testing Methods
 
 ### 1. Structured test flow (build–connect–run)

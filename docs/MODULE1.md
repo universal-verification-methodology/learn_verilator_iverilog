@@ -123,6 +123,12 @@ make all
 - **Observation**: `$display`, `$monitor`, and VCD for passive debug
 - **Closure**: `$finish` after pass/fail counts or explicit timeout
 
+**Simulation flow**: `cd module1/examples/compilation && make basic_compilation` → `cd ../simulation && make` → VVP event scheduler runs the testbench
+
+**Execution sequence**: Gather RTL from `module1/dut/` → `iverilog -o sim tb.v dut.v` → `vvp sim` → read `$display` self-check → `$dumpvars` VCD → `./scripts/module1.sh --check`
+
+**Self-check flow**: TB compares expected vs actual → error count on stdout → `$finish` with summary
+
 ## Verification & Testing Methods
 
 ### 1. Directed functional testing

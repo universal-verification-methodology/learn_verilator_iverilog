@@ -1,3 +1,5 @@
 flowchart TD
-  A[modular agents] --> B[scenarios]
-  B --> C[self-check report]
+  CLKRST[clock_reset lab] --> SELF[self_checking lab]
+  SELF --> STIMMON[stimulus_monitoring]
+  STIMMON --> MOD[modular_testbenches]
+  MOD --> REG[module4.sh --check]

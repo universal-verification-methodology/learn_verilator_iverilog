@@ -1,9 +1,6 @@
-flowchart LR
-  subgraph tb5["Procedural TB"]
-    TASKS[tasks / C++ methods]
-    CLK[clock generator]
-  end
-  UART[simple_uart FSM]
-  TASKS -->|tx_start data| UART
-  UART -->|tx_done tx| TASKS
-  CLK --> UART
+flowchart TB
+  INIT[initial blocks] --> TASKS[tasks / functions]
+  ALWAYS[always blocks] --> CLKDOM[clock domains]
+  TASKS --> DUT[ALU / file I/O DUT]
+  FILE[$fopen vectors] --> TASKS
+  DUT --> LOG[results file]

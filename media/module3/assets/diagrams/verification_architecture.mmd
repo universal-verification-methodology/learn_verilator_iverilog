@@ -1,4 +1,11 @@
 flowchart LR
-  DRV[driver] --> DUT[DUT]
-  DUT --> MON[monitor]
-  MON --> SB[scoreboard]
+  subgraph vpath["Verilog path"]
+    VSTIM[initial blocks] --> VDUT[DUT]
+    VDUT --> VCHK[$display checks]
+  end
+  subgraph cpath["C++ path"]
+    CSTIM[main loop] --> CDUT[eval]
+    CDUT --> CCHK[assert / cout]
+  end
+  CMP[comparison example] --> vpath
+  CMP --> cpath

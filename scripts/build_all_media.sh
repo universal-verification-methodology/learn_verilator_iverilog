@@ -28,6 +28,7 @@ INSTALL_DEPS=0
 MODULES_FILTER=""
 SECONDS_PER_SLIDE=8
 RUN_DEMOS=0
+NO_NARRATION=0
 EXTRA_ARGS=()
 
 usage() {
@@ -39,6 +40,7 @@ usage() {
   echo "  --regenerate-outlines  Run generate_outline_from_module.py (all modules)"
   echo "  --install-deps         sudo apt install libreoffice ffmpeg poppler-utils"
   echo "  --seconds-per-slide N  Video timing when no narration (default: 8)"
+  echo "  --no-narration         Skip TTS; silent video at fixed seconds per slide"
   echo "  --run-demos            Run capture commands during verify (slow)"
   echo "  -h, --help             Show help"
 }
@@ -56,6 +58,7 @@ while [[ $# -gt 0 ]]; do
     --module) MODULES_FILTER="$2"; shift 2 ;;
     --seconds-per-slide) SECONDS_PER_SLIDE="$2"; shift 2 ;;
     --run-demos) RUN_DEMOS=1; shift ;;
+    --no-narration) NO_NARRATION=1; shift ;;
     -h|--help) usage; exit 0 ;;
     *) EXTRA_ARGS+=("$1"); shift ;;
   esac
@@ -119,7 +122,7 @@ BUILD_ARGS=("$COURSE_ROOT")
 [[ $PPTX_ONLY -eq 1 ]] && BUILD_ARGS+=(--pptx-only)
 [[ $RUN_DEMOS -eq 1 ]] && BUILD_ARGS+=(--run-demos)
 BUILD_ARGS+=(--seconds-per-slide "$SECONDS_PER_SLIDE")
-BUILD_ARGS+=(--no-narration)
+[[ $NO_NARRATION -eq 1 ]] && BUILD_ARGS+=(--no-narration)
 BUILD_ARGS+=("${EXTRA_ARGS[@]}")
 
 check_system_deps || true

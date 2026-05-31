@@ -1,3 +1,6 @@
 flowchart TD
-  A[test plan] --> B[regression]
-  B --> C[metrics + sign-off]
+  ARCH[testbench_architecture] --> MET[verification_metrics]
+  MET --> TOOL[tool_selection guide]
+  TOOL --> STD[coding_standards]
+  STD --> REG[module8.sh --check]
+  REG --> SIGN[production readiness]
